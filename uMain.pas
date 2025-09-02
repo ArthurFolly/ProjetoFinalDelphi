@@ -12,9 +12,15 @@ type
     Fundo: TImage;
     Panel1: TPanel;
     Logo: TImage;
-    Label1: TLabel;
     Panel2: TPanel;
     Image1: TImage;
+    Panel6: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel7: TPanel;
+    Panel8: TPanel;
+    ContactHub: TPanel;
     procedure LogoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -35,12 +41,16 @@ begin
 
 if (windowstate = wsMaximized) then begin
 
-Logo.Width := 120
+Logo.Width := 120;
+
+Panel2.Margins.Top := 20;
 
 
 end else begin
 
-Logo.Width := 80
+Logo.Width := 80;
+
+Panel2.Margins.Top := 8;
 
 
 end;

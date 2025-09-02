@@ -878,7 +878,7 @@ object FLogin: TFLogin
       FD68039A41400B9A3AD1FE149DCD002D1F8D20EB4EEC6900DA5A41D295B82298
       01CD3A980D3CD2017B514DF5A514C070F7A281D28A067FFFD9}
     Stretch = True
-    ExplicitWidth = 1017
+    ExplicitTop = -5
   end
   object Panel2: TPanel
     AlignWithMargins = True
