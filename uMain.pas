@@ -24,13 +24,23 @@ type
     ImageFavoritos: TImage;
     ImageGrupos: TImage;
     ImageMensagens: TImage;
-    ImageEmprsea: TImage;
+    ImageEmpresa: TImage;
     ImageImpExp: TImage;
     ImageConfig: TImage;
     PanelForm: TPanel;
     PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    PanelAdicionar: TPanel;
+    AbaContatos: TTabSheet;
+    AbaFavoritos: TTabSheet;
+    Panel2: TPanel;
+    Image1: TImage;
+    Panel3: TPanel;
+    Image2: TImage;
+    AbaGrupos: TTabSheet;
+    AbaMensagens: TTabSheet;
+    TabSheet3: TTabSheet;
+    AbaImpExp: TTabSheet;
+    AbaConfigurações: TTabSheet;
+    Panel4: TPanel;
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosMouseEnter(Sender: TObject);
@@ -38,7 +48,23 @@ type
     procedure PanelFavoritosMouseEnter(Sender: TObject);
     procedure PanelFavoritosMouseLeave(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
-    procedure ContactHubClick(Sender: TObject); // 👈 adicionei aqui
+    procedure ContactHubClick(Sender: TObject);
+    procedure PanelGruposMouseEnter(Sender: TObject);
+    procedure PanelGruposMouseLeave(Sender: TObject);
+    procedure PanelMensagensMouseEnter(Sender: TObject);
+    procedure PanelMensagensMouseLeave(Sender: TObject);
+    procedure PanelEmpresaMouseEnter(Sender: TObject);
+    procedure PanelEmpresaMouseLeave(Sender: TObject);
+    procedure PanelImportExportMouseLeave(Sender: TObject);
+    procedure PanelImportExportMouseEnter(Sender: TObject);
+    procedure PanelConfiguracaoMouseLeave(Sender: TObject);
+    procedure PanelConfiguracaoMouseEnter(Sender: TObject);
+    procedure PanelFavoritosClick(Sender: TObject);
+    procedure PanelGruposClick(Sender: TObject);
+    procedure PanelMensagensClick(Sender: TObject);
+    procedure PanelEmpresaClick(Sender: TObject);
+    procedure PanelImportExportClick(Sender: TObject);
+    procedure PanelConfiguracaoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -115,6 +141,7 @@ begin
   end;
 end;
 
+
 procedure TFMain.LogoClick(Sender: TObject);
 begin
   Logo.Stretch := True;
@@ -122,10 +149,40 @@ begin
   Logo.Center := True;
 end;
 
-procedure TFMain.PanelContatosClick(Sender: TObject);
+
+procedure TFMain.PanelConfiguracaoClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 6;
+PageControl1.Show;
+end;
+
+procedure TFMain.PanelConfiguracaoMouseEnter(Sender: TObject);
 begin
 
+   PanelConfiguracao.BevelOuter := bvRaised;
+   PanelConfiguracao.Color := $00D6498F;
+   PanelConfiguracao.Cursor := crHandPoint;
+   ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
+
+end;
+
+procedure TFMain.PanelConfiguracaoMouseLeave(Sender: TObject);
+begin
+
+   PanelConfiguracao.BevelOuter := bvNone;
+   PanelConfiguracao.Color := $00121212;
+   PanelConfiguracao.Cursor := crHandPoint;
+   ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
+
+
+
+end;
+
+procedure TFMain.PanelContatosClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 0;
 PageControl1.Show;
+
 
 end;
 
@@ -134,40 +191,133 @@ begin
    PanelContatos.BevelOuter := bvRaised;
    PanelContatos.Color := $00D6498F;
    PanelContatos.Cursor := crHandPoint;
-   imageContato.picture.LoadFromFile('C:\Users\Arthur Folly\Downloads\Pictures\iconcontatos2.png');
+   // Carrega a imagem alternativa do ícone de contatos
+   ImageContato.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\iconcontatos2.png');
 end;
 
 procedure TFMain.PanelContatosMouseLeave(Sender: TObject);
 begin
-  PanelContatos.BevelOuter := BvNone;
+  PanelContatos.BevelOuter := bvNone;
   PanelContatos.Color := $00121212;
   PanelContatos.Cursor := crDefault;
-  imageContato.Picture.LoadFromFile('C:\Users\Arthur Folly\Downloads\Pictures\iconcontatos.png');
+  // Carrega a imagem padrão do ícone de contatos
+  ImageContato.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\iconcontatos.png');
 end;
 
+procedure TFMain.PanelEmpresaClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 4;
+PageControl1.Show;
+end;
 
+procedure TFMain.PanelEmpresaMouseEnter(Sender: TObject);
+begin
+
+   PanelEmpresa.BevelOuter := bvRaised;
+   PanelEmpresa.Color := $00D6498F;
+   PanelEmpresa.Cursor := crHandPoint;
+   ImageEmpresa.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoEmpresaRoxa.png');
+
+end;
+
+procedure TFMain.PanelEmpresaMouseLeave(Sender: TObject);
+begin
+
+   PanelEmpresa.BevelOuter := bvNone;
+   PanelEmpresa.Color := $00121212;
+   PanelEmpresa.Cursor := crHandPoint;
+   ImageEmpresa.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoEmpresaPreta.png');
+
+end;
+
+procedure TFMain.PanelFavoritosClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 1;
+PageControl1.Show;
+end;
 
 procedure TFMain.PanelFavoritosMouseEnter(Sender: TObject);
 begin
-
    PanelFavoritos.BevelOuter := bvRaised;
    PanelFavoritos.Color := $00D6498F;
    PanelFavoritos.Cursor := crHandPoint;
-   ImageFavoritos.picture.LoadFromFile('C:\Users\Arthur Folly\Downloads\Pictures\favoritospreto.png');
-
-
+   ImageFavoritos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\favoritospreto.png');
 end;
 
 procedure TFMain.PanelFavoritosMouseLeave(Sender: TObject);
 begin
-  PanelFavoritos.BevelOuter := BvNone;
+  PanelFavoritos.BevelOuter := bvNone;
   PanelFavoritos.Color := $00121212;
   PanelFavoritos.Cursor := crDefault;
-  ImageFavoritos.Picture.LoadFromFile('C:\Users\Arthur Folly\Downloads\Pictures\favoritosoriginal.png');
+  ImageFavoritos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\favoritosoriginal.png');
 end;
 
+procedure TFMain.PanelGruposClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 2;
+PageControl1.Show;
+end;
+
+procedure TFMain.PanelGruposMouseEnter(Sender: TObject);
+begin
+    PanelGrupos.BevelOuter := bvRaised;
+    PanelGrupos.Color := $00D6498F;
+    PanelGrupos.Cursor := crHandPoint;
+    ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposPreta.png');
+end;
+
+procedure TFMain.PanelGruposMouseLeave(Sender: TObject);
+begin
+  PanelGrupos.BevelOuter := bvNone;
+  PanelGrupos.Color := $00121212;
+  PanelGrupos.Cursor := crDefault;
+  ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposRoxa.png');
+end;
+
+procedure TFMain.PanelImportExportClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 5;
+PageControl1.Show;
+end;
+
+procedure TFMain.PanelImportExportMouseEnter(Sender: TObject);
+begin
+  PanelImportExport.BevelOuter := bvRaised;
+  PanelImportExport.Color := $00D6498F;
+  PanelImportExport.Cursor := crDefault;
+  ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ImpPreta.png');
+
+end;
+
+procedure TFMain.PanelImportExportMouseLeave(Sender: TObject);
+begin
+  PanelImportExport.BevelOuter := bvNone;
+  PanelImportExport.Color := $00121212;
+  PanelImportExport.Cursor := crDefault;
+  ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ImpRoxa.png');
 
 
+end;
 
+procedure TFMain.PanelMensagensClick(Sender: TObject);
+begin
+PageControl1.ActivePageIndex := 3;
+PageControl1.Show;
+end;
+
+procedure TFMain.PanelMensagensMouseEnter(Sender: TObject);
+begin
+    PanelMensagens.BevelOuter := bvRaised;
+    PanelMensagens.Color := $00D6498F;
+    PanelMensagens.Cursor := crHandPoint;
+    ImageMensagens.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoMensagensPreta.png');
+end;
+
+procedure TFMain.PanelMensagensMouseLeave(Sender: TObject);
+begin
+  PanelMensagens.BevelOuter := bvNone;
+  PanelMensagens.Color := $00121212;
+  PanelMensagens.Cursor := crDefault;
+  ImageMensagens.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoMensagensRoxa.png');
+end;
 end.
-
