@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
-  Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels;
+  Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask;
 
 type
   TFMain = class(TForm)
@@ -36,6 +36,24 @@ type
     Card5: TCard;
     Card6: TCard;
     Card7: TCard;
+    PageControl: TPageControl;
+    Principal: TTabSheet;
+    Cadastro: TTabSheet;
+    Card8: TCard;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Label1: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Edit1: TEdit;
+    Nome: TLinkLabel;
+    Edit2: TEdit;
+    Label2: TLabel;
+    Numero: TMaskEdit;
+    Label3: TLabel;
+    Endereco: TEdit;
+    Label4: TLabel;
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
@@ -60,6 +78,8 @@ type
     procedure PanelFavoritosMouseLeave(Sender: TObject);
     procedure PanelContatosMouseEnter(Sender: TObject);
     procedure PanelContatosMouseLeave(Sender: TObject);
+    procedure Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
 //    procedure PanelMensagensDblClick(Sender: TObject);
   private
     procedure AtivarPainel(Panel: TPanel);
@@ -118,6 +138,15 @@ begin
     PainelPressionado.BevelInner := bvNone; // Sem bevel
     PainelPressionado.Cursor := crDefault;  // Cursor normal
   end;
+end;
+
+procedure TFMain.Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+Shape1.Shape := stRectangle;
+Shape1.Brush.Color := clRed;
+Shape1.Pen.Color := clBlack;
+
 end;
 
 procedure TFMain.FormResize(Sender: TObject);
@@ -183,6 +212,7 @@ end;
 procedure TFMain.PanelContatosClick(Sender: TObject);
 begin
   AtivarPainel(PanelContatos);
+  PageControl.Visible := true;
 end;
 
 procedure TFMain.PanelFavoritosClick(Sender: TObject);

@@ -215,7 +215,6 @@ object FMain: TFMain
       OnClick = PanelMensagensClick
       OnMouseEnter = PanelMensagensMouseEnter
       OnMouseLeave = PanelMensagensMouseLeave
-      ExplicitLeft = 0
       object ImageMensagens: TImage
         Left = 0
         Top = 0
@@ -492,7 +491,6 @@ object FMain: TFMain
       Font.Style = []
       ParentFont = False
       TabOrder = 6
-      ExplicitLeft = 0
       object Logo: TImage
         AlignWithMargins = True
         Left = 0
@@ -1298,7 +1296,6 @@ object FMain: TFMain
       OnClick = PanelContatosClick
       OnMouseEnter = PanelContatosMouseEnter
       OnMouseLeave = PanelContatosMouseLeave
-      ExplicitLeft = 0
       object ImageContato: TImage
         Left = 0
         Top = 0
@@ -1353,6 +1350,8 @@ object FMain: TFMain
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PanelForm'
+    Color = 15790320
+    ParentBackground = False
     TabOrder = 1
     object Fundo: TImage
       Left = 0
@@ -1822,7 +1821,7 @@ object FMain: TFMain
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card3
+      ActiveCard = Card2
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -1843,6 +1842,160 @@ object FMain: TFMain
         Caption = 'Card2'
         CardIndex = 1
         TabOrder = 1
+        object PageControl: TPageControl
+          Left = 0
+          Top = 0
+          Width = 882
+          Height = 681
+          ActivePage = Cadastro
+          Align = alClient
+          TabOrder = 0
+          TabWidth = 100
+          Visible = False
+          object Principal: TTabSheet
+            Caption = 'Contatos'
+            object Panel2: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+            end
+          end
+          object Cadastro: TTabSheet
+            Caption = 'Cadastro'
+            ImageIndex = 1
+            object Panel3: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+              ExplicitLeft = 2
+              ExplicitTop = -3
+            end
+            object Panel4: TPanel
+              Left = 24
+              Top = 46
+              Width = 825
+              Height = 585
+              Color = clWhite
+              ParentBackground = False
+              TabOrder = 1
+              object Label1: TLabel
+                Left = 1
+                Top = 1
+                Width = 823
+                Height = 32
+                Align = alTop
+                Caption = 'Cadastro De Contatos'
+                Color = clSilver
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -24
+                Font.Name = 'Segoe UI'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+                Transparent = False
+                ExplicitWidth = 248
+              end
+              object Bevel1: TBevel
+                Left = 0
+                Top = 299
+                Width = 824
+                Height = 24
+                Shape = bsBottomLine
+              end
+              object Bevel2: TBevel
+                Left = 0
+                Top = 329
+                Width = 824
+                Height = 24
+                Shape = bsBottomLine
+              end
+              object Label2: TLabel
+                Left = 336
+                Top = 59
+                Width = 34
+                Height = 15
+                Caption = 'E-mail'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label3: TLabel
+                Left = 576
+                Top = 59
+                Width = 101
+                Height = 15
+                Caption = 'Numero De Celular'
+              end
+              object Label4: TLabel
+                Left = 24
+                Top = 128
+                Width = 49
+                Height = 15
+                Caption = 'Endere'#231'o'
+              end
+              object Edit1: TEdit
+                Left = 24
+                Top = 80
+                Width = 289
+                Height = 33
+                Color = clBtnFace
+                TabOrder = 0
+                TextHint = 'Nome Completo'
+              end
+              object Nome: TLinkLabel
+                Left = 24
+                Top = 55
+                Width = 96
+                Height = 19
+                Caption = 'Nome Completo:'
+                TabOrder = 1
+              end
+              object Edit2: TEdit
+                Left = 336
+                Top = 80
+                Width = 217
+                Height = 33
+                Color = clBtnFace
+                TabOrder = 2
+                TextHint = 'E-mail'
+              end
+              object Numero: TMaskEdit
+                Left = 576
+                Top = 80
+                Width = 119
+                Height = 33
+                Color = clBtnFace
+                EditMask = '!\(99\)00000-000;1;_'
+                MaxLength = 13
+                TabOrder = 3
+                Text = '(  )     -   '
+              end
+              object Endereco: TEdit
+                Left = 24
+                Top = 149
+                Width = 289
+                Height = 36
+                Color = clBtnFace
+                TabOrder = 4
+                TextHint = 'Endere'#231'o'
+              end
+            end
+          end
+        end
       end
       object Card3: TCard
         Left = 0
@@ -1888,6 +2041,15 @@ object FMain: TFMain
         Caption = 'Card7'
         CardIndex = 6
         TabOrder = 6
+      end
+      object Card8: TCard
+        Left = 0
+        Top = 0
+        Width = 882
+        Height = 681
+        Caption = 'Card8'
+        CardIndex = 7
+        TabOrder = 7
       end
     end
   end
