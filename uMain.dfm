@@ -43,11 +43,9 @@ object FMain: TFMain
       ParentBackground = False
       ParentFont = False
       TabOrder = 0
+      OnClick = PanelEmpresaClick
       OnMouseEnter = PanelEmpresaMouseEnter
       OnMouseLeave = PanelEmpresaMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 407
-      ExplicitWidth = 360
       object ImageEmpresa: TImage
         Left = 0
         Top = 0
@@ -139,11 +137,9 @@ object FMain: TFMain
       ParentBackground = False
       ParentFont = False
       TabOrder = 1
+      OnClick = PanelConfiguracaoClick
       OnMouseEnter = PanelConfiguracaoMouseEnter
       OnMouseLeave = PanelConfiguracaoMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 569
-      ExplicitWidth = 360
       object ImageConfig: TImage
         Left = 0
         Top = 0
@@ -216,11 +212,10 @@ object FMain: TFMain
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
+      OnClick = PanelMensagensClick
       OnMouseEnter = PanelMensagensMouseEnter
       OnMouseLeave = PanelMensagensMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 326
-      ExplicitWidth = 360
+      ExplicitLeft = 0
       object ImageMensagens: TImage
         Left = 0
         Top = 0
@@ -273,11 +268,9 @@ object FMain: TFMain
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
+      OnClick = PanelGruposClick
       OnMouseEnter = PanelGruposMouseEnter
       OnMouseLeave = PanelGruposMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 245
-      ExplicitWidth = 360
       object ImageGrupos: TImage
         Left = 0
         Top = 0
@@ -346,8 +339,8 @@ object FMain: TFMain
       ParentFont = False
       TabOrder = 4
       OnClick = PanelFavoritosClick
-      ExplicitTop = 169
-      ExplicitWidth = 360
+      OnMouseEnter = PanelFavoritosMouseEnter
+      OnMouseLeave = PanelFavoritosMouseLeave
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -404,11 +397,9 @@ object FMain: TFMain
       ParentBackground = False
       ParentFont = False
       TabOrder = 5
+      OnClick = PanelImportExportClick
       OnMouseEnter = PanelImportExportMouseEnter
       OnMouseLeave = PanelImportExportMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 488
-      ExplicitWidth = 360
       object ImageImpExp: TImage
         Left = 0
         Top = 0
@@ -501,8 +492,7 @@ object FMain: TFMain
       Font.Style = []
       ParentFont = False
       TabOrder = 6
-      ExplicitTop = 4
-      ExplicitWidth = 360
+      ExplicitLeft = 0
       object Logo: TImage
         AlignWithMargins = True
         Left = 0
@@ -1306,6 +1296,8 @@ object FMain: TFMain
       ParentFont = False
       TabOrder = 7
       OnClick = PanelContatosClick
+      OnMouseEnter = PanelContatosMouseEnter
+      OnMouseLeave = PanelContatosMouseLeave
       ExplicitLeft = 0
       object ImageContato: TImage
         Left = 0
@@ -1362,7 +1354,6 @@ object FMain: TFMain
     BevelOuter = bvNone
     Caption = 'PanelForm'
     TabOrder = 1
-    ExplicitLeft = 374
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1831,14 +1822,10 @@ object FMain: TFMain
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card7
+      ActiveCard = Card3
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
-      ExplicitLeft = 240
-      ExplicitTop = 167
-      ExplicitWidth = 300
-      ExplicitHeight = 200
       object Card1: TCard
         Left = 0
         Top = 0
@@ -1847,9 +1834,6 @@ object FMain: TFMain
         Caption = 'Card1'
         CardIndex = 0
         TabOrder = 0
-        ExplicitLeft = 1
-        ExplicitWidth = 298
-        ExplicitHeight = 198
       end
       object Card2: TCard
         Left = 0
@@ -1859,8 +1843,6 @@ object FMain: TFMain
         Caption = 'Card2'
         CardIndex = 1
         TabOrder = 1
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Card3: TCard
         Left = 0
@@ -1870,8 +1852,6 @@ object FMain: TFMain
         Caption = 'Card3'
         CardIndex = 2
         TabOrder = 2
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Card4: TCard
         Left = 0
@@ -1881,8 +1861,6 @@ object FMain: TFMain
         Caption = 'Card4'
         CardIndex = 3
         TabOrder = 3
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Card5: TCard
         Left = 0
@@ -1892,8 +1870,6 @@ object FMain: TFMain
         Caption = 'Card5'
         CardIndex = 4
         TabOrder = 4
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Card6: TCard
         Left = 0
@@ -1903,8 +1879,6 @@ object FMain: TFMain
         Caption = 'Card6'
         CardIndex = 5
         TabOrder = 5
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
       object Card7: TCard
         Left = 0
@@ -1914,8 +1888,6 @@ object FMain: TFMain
         Caption = 'Card7'
         CardIndex = 6
         TabOrder = 6
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
     end
   end
