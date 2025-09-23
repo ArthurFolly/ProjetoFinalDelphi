@@ -928,10 +928,10 @@ object FLogin: TFLogin
         Font.Color = clWhite
         Font.Height = -21
         Font.Name = 'Segoe UI'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 247
+        ExplicitWidth = 263
       end
       object Clique: TLabel
         AlignWithMargins = True
@@ -952,6 +952,7 @@ object FLogin: TFLogin
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = CliqueClick
         OnMouseEnter = CliqueMouseEnter
         ExplicitWidth = 238
       end

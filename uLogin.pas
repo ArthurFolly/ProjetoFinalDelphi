@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain;
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain, uCadastro;
 
 type
   TFLogin = class(TForm)
@@ -21,6 +21,7 @@ type
     procedure CliqueMouseEnter(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
+    procedure CliqueClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -74,6 +75,29 @@ FMain.Show;
 
 end;
 
+end;
+
+procedure TFLogin.CliqueClick(Sender: TObject);
+begin
+if (windowstate = wsMaximized) then begin
+
+Self.Hide;
+
+FMain.WindowState := wsMaximized;
+
+FCadastro.Show;
+
+
+
+
+end else begin
+Self.hide;
+
+FMain.WindowState := wsNormal;
+
+FCadastro.Show;
+
+end;
 end;
 
 procedure TFLogin.CliqueMouseEnter(Sender: TObject);

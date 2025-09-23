@@ -4,7 +4,7 @@ uses
   Vcl.Forms,
   uLogin in 'uLogin.pas' {FLogin},
   uMain in 'uMain.pas' {FMain},
-  uCadastro in 'uCadastro.pas' {Form1};
+  uCadastro in 'uCadastro.pas' {FCadastro};
 
 {$R *.res}
 
@@ -13,6 +13,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFLogin, FLogin);
   Application.CreateForm(TFMain, FMain);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFCadastro, FCadastro);
   Application.Run;
 end.
