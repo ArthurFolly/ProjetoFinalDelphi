@@ -340,7 +340,6 @@ object FMain: TFMain
       OnClick = PanelFavoritosClick
       OnMouseEnter = PanelFavoritosMouseEnter
       OnMouseLeave = PanelFavoritosMouseLeave
-      ExplicitLeft = 4
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -1297,8 +1296,6 @@ object FMain: TFMain
       OnClick = PanelContatosClick
       OnMouseEnter = PanelContatosMouseEnter
       OnMouseLeave = PanelContatosMouseLeave
-      ExplicitLeft = 0
-      ExplicitTop = 93
       object ImageContato: TImage
         Left = 0
         Top = 0
@@ -1906,8 +1903,7 @@ object FMain: TFMain
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
-                ExplicitLeft = 0
-                ExplicitTop = 5
+                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -1946,8 +1942,8 @@ object FMain: TFMain
               object Label4: TLabel
                 Left = 24
                 Top = 128
-                Width = 73
-                Height = 18
+                Width = 49
+                Height = 15
                 Caption = 'Endere'#231'o'
               end
               object Empresa: TLabel
@@ -3201,7 +3197,7 @@ object FMain: TFMain
                 Left = 24
                 Top = 214
                 Width = 689
-                Height = 79
+                Height = 23
                 Color = clBtnFace
                 TabOrder = 6
                 TextHint = 'Observa'#231#227'o'
@@ -3238,10 +3234,6 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitLeft = 344
-              ExplicitTop = 304
-              ExplicitWidth = 185
-              ExplicitHeight = 41
               object Panel6: TPanel
                 Left = 24
                 Top = 24
