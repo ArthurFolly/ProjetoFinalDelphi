@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
-  Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask;
+  Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
+  Vcl.Buttons;
 
 type
   TFMain = class(TForm)
@@ -54,6 +55,12 @@ type
     Label3: TLabel;
     Endereco: TEdit;
     Label4: TLabel;
+    Empresa: TLabel;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
@@ -78,8 +85,8 @@ type
     procedure PanelFavoritosMouseLeave(Sender: TObject);
     procedure PanelContatosMouseEnter(Sender: TObject);
     procedure PanelContatosMouseLeave(Sender: TObject);
-    procedure Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
+//    procedure Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
+//      var Handled: Boolean);
 //    procedure PanelMensagensDblClick(Sender: TObject);
   private
     procedure AtivarPainel(Panel: TPanel);
@@ -140,14 +147,14 @@ begin
   end;
 end;
 
-procedure TFMain.Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
-  var Handled: Boolean);
-begin
-Shape1.Shape := stRectangle;
-Shape1.Brush.Color := clRed;
-Shape1.Pen.Color := clBlack;
-
-end;
+//procedure TFMain.Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
+//  var Handled: Boolean);
+//begin
+//Shape1.Shape := stRectangle;
+//Shape1.Brush.Color := clRed;
+//Shape1.Pen.Color := clBlack;
+//
+//end;
 
 procedure TFMain.FormResize(Sender: TObject);
 begin
