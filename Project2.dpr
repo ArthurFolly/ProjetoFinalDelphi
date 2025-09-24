@@ -8,7 +8,8 @@ uses
   CadastroUsuarioController in 'Controller\CadastroUsuarioController.pas',
   CadastroUsuarioService in 'Service\CadastroUsuarioService.pas',
   CadastroUsuarioRepository in 'Repository\CadastroUsuarioRepository.pas',
-  uCadastroUsuarios in 'View\uCadastroUsuarios.pas' {Form1};
+  uCadastroUsuarios in 'View\uCadastroUsuarios.pas' {Form1},
+  ConexaoBanco in 'Repository\ConexaoBanco.pas' {DataModule1: TDataModule};
 
 {$R *.res}
 
@@ -18,5 +19,6 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TFLogin, FLogin);
   Application.CreateForm(TFMain, FMain);
+  Application.CreateForm(TDataModule1, DataModule1);
   Application.Run;
 end.
