@@ -18,28 +18,17 @@ object Form1: TForm1
     Width = 1264
     Height = 720
     Caption = 'Panel1'
+    Color = 5573429
+    ParentBackground = False
     TabOrder = 0
     object Panel2: TPanel
-      Left = -16
+      Left = 336
       Top = 0
-      Width = 1248
+      Width = 617
       Height = 681
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
-      object Label1: TLabel
-        Left = 272
-        Top = 56
-        Width = 122
-        Height = 40
-        Caption = 'Cadastro'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWhite
-        Font.Height = -29
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object Label2: TLabel
         Left = 104
         Top = 131
@@ -92,13 +81,27 @@ object Form1: TForm1
         Font.Style = []
         ParentFont = False
       end
+      object Label1: TLabel
+        Left = 225
+        Top = 85
+        Width = 122
+        Height = 40
+        Caption = 'Cadastro'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -29
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object EdtNome: TEdit
         Left = 104
-        Top = 166
+        Top = 174
         Width = 377
         Height = 23
         TabOrder = 0
         TextHint = 'Escreva seu nome completo'
+        OnKeyPress = EdtNomeKeyPress
       end
       object EdtEmail: TEdit
         Left = 104
@@ -107,6 +110,7 @@ object Form1: TForm1
         Height = 23
         TabOrder = 1
         TextHint = 'Escreva seu e-mail'
+        OnKeyPress = EdtEmailKeyPress
       end
       object EdtNumero: TMaskEdit
         Left = 104
@@ -117,6 +121,7 @@ object Form1: TForm1
         MaxLength = 13
         TabOrder = 2
         Text = '(  )    -    '
+        OnKeyPress = EdtNumeroKeyPress
       end
       object EdtCPF: TMaskEdit
         Left = 104
@@ -127,10 +132,11 @@ object Form1: TForm1
         MaxLength = 14
         TabOrder = 3
         Text = '___.___.___-__'
+        OnKeyPress = EdtCPFKeyPress
       end
       object Panel3: TPanel
-        Left = 152
-        Top = 544
+        Left = 144
+        Top = 528
         Width = 337
         Height = 49
         Caption = 'Cadastrar'

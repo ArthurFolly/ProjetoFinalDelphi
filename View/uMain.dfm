@@ -1833,6 +1833,7 @@ object FMain: TFMain
         Caption = 'Card1'
         CardIndex = 0
         TabOrder = 0
+        ExplicitLeft = 3
       end
       object Card2: TCard
         Left = 0
@@ -1878,6 +1879,8 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitLeft = -1
+              ExplicitTop = 3
             end
             object Panel4: TPanel
               Left = 24
@@ -1894,9 +1897,9 @@ object FMain: TFMain
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
-                Color = clSilver
+                Color = clWhite
                 Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
+                Font.Color = clBlack
                 Font.Height = -24
                 Font.Name = 'Segoe UI'
                 Font.Style = [fsBold]
@@ -3137,6 +3140,13 @@ object FMain: TFMain
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                 Layout = blGlyphTop
+              end
+              object Bevel3: TBevel
+                Left = 0
+                Top = 9
+                Width = 824
+                Height = 24
+                Shape = bsBottomLine
               end
               object Edit1: TEdit
                 Left = 24

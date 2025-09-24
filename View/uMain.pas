@@ -67,6 +67,7 @@ type
     Panel6: TPanel;
     Label5: TLabel;
     StringGrid1: TStringGrid;
+    Bevel3: TBevel;
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
