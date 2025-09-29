@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls, uMain;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls, uMain,CadastroUsuarioController;
 
 type
   TForm1 = class(TForm)
@@ -26,6 +26,7 @@ type
     procedure EdtEmailKeyPress(Sender: TObject; var Key: Char);
     procedure EdtNumeroKeyPress(Sender: TObject; var Key: Char);
     procedure EdtCPFKeyPress(Sender: TObject; var Key: Char);
+    procedure EdtNumeroChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -83,6 +84,7 @@ begin
   end;
 end;
 
+
 procedure TForm1.EdtNumeroKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
@@ -102,10 +104,21 @@ begin
 end;
 
 procedure TForm1.Panel3Click(Sender: TObject);
+var Controller : UsuarioController;
+var email : String;
+
 begin
+  email := EdtEmail.Text;
+
+  Controller := UsuarioController.Create;
+
+  Controller.CadastrarUsuario(senha, email, CPF,
+nome, numero: String)
   // Ao clicar no painel, validar os campos
   if ValidarCampos then
     ShowMessage('Todos os campos estão corretos. Cadastro realizado com sucesso!');
+
+  Controller.Free;
 end;
 
 function TForm1.ValidarNumero: Boolean;

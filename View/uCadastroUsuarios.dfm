@@ -22,13 +22,17 @@ object Form1: TForm1
     ParentBackground = False
     TabOrder = 0
     object Panel2: TPanel
-      Left = 336
-      Top = 0
+      Left = 646
+      Top = 1
       Width = 617
-      Height = 681
+      Height = 718
+      Align = alRight
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
+      ExplicitLeft = 336
+      ExplicitTop = 8
+      ExplicitHeight = 681
       object Label2: TLabel
         Left = 104
         Top = 131
@@ -70,7 +74,7 @@ object Form1: TForm1
       end
       object Label5: TLabel
         Left = 104
-        Top = 424
+        Top = 408
         Width = 27
         Height = 21
         Caption = 'CPF'
@@ -121,11 +125,12 @@ object Form1: TForm1
         MaxLength = 13
         TabOrder = 2
         Text = '(  )    -    '
+        OnChange = EdtNumeroChange
         OnKeyPress = EdtNumeroKeyPress
       end
       object EdtCPF: TMaskEdit
         Left = 104
-        Top = 464
+        Top = 435
         Width = 131
         Height = 23
         EditMask = '___.___.___-__;1;_'

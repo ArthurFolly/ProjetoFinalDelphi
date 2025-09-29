@@ -3,6 +3,7 @@ unit TUsuarioModel;
 interface
 
 Type TUsuario = Class
+  Id : Integer;
   Nome : String;
   Email : String;
   Telefone : String;

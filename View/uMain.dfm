@@ -215,6 +215,7 @@ object FMain: TFMain
       OnClick = PanelMensagensClick
       OnMouseEnter = PanelMensagensMouseEnter
       OnMouseLeave = PanelMensagensMouseLeave
+      ExplicitLeft = 0
       object ImageMensagens: TImage
         Left = 0
         Top = 0
@@ -270,6 +271,8 @@ object FMain: TFMain
       OnClick = PanelGruposClick
       OnMouseEnter = PanelGruposMouseEnter
       OnMouseLeave = PanelGruposMouseLeave
+      ExplicitLeft = 4
+      ExplicitTop = 249
       object ImageGrupos: TImage
         Left = 0
         Top = 0
@@ -340,6 +343,7 @@ object FMain: TFMain
       OnClick = PanelFavoritosClick
       OnMouseEnter = PanelFavoritosMouseEnter
       OnMouseLeave = PanelFavoritosMouseLeave
+      ExplicitLeft = 4
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -1296,6 +1300,8 @@ object FMain: TFMain
       OnClick = PanelContatosClick
       OnMouseEnter = PanelContatosMouseEnter
       OnMouseLeave = PanelContatosMouseLeave
+      ExplicitLeft = 4
+      ExplicitTop = 93
       object ImageContato: TImage
         Left = 0
         Top = 0
@@ -1833,7 +1839,6 @@ object FMain: TFMain
         Caption = 'Card1'
         CardIndex = 0
         TabOrder = 0
-        ExplicitLeft = 3
       end
       object Card2: TCard
         Left = 0
@@ -1879,8 +1884,6 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitLeft = -1
-              ExplicitTop = 3
             end
             object Panel4: TPanel
               Left = 24

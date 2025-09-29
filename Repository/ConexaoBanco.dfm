@@ -10,14 +10,13 @@ object DataModule1: TDataModule1
       'User=postgres'
       'Password=root'
       'User_Name=postgres')
-    Connected = True
     Left = 456
     Top = 168
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\Arthur Folly\Documents\ProjetoFinal_Delphi\lib\lib\libp' +
-      'q.dll'
+      'C:\Users\leo mendes\OneDrive\Documents\Projeto_Delphi\ProjetoFin' +
+      'alDelphi\lib\libpq.dll'
     Left = 328
     Top = 168
   end
