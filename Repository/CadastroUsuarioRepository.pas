@@ -20,6 +20,8 @@ destructor Destroy;
 
 function  BuscarUsuarioPorId(id:integer): TUsuario;
 
+function Salvar(usuario: TUsuario): Boolean;
+
 
 
 
@@ -27,7 +29,7 @@ End;
 
 implementation
 
-{ UsuarioRepository }
+
 
 function UsuarioRepository.BuscarUsuarioPorId(id: integer): TUsuario;
 var Usuario : TUsuario;
@@ -35,16 +37,25 @@ begin
 
     Usuario := TUsuario.Create;
 
-     Self.query.SQL.Text := 'SELECT '; // DEFINE O COMANDO SQL
-     Self.query.ExecSQL; // SÓ EXECUTA O COMANDO E NÃO RETORNA NADA
+     Self.query.SQL.Text := 'SELECT * FROM usuarios WHERE id_usuario = :id  '; // DEFINE O COMANDO SQL
+     Self.query.ParamByName('id').AsInteger := id;
      Self.query.Open(); // EXECUTA E RETORNA DADOS
+
+
+
+
+//     Self.query.ExecSQL;          // SÓ EXECUTA O COMANDO E NÃO RETORNA NADA
+
 
      // PARA ACESSAR OS DADOS
      // CASO SEJAM VÁRIOS RESULTADOS
      while not Self.query.Eof do begin // Percorre os resultados até chegar ao final (query.Eof)
         Usuario.Email := Self.query.FieldByName('email').AsString; // acessa o campo email e retorna com string
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
-
+        Usuario.Nome := Self.query.FieldByName('nome').AsString;
+        Usuario.CPF := Self.query.FieldByName('CPF').AsString;
+        Usuario.Telefone := Self.query.FieldByName('numero').AsString;
+        Usuario.Senha := Self.query.FieldByName('senha').AsString;
         Self.query.Next; // Vai para o próximo usuário
      end;
 
@@ -73,5 +84,29 @@ Inherited destroy;
 end;
 
 
+
+function UsuarioRepository.Salvar(usuario: TUsuario): Boolean;
+begin
+begin
+  Result := False;
+  try
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'INSERT INTO usuarios (email, nome, senha, CPF, telefone) VALUES (:email, :nome, :senha, :CPF, :telefone)';
+
+    Self.query.ParamByName('email').AsString := usuario.Email;
+    Self.query.ParamByName('nome').AsString := usuario.Nome;
+    Self.query.ParamByName('senha').AsString := usuario.Senha;
+    Self.query.ParamByName('CPF').AsString := usuario.CPF;
+    Self.query.ParamByName('telefone').AsString := usuario.Telefone;
+
+
+    Self.query.ExecSQL;
+    Result := True;
+  except
+    Result := False;
+  end;
+end;
+
+end;
 
 end.

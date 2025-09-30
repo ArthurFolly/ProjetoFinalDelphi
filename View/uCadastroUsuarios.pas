@@ -4,11 +4,12 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls, uMain,CadastroUsuarioController;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls, uMain,CadastroUsuarioController,
+  Vcl.Imaging.jpeg;
 
 type
-  TForm1 = class(TForm)
-    Panel1: TPanel;
+  TFormCadastroUsuario = class(TForm)
+    PanelFundo: TPanel;
     Panel2: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -20,24 +21,29 @@ type
     EdtNumero: TMaskEdit;
     EdtCPF: TMaskEdit;
     Panel3: TPanel;
+    EdtSenha: TEdit;
+    Image1: TImage;
+    Label6: TLabel;
     procedure Panel3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure EdtNomeKeyPress(Sender: TObject; var Key: Char);
     procedure EdtEmailKeyPress(Sender: TObject; var Key: Char);
     procedure EdtNumeroKeyPress(Sender: TObject; var Key: Char);
     procedure EdtCPFKeyPress(Sender: TObject; var Key: Char);
-    procedure EdtNumeroChange(Sender: TObject);
-
+     procedure FormDestroy(Sender: TObject);
   private
-    { Private declarations }
+   controller: UsuarioController;
+   procedure  LimparCampos;
   public
+
     function ValidarCampos: Boolean;
     function ValidarNumero: Boolean;
     function ValidarCPF: Boolean;
+
   end;
 
 var
-  Form1: TForm1;
+  FormCadastroUsuario: TFormCadastroUsuario;
 
 implementation
 
@@ -45,7 +51,7 @@ implementation
 
 { TForm1 }
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TFormCadastroUsuario.FormCreate(Sender: TObject);
 begin
   // Inicializa o texto vazio
   EdtCPF.Text := '';
@@ -61,12 +67,31 @@ begin
   EdtNumero.TabOrder := 2;
   EdtCPF.TabOrder := 3;
   Panel3.TabOrder := 4;
+
+  controller := UsuarioController.Create;
 end;
 
 
 
+
+procedure TFormCadastroUsuario.FormDestroy(Sender: TObject);
+begin
+  controller.Free;
+end;
+
+procedure TFormCadastroUsuario.LimparCampos;
+begin
+  EdtNome.Clear;
+  EdtEmail.Clear;
+  EdtNumero.Text := '';
+  EdtCPF.Text := '';
+  EdtSenha.Clear;
+  EdtNome.SetFocus;
+
+end;
+
 // Eventos KeyPress para navegação com Enter
-procedure TForm1.EdtNomeKeyPress(Sender: TObject; var Key: Char);
+procedure TFormCadastroUsuario.EdtNomeKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
   begin
@@ -75,7 +100,7 @@ begin
   end;
 end;
 
-procedure TForm1.EdtEmailKeyPress(Sender: TObject; var Key: Char);
+procedure TFormCadastroUsuario.EdtEmailKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
   begin
@@ -85,7 +110,7 @@ begin
 end;
 
 
-procedure TForm1.EdtNumeroKeyPress(Sender: TObject; var Key: Char);
+procedure TFormCadastroUsuario.EdtNumeroKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
   begin
@@ -94,7 +119,7 @@ begin
   end;
 end;
 
-procedure TForm1.EdtCPFKeyPress(Sender: TObject; var Key: Char);
+procedure TFormCadastroUsuario.EdtCPFKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
   begin
@@ -103,25 +128,35 @@ begin
   end;
 end;
 
-procedure TForm1.Panel3Click(Sender: TObject);
+procedure TFormCadastroUsuario.Panel3Click(Sender: TObject);
 var Controller : UsuarioController;
-var email : String;
+var email,nome,CPF,senha,numero,msgErro : String;
+var id :Integer;
 
 begin
+id := 0;
   email := EdtEmail.Text;
+  nome := EdtNome.Text;
+  numero := EdtNumero.Text;
+  CPF := EdtCPF.Text;
+  senha := EdtSenha.Text;
+
+  if not ValidarCampos then begin
+    exit;
+  end;
 
   Controller := UsuarioController.Create;
 
-  Controller.CadastrarUsuario(senha, email, CPF,
-nome, numero: String)
+  Controller.CadastrarUsuario(id, senha, email, CPF,
+nome,numero,msgErro);
+
   // Ao clicar no painel, validar os campos
   if ValidarCampos then
     ShowMessage('Todos os campos estão corretos. Cadastro realizado com sucesso!');
 
   Controller.Free;
 end;
-
-function TForm1.ValidarNumero: Boolean;
+function TFormCadastroUsuario.ValidarNumero: Boolean;
 var
   NumeroLimpo: string;
 begin
@@ -139,7 +174,7 @@ begin
     Result := True;
 end;
 
-function TForm1.ValidarCPF: Boolean;
+function TFormCadastroUsuario.ValidarCPF: Boolean;
 var
   CPFLimpo: string;
 begin
@@ -155,7 +190,7 @@ begin
     Result := True;
 end;
 
-function TForm1.ValidarCampos: Boolean;
+function TFormCadastroUsuario.ValidarCampos: Boolean;
 begin
   Result := False;
 

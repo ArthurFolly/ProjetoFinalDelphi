@@ -8,6 +8,7 @@ Type TUsuario = Class
   Email : String;
   Telefone : String;
   CPF : String;
+  Senha : String;
 function getNome :String;
 procedure setNome (aNome:String);
 function getEmail :String;

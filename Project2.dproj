@@ -135,10 +135,9 @@
         </DCCReference>
         <DCCReference Include="Model\TUsuarioModel.pas"/>
         <DCCReference Include="Controller\CadastroUsuarioController.pas"/>
-        <DCCReference Include="Service\CadastroUsuarioService.pas"/>
         <DCCReference Include="Repository\CadastroUsuarioRepository.pas"/>
         <DCCReference Include="View\uCadastroUsuarios.pas">
-            <Form>Form1</Form>
+            <Form>FormCadastroUsuario</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Repository\ConexaoBanco.pas">
