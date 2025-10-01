@@ -136,7 +136,7 @@
         <DCCReference Include="Model\TUsuarioModel.pas"/>
         <DCCReference Include="Controller\CadastroUsuarioController.pas"/>
         <DCCReference Include="Repository\CadastroUsuarioRepository.pas"/>
-        <DCCReference Include="View\uCadastroUsuarios.pas">
+        <DCCReference Include="View\uCadastroUsuariosView.pas">
             <Form>FormCadastroUsuario</Form>
             <FormType>dfm</FormType>
         </DCCReference>

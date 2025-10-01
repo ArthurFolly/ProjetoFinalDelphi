@@ -893,7 +893,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 901
+      ExplicitLeft = 879
       object Label2: TLabel
         Left = 56
         Top = 131
@@ -972,11 +972,25 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label7: TLabel
+        Left = 80
+        Top = 576
+        Width = 180
+        Height = 21
+        Caption = 'Clique para ir para o login'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        OnClick = Label7Click
+      end
       object EdtNome: TEdit
         Left = 56
         Top = 158
         Width = 193
-        Height = 39
+        Height = 23
         TabOrder = 0
         TextHint = 'Escreva seu nome completo'
         OnKeyPress = EdtNomeKeyPress
@@ -985,7 +999,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Left = 56
         Top = 238
         Width = 193
-        Height = 35
+        Height = 23
         TabOrder = 1
         TextHint = 'Escreva seu e-mail'
         OnKeyPress = EdtEmailKeyPress
@@ -994,7 +1008,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Left = 56
         Top = 313
         Width = 121
-        Height = 25
+        Height = 23
         EditMask = '!\(99\)0000-0000;1;_'
         MaxLength = 13
         TabOrder = 2
@@ -1014,7 +1028,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Panel3: TPanel
         Left = 56
-        Top = 520
+        Top = 504
         Width = 233
         Height = 49
         Caption = 'Cadastrar'
@@ -1037,6 +1051,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
         PasswordChar = '*'
         TabOrder = 5
         TextHint = 'Escreva sua senha'
+        OnKeyPress = EdtSenhaKeyPress
       end
     end
   end

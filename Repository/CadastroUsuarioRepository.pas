@@ -2,7 +2,7 @@ unit CadastroUsuarioRepository;
 
 interface
 
-uses ConexaoBanco, firedac.Comp.Client, firedac.DApt,TUsuarioModel;
+uses ConexaoBanco, firedac.Comp.Client, firedac.DApt,TUsuarioModel,SysUtils;
 
 
 
@@ -54,13 +54,13 @@ begin
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
         Usuario.CPF := Self.query.FieldByName('CPF').AsString;
-        Usuario.Telefone := Self.query.FieldByName('numero').AsString;
+        Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha').AsString;
         Self.query.Next; // Vai para o próximo usuário
      end;
 
      // CASO SEJA SÓ UM RESULTADO
-     Self.query.FieldByName('');
+//     Self.query.FieldByName('');
 
      // Depois que terminar de usar tudo
      Self.query.Close;
@@ -68,6 +68,7 @@ end;
 
 constructor UsuarioRepository.Create;
 begin
+
 Inherited create;
 
 Self.query := TFDQuery.Create(nil);
@@ -86,27 +87,26 @@ end;
 
 
 function UsuarioRepository.Salvar(usuario: TUsuario): Boolean;
-begin
+
 begin
   Result := False;
   try
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'INSERT INTO usuarios (email, nome, senha, CPF, telefone) VALUES (:email, :nome, :senha, :CPF, :telefone)';
+    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, cpf, telefone) VALUES (:email, :nome, :senha, :cpf, :telefone)';
 
-    Self.query.ParamByName('email').AsString := usuario.Email;
-    Self.query.ParamByName('nome').AsString := usuario.Nome;
-    Self.query.ParamByName('senha').AsString := usuario.Senha;
-    Self.query.ParamByName('CPF').AsString := usuario.CPF;
-    Self.query.ParamByName('telefone').AsString := usuario.Telefone;
-
-
+    Self.query.ParamByName('email').AsString := usuario.getEmail;
+    Self.query.ParamByName('nome').AsString := usuario.getNome;
+    Self.query.ParamByName('senha').AsString := usuario.getSenha;
+    Self.query.ParamByName('cpf').AsString := usuario.getCPF;
+    Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
     Self.query.ExecSQL;
     Result := True;
   except
     Result := False;
   end;
-end;
 
 end;
+
+
 
 end.

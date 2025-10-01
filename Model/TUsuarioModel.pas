@@ -17,6 +17,8 @@ function getTelefone :String;
 procedure setTelefone (aTelefone:String);
 function getCPF :String;
 procedure setCPF (aCPF:String);
+function getSenha :String;
+procedure setSenha (aSenha:String);
 
 
 
@@ -28,7 +30,7 @@ implementation
 
 function TUsuario.getCPF: String;
 begin
-  result := Self.Nome;
+  result := Self.CPF;
 end;
 
 function TUsuario.getEmail: String;
@@ -39,6 +41,11 @@ end;
 function TUsuario.getNome: String;
 begin
   result := Self.Nome;
+end;
+
+function TUsuario.getSenha: String;
+begin
+  result := self.Senha;
 end;
 
 function TUsuario.getTelefone: String;
@@ -59,6 +66,11 @@ end;
 procedure TUsuario.setNome(aNome: String);
 begin
   aNome := Self.Nome
+end;
+
+procedure TUsuario.setSenha(aSenha: String);
+begin
+  aSenha := Self.Senha
 end;
 
 procedure TUsuario.setTelefone(aTelefone: String);
