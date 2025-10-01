@@ -145,6 +145,9 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Controller\LoginUsuarioController.pas"/>
+        <DCCReference Include="Model\TUsuarioLoginModel.pas"/>
+        <DCCReference Include="Repository\LoginUsuarioRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

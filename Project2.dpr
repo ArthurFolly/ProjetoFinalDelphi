@@ -8,7 +8,10 @@ uses
   CadastroUsuarioController in 'Controller\CadastroUsuarioController.pas',
   CadastroUsuarioRepository in 'Repository\CadastroUsuarioRepository.pas',
   uCadastroUsuariosView in 'View\uCadastroUsuariosView.pas' {FormCadastroUsuario},
-  ConexaoBanco in 'Repository\ConexaoBanco.pas' {DataModule1: TDataModule};
+  ConexaoBanco in 'Repository\ConexaoBanco.pas' {DataModule1: TDataModule},
+  LoginUsuarioController in 'Controller\LoginUsuarioController.pas',
+  TUsuarioLoginModel in 'Model\TUsuarioLoginModel.pas',
+  LoginUsuarioRepository in 'Repository\LoginUsuarioRepository.pas';
 
 {$R *.res}
 
