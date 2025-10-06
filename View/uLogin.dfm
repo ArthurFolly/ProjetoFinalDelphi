@@ -1802,6 +1802,8 @@ object FLogin: TFLogin
         ParentFont = False
         TabOrder = 2
         OnClick = Panel1Click
+        OnMouseEnter = Panel1MouseEnter
+        OnMouseLeave = Panel1MouseLeave
       end
     end
   end

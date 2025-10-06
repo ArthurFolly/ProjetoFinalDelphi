@@ -140,6 +140,7 @@ object FMain: TFMain
       OnClick = PanelConfiguracaoClick
       OnMouseEnter = PanelConfiguracaoMouseEnter
       OnMouseLeave = PanelConfiguracaoMouseLeave
+      ExplicitLeft = 4
       object ImageConfig: TImage
         Left = 0
         Top = 0
@@ -215,7 +216,6 @@ object FMain: TFMain
       OnClick = PanelMensagensClick
       OnMouseEnter = PanelMensagensMouseEnter
       OnMouseLeave = PanelMensagensMouseLeave
-      ExplicitLeft = 0
       object ImageMensagens: TImage
         Left = 0
         Top = 0
@@ -271,8 +271,6 @@ object FMain: TFMain
       OnClick = PanelGruposClick
       OnMouseEnter = PanelGruposMouseEnter
       OnMouseLeave = PanelGruposMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 249
       object ImageGrupos: TImage
         Left = 0
         Top = 0
@@ -343,7 +341,6 @@ object FMain: TFMain
       OnClick = PanelFavoritosClick
       OnMouseEnter = PanelFavoritosMouseEnter
       OnMouseLeave = PanelFavoritosMouseLeave
-      ExplicitLeft = 4
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -1300,8 +1297,6 @@ object FMain: TFMain
       OnClick = PanelContatosClick
       OnMouseEnter = PanelContatosMouseEnter
       OnMouseLeave = PanelContatosMouseLeave
-      ExplicitLeft = 4
-      ExplicitTop = 93
       object ImageContato: TImage
         Left = 0
         Top = 0

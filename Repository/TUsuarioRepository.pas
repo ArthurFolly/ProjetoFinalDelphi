@@ -2,7 +2,7 @@ unit TUsuarioRepository;
 
 interface
 
-uses ConexaoBanco, firedac.Comp.Client, firedac.DApt,TUsuarioModel,SysUtils;
+uses ConexaoBanco, firedac.Comp.Client, firedac.DApt,TUsuarioModel,SysUtils,System.Hash;
 
 
 
@@ -11,6 +11,8 @@ type UsuarioRepository = Class
 private
 
 query: TFDQuery;
+
+function GerarHashSenha(senha: String): String;
 
 
 public
@@ -24,6 +26,10 @@ function Salvar(usuario: TUsuario): Boolean;
 
 function BuscarPorEmail(email:String):TUsuario;
 
+function VerificarSenha (email,senha:string) : Boolean ;
+
+function AutenticarUsuario (email,senha : String) :TUsuario;
+
 
 
 End;
@@ -32,17 +38,50 @@ implementation
 
 
 
+function UsuarioRepository.AutenticarUsuario(email, senha: String): TUsuario;
+
+var Usuario : TUsuario;
+    senhaHash: String;
+
+begin
+    Result := nil;
+
+    senhaHash := GerarHashSenha(senha);
+
+
+    Self.query.Close;
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email AND senha = :senha';
+    Self.query.ParamByName('email').AsString := email;
+    Self.query.ParamByName('senha').AsString := senhaHash;
+    Self.query.Open();
+
+    if not Self.query.IsEmpty then begin
+      Usuario := TUsuario.Create;
+      Usuario.Email := Self.query.FieldByName('email').AsString;
+      Usuario.Nome := Self.query.FieldByName('nome').AsString;
+      Usuario.CPF := Self.query.FieldByName('cpf').AsString;
+      Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
+      Usuario.Senha := Self.query.FieldByName('senha').AsString;
+      Result := Usuario;
+    end;
+    Self.query.Close;
+
+
+
+end;
+
 function UsuarioRepository.BuscarPorEmail(email: String): TUsuario;
 var Usuario: TUsuario;
 
 begin
   Result := nil;
 
-  query.Close;
-  query.SQL.Clear;
+  Self.query.Close;
+  Self.query.SQL.Clear;
 
 
-  Self.query.SQL.Text := 'SELECT * FROM usuarios WHERE email = :email';
+  Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email';
   Self.query.ParamByName('email').AsString := email;
   Self.query.Open();
 
@@ -62,7 +101,7 @@ begin
 
     Usuario := TUsuario.Create;
 
-     Self.query.SQL.Text := 'SELECT * FROM usuarios WHERE id_usuario = :id  '; // DEFINE O COMANDO SQL
+     Self.query.SQL.Text := 'SELECT * FROM usuario WHERE id_usuario = :id  '; // DEFINE O COMANDO SQL
      Self.query.ParamByName('id').AsInteger := id;
      Self.query.Open(); // EXECUTA E RETORNA DADOS
 
@@ -74,7 +113,17 @@ begin
 
      // PARA ACESSAR OS DADOS
      // CASO SEJAM VÁRIOS RESULTADOS
-     while not Self.query.Eof do begin // Percorre os resultados até chegar ao final (query.Eof)
+     if not Self.query.IsEmpty then begin
+       Usuario.Email := Self.query.FieldByName('email').AsString;
+        Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger;
+        Usuario.Nome := Self.query.FieldByName('nome').AsString;
+        Usuario.CPF := Self.query.FieldByName('CPF').AsString;
+        Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
+        Usuario.Senha := Self.query.FieldByName('senha').AsString;
+
+
+
+      while not Self.query.Eof do begin // Percorre os resultados até chegar ao final (query.Eof)
         Usuario.Email := Self.query.FieldByName('email').AsString; // acessa o campo email e retorna com string
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
@@ -82,46 +131,57 @@ begin
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha').AsString;
         Self.query.Next; // Vai para o próximo usuário
+      end;
      end;
-
      // CASO SEJA SÓ UM RESULTADO
 //     Self.query.FieldByName('');
 
      // Depois que terminar de usar tudo
      Self.query.Close;
+     Result := Usuario;
 end;
-
 constructor UsuarioRepository.Create;
 begin
 
-Inherited create;
+  Inherited create;
 
-Self.query := TFDQuery.Create(nil);
+  Self.query := TFDQuery.Create(nil);
 
-Self.query.Connection :=  DataModule1.FDConnection1;
+  Self.query.Connection :=  DataModule1.FDConnection1;
 
 end;
 
 destructor UsuarioRepository.Destroy;
 begin
-Self.query.Free;
-Inherited destroy;
+  Self.query.Free;
+  Inherited destroy;
 
 end;
 
 
 
+function UsuarioRepository.GerarHashSenha(senha: String): String;
+begin
+
+  Result := THashMD5.GetHashString(senha);
+
+end;
+
 function UsuarioRepository.Salvar(usuario: TUsuario): Boolean;
+
+var senhaHash: String;
 
 begin
   Result := False;
+  senhaHash := GerarHashSenha(usuario.getSenha);
+
   try
     Self.query.SQL.Clear;
     Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, cpf, telefone) VALUES (:email, :nome, :senha, :cpf, :telefone)';
 
     Self.query.ParamByName('email').AsString := usuario.getEmail;
     Self.query.ParamByName('nome').AsString := usuario.getNome;
-    Self.query.ParamByName('senha').AsString := usuario.getSenha;
+    Self.query.ParamByName('senha').AsString := senhaHash;
     Self.query.ParamByName('cpf').AsString := usuario.getCPF;
     Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
     Self.query.ExecSQL;
@@ -133,5 +193,26 @@ begin
 end;
 
 
+
+function UsuarioRepository.VerificarSenha(email, senha: string): Boolean;
+
+var senhaHash: String;
+
+begin
+  Result := False;
+  senhaHash := GerarHashSenha(senha);
+
+  Self.query.SQL.Clear;
+  Self.query.SQL.Text := 'SELECT COUNT(*) as TOTAL FROM "Usuario" Where email = :email AND senha = :senha';
+  Self.query.ParamByName('email').AsString := email;
+  Self.query.ParamByName('senha').asString := senhaHash;
+  Self.query.Open();
+
+
+  Result := query.FieldByName('total').AsInteger > 0;
+  Self.query.Close;
+
+
+end;
 
 end.

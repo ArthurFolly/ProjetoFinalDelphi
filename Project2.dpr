@@ -16,9 +16,9 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFLogin, FLogin);
   Application.CreateForm(TDataModule1, DataModule1);
   Application.CreateForm(TFormCadastroUsuario, FormCadastroUsuario);
   Application.CreateForm(TFMain, FMain);
-  Application.CreateForm(TFLogin, FLogin);
   Application.Run;
 end.

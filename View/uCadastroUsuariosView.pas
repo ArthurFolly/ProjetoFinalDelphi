@@ -34,6 +34,8 @@ type
      procedure FormDestroy(Sender: TObject);
     procedure EdtSenhaKeyPress(Sender: TObject; var Key: Char);
     procedure Label7Click(Sender: TObject);
+    procedure Panel3MouseEnter(Sender: TObject);
+    procedure Panel3MouseLeave(Sender: TObject);
   private
   controller: UsuarioController;
    procedure  LimparCampos;
@@ -194,6 +196,16 @@ begin
 
 
 end;
+procedure TFormCadastroUsuario.Panel3MouseEnter(Sender: TObject);
+begin
+Panel3.Color := $00DB5B9B;
+end;
+
+procedure TFormCadastroUsuario.Panel3MouseLeave(Sender: TObject);
+begin
+Panel3.Color := $00D6498F;
+end;
+
 function TFormCadastroUsuario.ValidarNumero: Boolean;
 var
   NumeroLimpo: string;

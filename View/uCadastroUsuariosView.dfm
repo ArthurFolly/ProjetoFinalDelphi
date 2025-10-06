@@ -1041,6 +1041,8 @@ object FormCadastroUsuario: TFormCadastroUsuario
         ParentFont = False
         TabOrder = 4
         OnClick = Panel3Click
+        OnMouseEnter = Panel3MouseEnter
+        OnMouseLeave = Panel3MouseLeave
       end
       object EdtSenha: TEdit
         Left = 56
