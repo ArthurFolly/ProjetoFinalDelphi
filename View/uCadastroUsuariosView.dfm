@@ -893,7 +893,6 @@ object FormCadastroUsuario: TFormCadastroUsuario
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 879
       object Label2: TLabel
         Left = 56
         Top = 131

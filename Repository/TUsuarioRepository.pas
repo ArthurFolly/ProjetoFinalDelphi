@@ -1,4 +1,4 @@
-unit CadastroUsuarioRepository;
+unit TUsuarioRepository;
 
 interface
 
@@ -22,6 +22,7 @@ function  BuscarUsuarioPorId(id:integer): TUsuario;
 
 function Salvar(usuario: TUsuario): Boolean;
 
+function BuscarPorEmail(email:String):TUsuario;
 
 
 
@@ -30,6 +31,30 @@ End;
 implementation
 
 
+
+function UsuarioRepository.BuscarPorEmail(email: String): TUsuario;
+var Usuario: TUsuario;
+
+begin
+  Result := nil;
+
+  query.Close;
+  query.SQL.Clear;
+
+
+  Self.query.SQL.Text := 'SELECT * FROM usuarios WHERE email = :email';
+  Self.query.ParamByName('email').AsString := email;
+  Self.query.Open();
+
+  if not self.query.IsEmpty then begin
+    Usuario := TUsuario.create;
+    usuario.Email := Self.query.FieldByName('email').asString;
+  end;
+
+  Result := Usuario;
+
+
+end;
 
 function UsuarioRepository.BuscarUsuarioPorId(id: integer): TUsuario;
 var Usuario : TUsuario;

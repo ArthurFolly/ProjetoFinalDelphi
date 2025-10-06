@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain, uCadastro;
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain, uCadastro,TUsuarioRepository;
 
 type
   TFLogin = class(TForm)

@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls, uMain,CadastroUsuarioController,
-  Vcl.Imaging.jpeg,CadastroUsuarioRepository, TUsuarioModel,uLogin;
+  Vcl.Imaging.jpeg,TUsuarioRepository, TUsuarioModel,uLogin;
 
 type
   TFormCadastroUsuario = class(TForm)

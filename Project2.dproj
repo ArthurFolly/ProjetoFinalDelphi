@@ -135,7 +135,7 @@
         </DCCReference>
         <DCCReference Include="Model\TUsuarioModel.pas"/>
         <DCCReference Include="Controller\CadastroUsuarioController.pas"/>
-        <DCCReference Include="Repository\CadastroUsuarioRepository.pas"/>
+        <DCCReference Include="Repository\TUsuarioRepository.pas"/>
         <DCCReference Include="View\uCadastroUsuariosView.pas">
             <Form>FormCadastroUsuario</Form>
             <FormType>dfm</FormType>
@@ -146,8 +146,6 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Controller\LoginUsuarioController.pas"/>
-        <DCCReference Include="Model\TUsuarioLoginModel.pas"/>
-        <DCCReference Include="Repository\LoginUsuarioRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

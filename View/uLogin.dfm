@@ -1759,7 +1759,7 @@ object FLogin: TFLogin
         Font.Style = []
         ParentFont = False
         TabOrder = 0
-        TextHint = 'E-mail ou Telefone'
+        TextHint = 'E-mail'
       end
       object EditSenha: TEdit
         AlignWithMargins = True

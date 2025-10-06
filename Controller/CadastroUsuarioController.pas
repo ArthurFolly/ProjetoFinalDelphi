@@ -1,6 +1,6 @@
 unit CadastroUsuarioController;
 
-interface  uses CadastroUsuarioRepository,TUsuarioModel,SysUtils;
+interface  uses TUsuarioRepository,TUsuarioModel,SysUtils;
 
 type UsuarioController = Class
 

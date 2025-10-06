@@ -6,12 +6,10 @@ uses
   uMain in 'View\uMain.pas' {FMain},
   TUsuarioModel in 'Model\TUsuarioModel.pas',
   CadastroUsuarioController in 'Controller\CadastroUsuarioController.pas',
-  CadastroUsuarioRepository in 'Repository\CadastroUsuarioRepository.pas',
+  TUsuarioRepository in 'Repository\TUsuarioRepository.pas',
   uCadastroUsuariosView in 'View\uCadastroUsuariosView.pas' {FormCadastroUsuario},
   ConexaoBanco in 'Repository\ConexaoBanco.pas' {DataModule1: TDataModule},
-  LoginUsuarioController in 'Controller\LoginUsuarioController.pas',
-  TUsuarioLoginModel in 'Model\TUsuarioLoginModel.pas',
-  LoginUsuarioRepository in 'Repository\LoginUsuarioRepository.pas';
+  LoginUsuarioController in 'Controller\LoginUsuarioController.pas';
 
 {$R *.res}
 
