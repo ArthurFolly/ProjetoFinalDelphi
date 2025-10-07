@@ -51,9 +51,9 @@ begin
 
     Self.query.Close;
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email AND senha = :senha';
+    Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email AND senha_hash = :senha_hash';
     Self.query.ParamByName('email').AsString := email;
-    Self.query.ParamByName('senha').AsString := senhaHash;
+    Self.query.ParamByName('senha_hash').AsString := senhaHash;
     Self.query.Open();
 
     if not Self.query.IsEmpty then begin
@@ -62,7 +62,7 @@ begin
       Usuario.Nome := Self.query.FieldByName('nome').AsString;
       Usuario.CPF := Self.query.FieldByName('cpf').AsString;
       Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-      Usuario.Senha := Self.query.FieldByName('senha').AsString;
+      Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
       Result := Usuario;
     end;
     Self.query.Close;
@@ -102,7 +102,7 @@ begin
     Usuario := TUsuario.Create;
 
      Self.query.SQL.Text := 'SELECT * FROM usuario WHERE id_usuario = :id  '; // DEFINE O COMANDO SQL
-     Self.query.ParamByName('id').AsInteger := id;
+     Self.query.ParamByName('id_usuario').AsInteger := id;
      Self.query.Open(); // EXECUTA E RETORNA DADOS
 
 
@@ -119,7 +119,7 @@ begin
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
         Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-        Usuario.Senha := Self.query.FieldByName('senha').AsString;
+        Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
 
 
 
@@ -129,7 +129,7 @@ begin
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
         Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-        Usuario.Senha := Self.query.FieldByName('senha').AsString;
+        Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
         Self.query.Next; // Vai para o próximo usuário
       end;
      end;
@@ -177,11 +177,11 @@ begin
 
   try
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, cpf, telefone) VALUES (:email, :nome, :senha, :cpf, :telefone)';
+    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, cpf, telefone) VALUES (:email, :nome, :senha_hash, :cpf, :telefone)';
 
     Self.query.ParamByName('email').AsString := usuario.getEmail;
     Self.query.ParamByName('nome').AsString := usuario.getNome;
-    Self.query.ParamByName('senha').AsString := senhaHash;
+    Self.query.ParamByName('senha_hash').AsString := senhaHash;
     Self.query.ParamByName('cpf').AsString := usuario.getCPF;
     Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
     Self.query.ExecSQL;
@@ -203,9 +203,9 @@ begin
   senhaHash := GerarHashSenha(senha);
 
   Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT COUNT(*) as TOTAL FROM "Usuario" Where email = :email AND senha = :senha';
+  Self.query.SQL.Text := 'SELECT COUNT(*) as TOTAL FROM "Usuario" Where email = :email AND senha_hash = :senha_hash';
   Self.query.ParamByName('email').AsString := email;
-  Self.query.ParamByName('senha').asString := senhaHash;
+  Self.query.ParamByName('senha_hash').asString := senhaHash;
   Self.query.Open();
 
 

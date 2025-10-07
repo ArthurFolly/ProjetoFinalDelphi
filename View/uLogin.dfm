@@ -11,6 +11,8 @@ object FLogin: TFLogin
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnResize = FormResize
   TextHeight = 15
   object Logo: TImage
@@ -1741,7 +1743,7 @@ object FLogin: TFLogin
         ExplicitTop = 168
         ExplicitWidth = 105
       end
-      object EditLogin: TEdit
+      object EditEmail: TEdit
         AlignWithMargins = True
         Left = 30
         Top = 328
@@ -1778,6 +1780,7 @@ object FLogin: TFLogin
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        PasswordChar = '*'
         TabOrder = 1
         TextHint = 'Senha'
       end
@@ -1804,6 +1807,15 @@ object FLogin: TFLogin
         OnClick = Panel1Click
         OnMouseEnter = Panel1MouseEnter
         OnMouseLeave = Panel1MouseLeave
+      end
+      object BtnMostrarSenha: TButton
+        Left = 304
+        Top = 390
+        Width = 33
+        Height = 29
+        Caption = #55357#56385
+        TabOrder = 3
+        OnClick = BtnMostrarSenhaClick
       end
     end
   end

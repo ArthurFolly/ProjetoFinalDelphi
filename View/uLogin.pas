@@ -1,11 +1,11 @@
-unit uLogin;
+﻿unit uLogin;
 
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain, uCadastro,TUsuarioRepository,LoginUsuarioController;
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain,TUsuarioRepository,LoginUsuarioController,TUsuarioModel,firedac.DApt;
 
 type
   TFLogin = class(TForm)
@@ -14,19 +14,26 @@ type
     Contact: TLabel;
     Clique: TLabel;
     Image2: TImage;
-    EditLogin: TEdit;
+    EditEmail: TEdit;
     EditSenha: TEdit;
     Panel1: TPanel;
     Panel2: TPanel;
+    BtnMostrarSenha: TButton;
     procedure CliqueMouseEnter(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
     procedure CliqueClick(Sender: TObject);
     procedure Panel1MouseEnter(Sender: TObject);
     procedure Panel1MouseLeave(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure BtnMostrarSenhaClick(Sender: TObject);
   private
-   TUsuarioRepository: UsuarioRepository;
+
+  LoginUsuarioController : TLoginUsuarioController;
   public
+
+
 
   end;
 
@@ -35,7 +42,21 @@ var
 
 implementation
 
+  uses uCadastroUsuariosView,System.Hash;
+
 {$R *.dfm}
+
+procedure TFLogin.FormCreate(Sender: TObject);
+begin
+
+LoginUsuarioController := TLoginUsuarioController.Create;
+end;
+
+procedure TFLogin.FormDestroy(Sender: TObject);
+begin
+
+LoginUsuarioController.Free;
+end;
 
 procedure TFLogin.FormResize(Sender: TObject);
 begin
@@ -60,29 +81,65 @@ end;
 
 procedure TFLogin.Panel1Click(Sender: TObject);
 
-
+ var Usuario :TUsuario;
+     Mensagem : String;
 
 begin
 
-if (windowstate = wsMaximized) then begin
+if (Trim(EditEmail.Text) = '') or  (Trim(EditSenha.Text) = '') then begin
+  if Trim(EditEmail.Text) = '' then  begin
+   ShowMessage('Preencha os campos, Corretamente');
+  EditEmail.SetFocus;
 
-Self.Hide;
 
-FMain.WindowState := wsMaximized;
 
-FMain.Show;
 
-end else begin
 
-Self.hide;
 
-FMain.WindowState := wsNormal;
 
-FMain.Show;
+  end else  begin
+
+
+    EditSenha.SetFocus;
+
+  end;
+
+  Exit;
+
 
 end;
 
+
+
+Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text,Mensagem);
+
+ if Assigned(Usuario) then begin
+
+    ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
+    EditEmail.Clear;
+    EditSenha.Clear;
+
+
+    Self.Hide;
+
+
+    if WindowState = wsMaximized then
+
+      FMain.WindowState := wsMaximized
+    else
+      FMain.WindowState := wsNormal;
+
+    FMain.Show;
+
+  end else begin
+
+    ShowMessage(Mensagem);
+    EditSenha.Clear;
+    EditSenha.SetFocus;
+  end;
 end;
+
+
 
 procedure TFLogin.Panel1MouseEnter(Sender: TObject);
   begin
@@ -94,25 +151,41 @@ procedure TFLogin.Panel1MouseLeave(Sender: TObject);
     Panel1.Color := $00D6498F;
   end;
 
+procedure TFLogin.BtnMostrarSenhaClick(Sender: TObject);
+begin
+  if EditSenha.PasswordChar = '*' then begin
+
+    EditSenha.PasswordChar := #0;
+    BtnMostrarSenha.Caption := '🙈';
+  end else begin
+
+    EditSenha.PasswordChar := '*';
+    BtnMostrarSenha.Caption := '👁';
+end;
+end;
+
 procedure TFLogin.CliqueClick(Sender: TObject);
 begin
 if (windowstate = wsMaximized) then begin
 
 Self.Hide;
 
-FMain.WindowState := wsMaximized;
+FormCadastroUsuario.WindowState := wsMaximized;
 
-FCadastro.Show;
+FormCadastroUsuario.Show;
 
 
 
 
 end else begin
+
+
+
 Self.hide;
 
-FMain.WindowState := wsNormal;
+FormCadastroUsuario.WindowState := wsNormal;
 
-FCadastro.Show;
+FormCadastroUsuario.Show;
 
 end;
 end;

@@ -112,7 +112,7 @@ begin
 
 end;
 
-// Eventos KeyPress para navegação com Enter
+
 procedure TFormCadastroUsuario.EdtNomeKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then // Enter
@@ -134,9 +134,9 @@ end;
 
 procedure TFormCadastroUsuario.EdtNumeroKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then // Enter
+  if Key = #13 then
   begin
-    Key := #0; // Impede o beep
+    Key := #0;
     EdtCPF.SetFocus;
   end;
 end;
@@ -156,10 +156,10 @@ end;
 
 procedure TFormCadastroUsuario.EdtCPFKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then // Enter
+  if Key = #13 then
   begin
-    Key := #0; // Impede o beep
-    Panel3Click(nil); // Executa a validação
+    Key := #0;
+    Panel3Click(nil);
   end;
 end;
 
