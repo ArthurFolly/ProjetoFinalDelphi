@@ -28,6 +28,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BtnMostrarSenhaClick(Sender: TObject);
+    procedure CliqueMouseLeave(Sender: TObject);
   private
 
   LoginUsuarioController : TLoginUsuarioController;
@@ -144,11 +145,14 @@ end;
 procedure TFLogin.Panel1MouseEnter(Sender: TObject);
   begin
     Panel1.Color := $00DB5B9B;
+    Panel1.font.style := [fsUnderline];
   end;
 
 procedure TFLogin.Panel1MouseLeave(Sender: TObject);
   begin
     Panel1.Color := $00D6498F;
+    Panel1.font.style := [];
+
   end;
 
 procedure TFLogin.BtnMostrarSenhaClick(Sender: TObject);
@@ -193,6 +197,11 @@ end;
 procedure TFLogin.CliqueMouseEnter(Sender: TObject);
 begin
   Clique.font.style := [fsUnderline];
+end;
+
+procedure TFLogin.CliqueMouseLeave(Sender: TObject);
+begin
+  Clique.font.style := [];
 end;
 
 end.

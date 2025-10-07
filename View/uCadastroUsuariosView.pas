@@ -36,6 +36,8 @@ type
     procedure Label7Click(Sender: TObject);
     procedure Panel3MouseEnter(Sender: TObject);
     procedure Panel3MouseLeave(Sender: TObject);
+    procedure Label7MouseEnter(Sender: TObject);
+    procedure Label7MouseLeave(Sender: TObject);
   private
   controller: UsuarioController;
    procedure  LimparCampos;
@@ -101,6 +103,16 @@ FLogin.Show;
 
 end;
 
+procedure TFormCadastroUsuario.Label7MouseEnter(Sender: TObject);
+begin
+ label7.font.style := [fsunderline];
+end;
+
+procedure TFormCadastroUsuario.Label7MouseLeave(Sender: TObject);
+begin
+ label7.font.style := [];
+end;
+
 procedure TFormCadastroUsuario.LimparCampos;
 begin
   EdtNome.Clear;
@@ -159,7 +171,7 @@ begin
   if Key = #13 then
   begin
     Key := #0;
-    Panel3Click(nil);
+    EdtSenha.SetFocus;
   end;
 end;
 
@@ -199,11 +211,13 @@ end;
 procedure TFormCadastroUsuario.Panel3MouseEnter(Sender: TObject);
 begin
 Panel3.Color := $00DB5B9B;
+Panel3.font.style := [fsunderline];
 end;
 
 procedure TFormCadastroUsuario.Panel3MouseLeave(Sender: TObject);
 begin
 Panel3.Color := $00D6498F;
+Panel3.font.style := [];
 end;
 
 function TFormCadastroUsuario.ValidarNumero: Boolean;

@@ -9,7 +9,10 @@ uses
   TUsuarioRepository in 'Repository\TUsuarioRepository.pas',
   uCadastroUsuariosView in 'View\uCadastroUsuariosView.pas' {FormCadastroUsuario},
   ConexaoBanco in 'Repository\ConexaoBanco.pas' {DataModule1: TDataModule},
-  LoginUsuarioController in 'Controller\LoginUsuarioController.pas';
+  LoginUsuarioController in 'Controller\LoginUsuarioController.pas',
+  TContatosModel in 'Model\TContatosModel.pas',
+  ContatosController in 'Controller\ContatosController.pas',
+  ContatosRepository in 'Repository\ContatosRepository.pas';
 
 {$R *.res}
 

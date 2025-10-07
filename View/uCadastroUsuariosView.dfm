@@ -896,9 +896,9 @@ object FormCadastroUsuario: TFormCadastroUsuario
       object Label2: TLabel
         Left = 56
         Top = 131
-        Width = 115
+        Width = 118
         Height = 21
-        Caption = 'Nome Completo'
+        Caption = 'Nome Completo:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -909,9 +909,9 @@ object FormCadastroUsuario: TFormCadastroUsuario
       object Label3: TLabel
         Left = 56
         Top = 211
-        Width = 44
+        Width = 47
         Height = 21
-        Caption = 'E-mail'
+        Caption = 'E-mail:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -921,10 +921,10 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Label4: TLabel
         Left = 56
-        Top = 279
-        Width = 131
+        Top = 286
+        Width = 134
         Height = 21
-        Caption = 'Numero Telefonico'
+        Caption = 'Numero Telefonico:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -934,10 +934,10 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Label5: TLabel
         Left = 56
-        Top = 344
-        Width = 27
+        Top = 346
+        Width = 30
         Height = 21
-        Caption = 'CPF'
+        Caption = 'CPF:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -947,10 +947,10 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Label6: TLabel
         Left = 56
-        Top = 413
-        Width = 43
+        Top = 415
+        Width = 46
         Height = 21
-        Caption = 'Senha'
+        Caption = 'Senha:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -16
@@ -984,6 +984,8 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Font.Style = []
         ParentFont = False
         OnClick = Label7Click
+        OnMouseEnter = Label7MouseEnter
+        OnMouseLeave = Label7MouseLeave
       end
       object EdtNome: TEdit
         Left = 56
@@ -1017,7 +1019,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       object EdtCPF: TMaskEdit
         Left = 56
         Top = 371
-        Width = 131
+        Width = 121
         Height = 23
         EditMask = '___.___.___-__;1;_'
         MaxLength = 14
@@ -1027,7 +1029,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Panel3: TPanel
         Left = 56
-        Top = 504
+        Top = 505
         Width = 233
         Height = 49
         Caption = 'Cadastrar'
@@ -1049,7 +1051,6 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Top = 440
         Width = 121
         Height = 23
-        PasswordChar = '*'
         TabOrder = 5
         TextHint = 'Escreva sua senha'
         OnKeyPress = EdtSenhaKeyPress

@@ -956,6 +956,7 @@ object FLogin: TFLogin
         ParentFont = False
         OnClick = CliqueClick
         OnMouseEnter = CliqueMouseEnter
+        OnMouseLeave = CliqueMouseLeave
         ExplicitWidth = 238
       end
       object Image2: TImage
@@ -1790,6 +1791,7 @@ object FLogin: TFLogin
         Top = 452
         Width = 308
         Height = 41
+        Cursor = crHandPoint
         Margins.Left = 30
         Margins.Right = 30
         Margins.Bottom = 30
