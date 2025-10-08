@@ -24,7 +24,6 @@ object FMain: TFMain
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -6
     object PanelEmpresa: TPanel
       AlignWithMargins = True
       Left = 3
@@ -141,6 +140,7 @@ object FMain: TFMain
       OnClick = PanelConfiguracaoClick
       OnMouseEnter = PanelConfiguracaoMouseEnter
       OnMouseLeave = PanelConfiguracaoMouseLeave
+      ExplicitLeft = 4
       object ImageConfig: TImage
         Left = 0
         Top = 0
@@ -271,6 +271,7 @@ object FMain: TFMain
       OnClick = PanelGruposClick
       OnMouseEnter = PanelGruposMouseEnter
       OnMouseLeave = PanelGruposMouseLeave
+      ExplicitLeft = 0
       object ImageGrupos: TImage
         Left = 0
         Top = 0

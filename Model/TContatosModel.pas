@@ -2,7 +2,7 @@ unit TContatosModel;
 
 interface
 
-implementation
+
 
 Type Contatos = Class
 
@@ -13,6 +13,7 @@ Type Contatos = Class
   Endereco: String;
   Empresa : String;
   Observacao : String;
+  Favorito : Boolean;
 
   function getNome :String;
   procedure setNome (aNome:String);
@@ -26,9 +27,13 @@ Type Contatos = Class
   procedure setEmpresa (aEmpresa:String);
   function getObservacao :String;
   procedure setObservacao (aObservacao:String);
-
-
+  function getFavorito :Boolean;
+  procedure setFavorito (aFavorito:Boolean);
 End;
+
+implementation
+
+
 
 { Contatos }
 
@@ -64,7 +69,7 @@ end;
 
 procedure Contatos.setEmail(aEmail: String);
 begin
-  aEmail := Self.Email
+  Self.Email := aEmail
 end;
 
 procedure Contatos.setEmpresa(aEmpresa: String);
