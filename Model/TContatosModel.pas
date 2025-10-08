@@ -12,8 +12,9 @@ Type Contatos = Class
   Telefone : String;
   Endereco: String;
   Empresa : String;
-  Observacao : String;
+  Observacoes : String;
   Favorito : Boolean;
+  Id_usuario:Integer;
 
   function getNome :String;
   procedure setNome (aNome:String);
@@ -59,7 +60,7 @@ end;
 
 function Contatos.getObservacao: String;
 begin
-  Result := Self.Observacao;
+  Result := Self.Observacoes;
 end;
 
 function Contatos.getTelefone: String;
@@ -89,7 +90,7 @@ end;
 
 procedure Contatos.setObservacao(aObservacao: String);
 begin
-  aObservacao :=  Self.Observacao;
+  aObservacao :=  Self.Observacoes;
 end;
 
 procedure Contatos.setTelefone(aTelefone: String);

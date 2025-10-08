@@ -21,6 +21,7 @@ destructor Destroy;
     function Adicionar(AContato: Contatos): Boolean;
     function Atualizar(AContato: Contatos): Boolean;
     function Excluir(AId: Integer): Boolean;
+    function ExcluirPorNome(ANome: string): Boolean;
     function BuscarPorId(AId: Integer): Contatos;
     function ListarTodos: TObjectList<Contatos>;
     function BuscarPorNome(ANome: string): TObjectList<Contatos>;
@@ -90,13 +91,39 @@ begin
 
 end;
 
+function TContatosRepository.ExcluirPorNome(ANome: string): Boolean;
+begin
+  Result := false;
+  self.query.SQL.Text := 'DELETE FROM contatos Where nome = :nome';
+  self.query.ParamByName('nome').AsString := aNome;
+  Self.query.ExecSQL;
+
+
+end;
+
 function TContatosRepository.Adicionar(aContato: Contatos): Boolean;
 
 var query : TFDQuery;
 
-begin
-Result := False;
 
+begin
+
+  Result := False;
+  Self.query.sql.clear;
+  Self.query.SQL.Text := 'INSERT INTO contatos (id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario,favoritos) ' +
+                      'VALUES (:id_contato, :nome, :telefone, :email, :endereco, :empresa, :observacoes, :id_usuario,:favoritos)';
+  Self.query.ParamByName('id_contato').AsInteger := aContato.Id;
+  Self.query.ParamByName('nome').AsString := aContato.Nome;
+  Self.query.ParamByName('telefone').AsString := aContato.Telefone;
+  Self.query.ParamByName('email').AsString := aContato.Email;
+  Self.query.ParamByName('endereco').AsString := aContato.Endereco;
+  Self.query.ParamByName('empresa').AsString := aContato.Empresa;
+  self.query.ParamByName('observacoes').AsString := aContato.Observacoes;
+  self.query.ParamByName('favoritos').AsBoolean := aContato.Favorito;
+  self.query.ParamByName('id_usuario').AsInteger := aContato.Id_usuario;
+
+
+  Result := True
 
 
 
