@@ -30,6 +30,7 @@ Type Contatos = Class
   procedure setObservacao (aObservacao:String);
   function getFavorito :Boolean;
   procedure setFavorito (aFavorito:Boolean);
+
 End;
 
 implementation
@@ -51,6 +52,11 @@ end;
 function Contatos.getEndereco: String;
 begin
   Result := Self.Endereco;
+end;
+
+function Contatos.getFavorito: Boolean;
+begin
+ Result := Self.Favorito;
 end;
 
 function Contatos.getNome: String;
@@ -81,6 +87,11 @@ end;
 procedure Contatos.setEndereco(aEndereco: String);
 begin
   aEndereco := Self.Endereco;
+end;
+
+procedure Contatos.setFavorito(aFavorito: Boolean);
+begin
+  aFavorito := self.Favorito;
 end;
 
 procedure Contatos.setNome(aNome: String);

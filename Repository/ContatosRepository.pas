@@ -89,6 +89,8 @@ end;
 function TContatosRepository.Excluir(aId: Integer): Boolean;
 begin
 
+
+
 end;
 
 function TContatosRepository.ExcluirPorNome(ANome: string): Boolean;
@@ -136,7 +138,31 @@ begin
 end;
 
 function TContatosRepository.ListarTodos: TObjectList<Contatos>;
+var Contato: Contatos;
 begin
+Result := TObjectList<Contatos>.Create(True);
+
+Self.query.sql.Clear;
+Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, favoritos FROM contatos';
+Self.query.Open();
+
+while not Self.query.Eof do begin
+
+  Contato := Contatos.Create;
+
+
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+  Self.query.FieldByName('nome').AsString := Contato.Nome;
+  Self.query.FieldByName('telefone').AsString := Contato.Telefone;
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
+
+  Result.Add(Contato);
+  Self.query.Next;
+end;
 
 end;
 
