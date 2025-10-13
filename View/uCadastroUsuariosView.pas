@@ -136,9 +136,9 @@ end;
 
 procedure TFormCadastroUsuario.EdtEmailKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key = #13 then // Enter
+  if Key = #13 then
   begin
-    Key := #0; // Impede o beep
+    Key := #0;
     EdtNumero.SetFocus;
   end;
 end;
@@ -244,12 +244,12 @@ var
 begin
   Result := False;
 
-  // Remove a máscara para validar
+
   CPFLimpo := StringReplace(EdtCPF.Text, '.', '', [rfReplaceAll]);
   CPFLimpo := StringReplace(CPFLimpo, '-', '', [rfReplaceAll]);
   CPFLimpo := StringReplace(CPFLimpo, '_', '', [rfReplaceAll]);
 
-  // Verifica se tem 11 dígitos
+
   if Length(CPFLimpo) = 11 then
     Result := True;
 end;
@@ -258,7 +258,7 @@ function TFormCadastroUsuario.ValidarCampos: Boolean;
 begin
   Result := False;
 
-  // Validação do nome
+
   if Trim(EdtNome.Text) = '' then
   begin
     ShowMessage('O campo Nome não pode estar vazio.');
@@ -266,7 +266,7 @@ begin
     Exit;
   end;
 
-  // Validação do e-mail
+
   if Trim(EdtEmail.Text) = '' then
   begin
     ShowMessage('O campo E-mail não pode estar vazio.');
@@ -274,7 +274,7 @@ begin
     Exit;
   end;
 
-  // Validação básica do formato do e-mail
+
   if Pos('@', EdtEmail.Text) = 0 then
   begin
     ShowMessage('O e-mail deve conter o símbolo @.');
@@ -282,7 +282,7 @@ begin
     Exit;
   end;
 
-  // Validação do número usando a nova função
+
   if not ValidarNumero then
   begin
     ShowMessage('O campo Número está vazio ou incompleto.');
@@ -290,7 +290,7 @@ begin
     Exit;
   end;
 
-  // Validação do CPF usando a nova função
+
   if not ValidarCPF then
   begin
     ShowMessage('O campo CPF está vazio ou incompleto.');

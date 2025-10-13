@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
-  Vcl.Buttons, Vcl.Grids;
+  Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids;
 
 type
   TFMain = class(TForm)
@@ -68,6 +68,11 @@ type
     Label5: TLabel;
     StringGrid1: TStringGrid;
     Bevel3: TBevel;
+    SpeedButton4: TSpeedButton;
+    DBGrid2: TDBGrid;
+    Panel7: TPanel;
+    SpeedButton5: TSpeedButton;
+    SpeedButton6: TSpeedButton;
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
