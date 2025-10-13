@@ -1854,7 +1854,7 @@ object FMain: TFMain
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = Principal
+          ActivePage = Cadastro
           Align = alClient
           TabOrder = 0
           TabWidth = 100
@@ -1870,7 +1870,6 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitLeft = -1
               object DBGrid2: TDBGrid
                 Left = 32
                 Top = 40
