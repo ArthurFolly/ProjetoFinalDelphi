@@ -97,14 +97,13 @@ type
     procedure PanelFavoritosMouseLeave(Sender: TObject);
     procedure PanelContatosMouseEnter(Sender: TObject);
     procedure PanelContatosMouseLeave(Sender: TObject);
-//    procedure Shape1ContextPopup(Sender: TObject; MousePos: TPoint;
-//      var Handled: Boolean);
-//    procedure PanelMensagensDblClick(Sender: TObject);
+
+
   private
     procedure AtivarPainel(Panel: TPanel);
     procedure ResetarPainelAnterior;
   public
-    { Public declarations }
+
   end;
 
 var

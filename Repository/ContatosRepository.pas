@@ -2,21 +2,17 @@ unit ContatosRepository;
 
 interface
 
-uses ConexaoBanco,firedac.Comp.Client, firedac.DApt,TContatosModel,SysUtils,System.Hash,System.Generics.Collections;
+uses
+  ConexaoBanco, FireDAC.Comp.Client, FireDAC.DApt, TContatosModel, SysUtils,
+  System.Generics.Collections;
 
-implementation
-
-Type TContatosRepository = class
-
-private
-
-query : TFDQuery;
-
-public
-
-constructor Create;
-
-destructor Destroy;
+type
+  TContatosRepository = class
+  private
+    query: TFDQuery;
+  public
+    constructor Create;
+    destructor Destroy;
 
     function Adicionar(AContato: Contatos): Boolean;
     function Atualizar(AContato: Contatos): Boolean;
@@ -25,20 +21,41 @@ destructor Destroy;
     function BuscarPorNome(ANome: string): TObjectList<Contatos>;
     function BuscarPorTelefone(ATelefone: string): TObjectList<Contatos>;
     function BuscarPorEmpresa(AEmpresa: string): TObjectList<Contatos>;
-    function AlternarFavorito(AId: Integer): Boolean;
+  end;
 
+implementation
 
-
-
+constructor TContatosRepository.Create;
+begin
+  Inherited Create;
+  Self.query := TFDQuery.Create(nil);
+  Self.query.Connection := DataModule1.FDConnection1;
 end;
 
-{ Contatos }
-
-
-
-
-function TContatosRepository.AlternarFavorito(aId: Integer): Boolean;
+destructor TContatosRepository.Destroy;
 begin
+  Self.query.Free;
+  Inherited;
+end;
+
+function TContatosRepository.Adicionar(AContato: Contatos): Boolean;
+begin
+  Result := False;
+
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'INSERT INTO contatos (id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo) ' +
+                           'VALUES (:id_contato, :nome, :telefone, :email, :endereco, :empresa, :observacoes, :id_usuario, :ativo)';
+    Self.query.ParamByName('id_contato').AsInteger := AContato.Id;
+    Self.query.ParamByName('nome').AsString := AContato.Nome;
+    Self.query.ParamByName('telefone').AsString := AContato.Telefone;
+    Self.query.ParamByName('email').AsString := AContato.Email;
+    Self.query.ParamByName('endereco').AsString := AContato.Endereco;
+    Self.query.ParamByName('empresa').AsString := AContato.Empresa;
+    Self.query.ParamByName('observacoes').AsString := AContato.Observacoes;
+    Self.query.ParamByName('id_usuario').AsInteger := AContato.Id_usuario;
+    Self.query.ParamByName('ativo').AsBoolean := AContato.Ativo;
+    Self.query.ExecSQL;
+    Result := Self.query.RowsAffected > 0;
 
 end;
 
@@ -49,7 +66,7 @@ begin
     Self.query.SQL.Clear;
     Self.query.SQL.Text := 'UPDATE contatos SET nome = :nome, telefone = :telefone, email = :email, ' +
                            'endereco = :endereco, empresa = :empresa, observacoes = :observacoes, ' +
-                           'id_usuario = :id_usuario WHERE id_contato = :id_contato';
+                           'id_usuario = :id_usuario, ativo = :ativo WHERE id_contato = :id_contato';
     Self.query.ParamByName('id_contato').AsInteger := AContato.Id;
     Self.query.ParamByName('nome').AsString := AContato.Nome;
     Self.query.ParamByName('telefone').AsString := AContato.Telefone;
@@ -58,19 +75,143 @@ begin
     Self.query.ParamByName('empresa').AsString := AContato.Empresa;
     Self.query.ParamByName('observacoes').AsString := AContato.Observacoes;
     Self.query.ParamByName('id_usuario').AsInteger := AContato.Id_usuario;
+    Self.query.ParamByName('ativo').AsBoolean := AContato.Ativo;
     Self.query.ExecSQL;
-
     Result := Self.query.RowsAffected > 0;
-  end;
-function TContatosRepository.BuscarPorEmpresa(aEmpresa: string): TObjectList<Contatos>;
+
+end;
+
+function TContatosRepository.BuscarPorId(AId: Integer): Contatos;
+begin
+  Result := nil;
+
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo FROM contatos WHERE id_contato = :id_contato AND ativo = TRUE';
+    Self.query.ParamByName('id_contato').AsInteger := AId;
+    Self.query.Open;
+
+    if not Self.query.Eof then
+    begin
+      Result := Contatos.Create;
+      Result.Id := Self.query.FieldByName('id_contato').AsInteger;
+      Result.Nome := Self.query.FieldByName('nome').AsString;
+      Result.Telefone := Self.query.FieldByName('telefone').AsString;
+      Result.Email := Self.query.FieldByName('email').AsString;
+      Result.Endereco := Self.query.FieldByName('endereco').AsString;
+      Result.Empresa := Self.query.FieldByName('empresa').AsString;
+      Result.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      Result.Id_usuario := Self.query.FieldByName('id_usuario').AsInteger;
+      Result.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    end;
+    Self.query.Close;
+
+
+
+end;
+
+function TContatosRepository.ListarTodos: TObjectList<Contatos>;
+var
+  Contato: Contatos;
+begin
+  Result := TObjectList<Contatos>.Create(True);
+
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo FROM contatos WHERE ativo = TRUE';
+    Self.query.Open;
+
+    while not Self.query.Eof do
+    begin
+      Contato := Contatos.Create;
+      Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
+      Contato.Nome := Self.query.FieldByName('nome').AsString;
+      Contato.Telefone := Self.query.FieldByName('telefone').AsString;
+      Contato.Email := Self.query.FieldByName('email').AsString;
+      Contato.Endereco := Self.query.FieldByName('endereco').AsString;
+      Contato.Empresa := Self.query.FieldByName('empresa').AsString;
+      Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      Contato.Id_usuario := Self.query.FieldByName('id_usuario').AsInteger;
+      Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+      Result.Add(Contato);
+      Self.query.Next;
+    end;
+    Self.query.Close;
+     Result.Free;
+
+end;
+
+function TContatosRepository.BuscarPorNome(ANome: string): TObjectList<Contatos>;
+var
+  Contato: Contatos;
+begin
+  Result := TObjectList<Contatos>.Create(True);
+
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo FROM contatos WHERE nome LIKE :nome AND ativo = TRUE';
+    Self.query.ParamByName('nome').AsString := '%' + ANome + '%';
+    Self.query.Open;
+
+    while not Self.query.Eof do
+    begin
+      Contato := Contatos.Create;
+      Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
+      Contato.Nome := Self.query.FieldByName('nome').AsString;
+      Contato.Telefone := Self.query.FieldByName('telefone').AsString;
+      Contato.Email := Self.query.FieldByName('email').AsString;
+      Contato.Endereco := Self.query.FieldByName('endereco').AsString;
+      Contato.Empresa := Self.query.FieldByName('empresa').AsString;
+      Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      Contato.Id_usuario := Self.query.FieldByName('id_usuario').AsInteger;
+      Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+      Result.Add(Contato);
+      Self.query.Next;
+    end;
+    Self.query.Close;
+
+    Result.Free;
+
+end;
+
+function TContatosRepository.BuscarPorTelefone(ATelefone: string): TObjectList<Contatos>;
+var
+  Contato: Contatos;
+begin
+  Result := TObjectList<Contatos>.Create(True);
+
+    Self.query.SQL.Clear;
+    Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo FROM contatos WHERE telefone LIKE :telefone AND ativo = TRUE';
+    Self.query.ParamByName('telefone').AsString := '%' + ATelefone + '%';
+    Self.query.Open;
+
+    while not Self.query.Eof do
+    begin
+      Contato := Contatos.Create;
+      Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
+      Contato.Nome := Self.query.FieldByName('nome').AsString;
+      Contato.Telefone := Self.query.FieldByName('telefone').AsString;
+      Contato.Email := Self.query.FieldByName('email').AsString;
+      Contato.Endereco := Self.query.FieldByName('endereco').AsString;
+      Contato.Empresa := Self.query.FieldByName('empresa').AsString;
+      Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      Contato.Id_usuario := Self.query.FieldByName('id_usuario').AsInteger;
+      Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+      Result.Add(Contato);
+      Self.query.Next;
+    end;
+    Self.query.Close;
+
+
+
+end;
+
+function TContatosRepository.BuscarPorEmpresa(AEmpresa: string): TObjectList<Contatos>;
 var
   TContato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
-  try
+
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'SELECT id_contato, nome, empresa FROM contatos WHERE empresa = :empresa';
-    Self.query.ParamByName('empresa').AsString := aEmpresa;
+    Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, ativo FROM contatos WHERE empresa = :empresa AND ativo = TRUE';
+    Self.query.ParamByName('empresa').AsString := AEmpresa;
     Self.query.Open;
 
     while not Self.query.Eof do
@@ -78,102 +219,20 @@ begin
       TContato := Contatos.Create;
       TContato.Id := Self.query.FieldByName('id_contato').AsInteger;
       TContato.Nome := Self.query.FieldByName('nome').AsString;
+      TContato.Telefone := Self.query.FieldByName('telefone').AsString;
+      TContato.Email := Self.query.FieldByName('email').AsString;
+      TContato.Endereco := Self.query.FieldByName('endereco').AsString;
       TContato.Empresa := Self.query.FieldByName('empresa').AsString;
+      TContato.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      TContato.Id_usuario := Self.query.FieldByName('id_usuario').AsInteger;
+      TContato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
       Result.Add(TContato);
       Self.query.Next;
     end;
     Self.query.Close;
-  except
-    Result.Free;
-    raise;
-  end;
-end;
-
-function TContatosRepository.BuscarPorId(aId: Integer): Contatos;
-begin
-
-end;
-
-function TContatosRepository.BuscarPorNome(aNome: string): TObjectList<Contatos>;
-begin
-
-end;
-
-function TContatosRepository.BuscarPorTelefone(ATelefone: string): TObjectList<Contatos>;
-begin
-
-end;
-
-constructor TContatosRepository.Create;
-begin
-  Inherited create;
-
-  Self.query := TFDQuery.Create(nil);
-
-  Self.query.Connection :=  DataModule1.FDConnection1;
-
-
-end;
-
-destructor TContatosRepository.Destroy;
-begin
-  Inherited;
-end;
 
 
 
-function TContatosRepository.Adicionar(aContato: Contatos): Boolean;
-
-
-
-
-begin
-
-  Result := False;
-  Self.query.sql.clear;
-  Self.query.SQL.Text := 'INSERT INTO contatos (id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario,favoritos) ' +
-                      'VALUES (:id_contato, :nome, :telefone, :email, :endereco, :empresa, :observacoes, :id_usuario,)';
-  Self.query.ParamByName('id_contato').AsInteger := aContato.Id;
-  Self.query.ParamByName('nome').AsString := aContato.Nome;
-  Self.query.ParamByName('telefone').AsString := aContato.Telefone;
-  Self.query.ParamByName('email').AsString := aContato.Email;
-  Self.query.ParamByName('endereco').AsString := aContato.Endereco;
-  Self.query.ParamByName('empresa').AsString := aContato.Empresa;
-  self.query.ParamByName('observacoes').AsString := aContato.Observacoes;
-  Self.query.ExecSQL;
-
-  Result := True
-end;
-
-
-function TContatosRepository.ListarTodos: TObjectList<Contatos>;
-var Contato: Contatos;
-begin
-Result := TObjectList<Contatos>.Create(True);
-
-Self.query.sql.Clear;
-Self.query.SQL.Text := 'SELECT id_contato, nome, telefone, email, endereco, empresa, observacoes, id_usuario, favoritos FROM contatos';
-Self.query.Open();
-
-while not Self.query.Eof do begin
-
-  Contato := Contatos.Create;
-
-
-  Self.query.FieldByName('id_contato').AsInteger := Contato.Id;
-  Self.query.FieldByName('nome').AsString := Contato.Nome;
-  Self.query.FieldByName('telefone').AsString := Contato.Telefone;
-  Self.query.FieldByName('email').AsString := Contato.Email;
-  Self.query.FieldByName('endereco').AsString := Contato.Endereco;
-  Self.query.FieldByName('empresa').AsString := Contato.Empresa;
-  Self.query.FieldByName('observacoes').AsString := Contato.Observacoes;
-  Self.query.FieldByName('id_usuario').AsInteger := Contato.Id_usuario;
-  Self.query.FieldByName('favoritos').AsBoolean := Contato.Favorito;
-  Result.Add(Contato);
-  Self.query.Next;
-
-end;
-  Self.query.Close;
 end;
 
 end.

@@ -15,6 +15,7 @@ Type Contatos = Class
   Observacoes : String;
   Favorito : Boolean;
   Id_usuario:Integer;
+  Ativo : Boolean;
 
   function getNome :String;
   procedure setNome (aNome:String);
@@ -30,6 +31,8 @@ Type Contatos = Class
   procedure setObservacao (aObservacao:String);
   function getFavorito :Boolean;
   procedure setFavorito (aFavorito:Boolean);
+  function getAtivo :Boolean;
+  procedure setAtivo (aAtivo:Boolean);
 
 End;
 
