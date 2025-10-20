@@ -42,6 +42,11 @@ implementation
 
 { Contatos }
 
+function Contatos.getAtivo: Boolean;
+begin
+Result := Self.Ativo;
+end;
+
 function Contatos.getEmail: String;
 begin
   Result := Self.Email;
@@ -77,9 +82,14 @@ begin
   Result := Self.Telefone;
 end;
 
+procedure Contatos.setAtivo(aAtivo: Boolean);
+begin
+aAtivo := Self.Ativo;
+end;
+
 procedure Contatos.setEmail(aEmail: String);
 begin
-  Self.Email := aEmail
+aEmail := Self.Email;
 end;
 
 procedure Contatos.setEmpresa(aEmpresa: String);

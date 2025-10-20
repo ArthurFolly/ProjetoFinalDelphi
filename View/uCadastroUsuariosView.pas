@@ -63,7 +63,7 @@ begin
 
 
 
-  // Inicializa o texto vazio
+
   EdtCPF.Text := '';
   EdtNumero.Text := '';
 

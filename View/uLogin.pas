@@ -114,7 +114,7 @@ end;
 
 Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text,Mensagem);
 
- if Assigned(Usuario) then begin
+  if Assigned(Usuario) then begin
 
     ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
     EditEmail.Clear;

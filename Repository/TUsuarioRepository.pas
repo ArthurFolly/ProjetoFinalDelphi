@@ -203,7 +203,7 @@ begin
   senhaHash := GerarHashSenha(senha);
 
   Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT COUNT(*) as TOTAL FROM "Usuario" Where email = :email AND senha_hash = :senha_hash';
+  Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email AND senha_hash = :senha_hash';
   Self.query.ParamByName('email').AsString := email;
   Self.query.ParamByName('senha_hash').asString := senhaHash;
   Self.query.Open();
