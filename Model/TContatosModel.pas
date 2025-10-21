@@ -14,7 +14,6 @@ Type Contatos = Class
   Empresa : String;
   Observacoes : String;
   Favorito : Boolean;
-  Id_usuario:Integer;
   Ativo : Boolean;
 
   function getNome :String;

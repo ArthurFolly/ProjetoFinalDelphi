@@ -1871,65 +1871,12 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              object DBGrid2: TDBGrid
-                Left = 32
-                Top = 32
-                Width = 801
-                Height = 441
-                TabOrder = 0
-                TitleFont.Charset = DEFAULT_CHARSET
-                TitleFont.Color = clWindowText
-                TitleFont.Height = -12
-                TitleFont.Name = 'Segoe UI'
-                TitleFont.Style = []
-                Columns = <
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end
-                  item
-                    Expanded = False
-                    Width = 100
-                    Visible = True
-                  end>
-              end
               object Panel7: TPanel
-                Left = 32
-                Top = 504
+                Left = 34
+                Top = 491
                 Width = 801
                 Height = 121
-                TabOrder = 1
+                TabOrder = 0
                 object SpdEditarContatosGrid: TSpeedButton
                   Left = 352
                   Top = 8
@@ -2719,6 +2666,7 @@ object FMain: TFMain
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = SpdExcluirClick
                 end
                 object SpdAtualizar: TSpeedButton
                   Left = 56
@@ -3114,7 +3062,61 @@ object FMain: TFMain
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = SpdAtualizarClick
                 end
+              end
+              object DBGrid2: TDBGrid
+                Left = 34
+                Top = 44
+                Width = 801
+                Height = 441
+                TabOrder = 1
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -12
+                TitleFont.Name = 'Segoe UI'
+                TitleFont.Style = []
+                Columns = <
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    Width = 100
+                    Visible = True
+                  end>
               end
             end
           end
@@ -3133,7 +3135,7 @@ object FMain: TFMain
             end
             object Panel4: TPanel
               Left = 24
-              Top = 22
+              Top = 18
               Width = 825
               Height = 585
               Color = clWhite
@@ -3142,7 +3144,7 @@ object FMain: TFMain
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 823
+                Width = 248
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -3155,7 +3157,6 @@ object FMain: TFMain
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
-                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -3599,6 +3600,7 @@ object FMain: TFMain
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                 Layout = blGlyphTop
+                OnClick = SpdAdicionarClick
               end
               object SpdRemover: TSpeedButton
                 Left = 592
@@ -4426,13 +4428,13 @@ object FMain: TFMain
               object Numero: TMaskEdit
                 Left = 576
                 Top = 80
-                Width = 119
+                Width = 115
                 Height = 23
                 Color = clBtnFace
-                EditMask = '!\(99\)00000-000;1;_'
-                MaxLength = 13
+                EditMask = '!\(99\)00000-0000;1;_'
+                MaxLength = 14
                 TabOrder = 3
-                Text = '(  )     -   '
+                Text = '(  )     -    '
               end
               object Endereco: TEdit
                 Left = 24
@@ -4504,7 +4506,7 @@ object FMain: TFMain
                 object Label5: TLabel
                   Left = 1
                   Top = 1
-                  Width = 823
+                  Width = 95
                   Height = 32
                   Align = alTop
                   Caption = 'Favoritos'
@@ -4517,7 +4519,6 @@ object FMain: TFMain
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 95
                 end
                 object StringGrid1: TStringGrid
                   Left = 8

@@ -92,12 +92,6 @@ if (Trim(EditEmail.Text) = '') or  (Trim(EditSenha.Text) = '') then begin
    ShowMessage('Preencha os campos, Corretamente');
   EditEmail.SetFocus;
 
-
-
-
-
-
-
   end else  begin
 
 
@@ -109,8 +103,6 @@ if (Trim(EditEmail.Text) = '') or  (Trim(EditSenha.Text) = '') then begin
 
 
 end;
-
-
 
 Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text,Mensagem);
 

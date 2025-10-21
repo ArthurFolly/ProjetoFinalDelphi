@@ -8,7 +8,7 @@ uses
   Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
   Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
   ContatosRepository, System.Generics.Collections, Data.FMTBcd, Data.SqlExpr, Datasnap.DBClient,
-   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client;
+   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco;
 
 type
   TFMain = class(TForm)
@@ -71,7 +71,6 @@ type
     StringGrid1: TStringGrid;
     Bevel3: TBevel;
     SpeedButton4: TSpeedButton;
-    DBGrid2: TDBGrid;
     Panel7: TPanel;
     SpdEditarContatosGrid: TSpeedButton;
     SpdExcluir: TSpeedButton;
@@ -80,6 +79,7 @@ type
     ClientDataSet1: TClientDataSet;
     SQLConnection1: TSQLConnection;
     SQLQuery1: TSQLQuery;
+    DBGrid2: TDBGrid;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -146,6 +146,10 @@ var
 
 procedure TFMain.FormCreate(Sender: TObject);
 begin
+
+  DataModule1.FDConnection1.Connected := True;
+
+
   ContatosLista := TObjectList<Contatos>.Create(True);
   ContatosController := TContatosController.Create;
   Editando := False;
@@ -162,6 +166,8 @@ begin
 end;
 
 procedure TFMain.ConfigurarDBGrid;
+var
+  I: Integer;
 begin
   DataSource1.DataSet := ClientDataSet1;
   DBGrid2.DataSource := DataSource1;
@@ -177,10 +183,66 @@ begin
   ClientDataSet1.FieldDefs.Add('ENDERECO', ftString, 200);
 
   ClientDataSet1.CreateDataSet;
+
+  // *** CONFIGURA COLUNAS VISÍVEIS ***
+  DBGrid2.Columns.Clear;
+
+  // ID
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'ID';
+    Title.Caption := 'ID';
+    Width := 40;
+  end;
+
+  // NOME
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'NOME';
+    Title.Caption := 'NOME';
+    Width := 150;
+  end;
+
+  // TELEFONE
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'TELEFONE';
+    Title.Caption := 'TELEFONE';
+    Width := 120;
+  end;
+
+  // EMAIL
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'EMAIL';
+    Title.Caption := 'EMAIL';
+    Width := 150;
+  end;
+
+  // EMPRESA
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'EMPRESA';
+    Title.Caption := 'EMPRESA';
+    Width := 120;
+  end;
+
+  // ENDEREÇO
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'ENDERECO';
+    Title.Caption := 'ENDEREÇO';
+    Width := 200;
+  end;
+
+  // *** FORÇA VISÍVEL ***
+  DBGrid2.Visible := True;
+  DBGrid2.Refresh;
 end;
 
 procedure TFMain.CarregarContatosDB;
 begin
+
   ContatosController.CarregarContatos(ContatosLista);
   AtualizarDBGrid;
 end;
@@ -193,26 +255,33 @@ begin
   ClientDataSet1.DisableControls;
   try
     ClientDataSet1.Close;
-    ClientDataSet1.CreateDataSet;
+    ClientDataSet1.EmptyDataSet;
+
+
+    ClientDataSet1.Open;
+
 
     for I := 0 to ContatosLista.Count - 1 do
     begin
       Contato := ContatosLista[I];
 
       ClientDataSet1.Append;
-      ClientDataSet1.FieldByName('ID').Value := Contato.Id;
-      ClientDataSet1.FieldByName('NOME').Value := Contato.Nome;
-      ClientDataSet1.FieldByName('TELEFONE').Value := Contato.Telefone;
-      ClientDataSet1.FieldByName('EMAIL').Value := Contato.Email;
-      ClientDataSet1.FieldByName('EMPRESA').Value := Contato.Empresa;
-      ClientDataSet1.FieldByName('ENDERECO').Value := Contato.Endereco;
+      ClientDataSet1.FieldByName('ID').AsInteger := Contato.Id;
+      ClientDataSet1.FieldByName('NOME').AsString := Contato.Nome;
+      ClientDataSet1.FieldByName('TELEFONE').AsString := Contato.Telefone;
+      ClientDataSet1.FieldByName('EMAIL').AsString := Contato.Email;
+      ClientDataSet1.FieldByName('EMPRESA').AsString := Contato.Empresa;
+      ClientDataSet1.FieldByName('ENDERECO').AsString := Contato.Endereco;
       ClientDataSet1.Post;
     end;
 
-    ClientDataSet1.First;
+
+    if not ClientDataSet1.IsEmpty then
+      ClientDataSet1.First;
   finally
     ClientDataSet1.EnableControls;
   end;
+  DBGrid2.Refresh;
 end;
 
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
@@ -321,14 +390,9 @@ begin
   begin
     if MessageDlg('Excluir ' + Contato.Nome + '?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      if ContatosController.ExcluirContato(Contato.Id) then
-      begin
-        ContatosLista.Remove(Contato);
-        AtualizarDBGrid;
-        ShowMessage('Contato excluído!');
-      end
-      else
-        ShowMessage('Erro ao excluir!');
+
+      ContatosController.RemoverDaLista(ContatosLista, Contato.Id);
+      CarregarContatosDB;
     end;
   end
   else
@@ -338,7 +402,7 @@ end;
 procedure TFMain.SpdAtualizarClick(Sender: TObject);
 begin
   CarregarContatosDB;
-  ShowMessage('Contatos atualizados: ' + IntToStr(ContatosLista.Count));
+
 end;
 
 procedure TFMain.DBGrid2DblClick(Sender: TObject);
@@ -388,7 +452,7 @@ begin
         end;
       end;
     except
-      // Ignora erro
+
     end;
   end;
 end;
@@ -506,6 +570,10 @@ begin
   AtivarPainel(PanelContatos);
   CardPanel1.ActiveCard := Card2;
   PageControl.Visible := True;
+  Card2.Visible := True;
+  Card2.CardVisible := True;
+
+  CarregarContatosDB;
 end;
 
 procedure TFMain.PanelFavoritosClick(Sender: TObject);
