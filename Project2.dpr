@@ -12,7 +12,10 @@ uses
   LoginUsuarioController in 'Controller\LoginUsuarioController.pas',
   TContatosModel in 'Model\TContatosModel.pas',
   ContatosController in 'Controller\ContatosController.pas',
-  ContatosRepository in 'Repository\ContatosRepository.pas';
+  ContatosRepository in 'Repository\ContatosRepository.pas',
+  FavoritosRepository in 'Repository\FavoritosRepository.pas',
+  FavoritosController in 'Controller\FavoritosController.pas',
+  FavoritosModel in 'Model\FavoritosModel.pas';
 
 {$R *.res}
 

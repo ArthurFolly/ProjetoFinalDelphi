@@ -61,8 +61,6 @@ type
     Edit3: TEdit;
     Edit4: TEdit;
     SpdAdicionar: TSpeedButton;
-    SpdRemover: TSpeedButton;
-    SpdEditar: TSpeedButton;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     Panel5: TPanel;
@@ -74,12 +72,14 @@ type
     Panel7: TPanel;
     SpdEditarContatosGrid: TSpeedButton;
     SpdExcluir: TSpeedButton;
-    SpdAtualizar: TSpeedButton;
+    SpdListar: TSpeedButton;
     DataSource1: TDataSource;
     ClientDataSet1: TClientDataSet;
     SQLConnection1: TSQLConnection;
     SQLQuery1: TSQLQuery;
     DBGrid2: TDBGrid;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -110,15 +110,16 @@ type
     procedure SpdRemoverClick(Sender: TObject);
     procedure SpdEditarClick(Sender: TObject);
     procedure SpdEditarContatosGridClick(Sender: TObject);
-    procedure SpdExcluirClick(Sender: TObject);
-    procedure SpdAtualizarClick(Sender: TObject);
+    procedure SpdListarClick(Sender: TObject);
     procedure DBGrid2DblClick(Sender: TObject);
+    procedure SpdExcluirClick(Sender: TObject);
 
   private
     Editando: Boolean;
     ContatoAtual: Contatos;
     ContatosLista: TObjectList<Contatos>;
     ContatosController: TContatosController;
+    LoadingDataset: Boolean;
 
     procedure AtivarPainel(Panel: TPanel);
     procedure ResetarPainelAnterior;
@@ -129,6 +130,8 @@ type
     procedure PreencherFormulario(Contato: Contatos);
     procedure ConfigurarDBGrid;
     procedure CarregarContatosDB;
+    procedure SalvarEdicaoGridView(DataSet: TDataSet);
+    procedure ConfirmarExclusaoGrid(DataSet: TDataSet);
 
   public
     { Public declarations }
@@ -183,8 +186,9 @@ begin
   ClientDataSet1.FieldDefs.Add('ENDERECO', ftString, 200);
 
   ClientDataSet1.CreateDataSet;
+  ClientDataSet1.Open;
 
-  // *** CONFIGURA COLUNAS VISÍVEIS ***
+
   DBGrid2.Columns.Clear;
 
   // ID
@@ -235,10 +239,40 @@ begin
     Width := 200;
   end;
 
-  // *** FORÇA VISÍVEL ***
+
+  DBGrid2.ReadOnly := False;
+  DBGrid2.Options := [dgEditing, dgColumnResize];
+  ClientDataSet1.AfterPost := SalvarEdicaoGridView;
+  ClientDataSet1.AfterDelete := ConfirmarExclusaoGrid;
   DBGrid2.Visible := True;
   DBGrid2.Refresh;
+  DBGrid2.Options := [dgTitles, dgEditing, dgColumnResize];
+
 end;
+
+procedure TFMain.ConfirmarExclusaoGrid(DataSet: TDataSet);
+var
+  Contato: Contatos;
+begin
+  Contato := ContatoSelecionado;
+  if Contato <> nil then
+  begin
+    if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      Contato.Ativo := False; // exclusão lógica
+      if ContatosController.AtualizarContato(Contato) then
+      begin
+        ShowMessage('Contato excluído com sucesso!');
+        CarregarContatosDB; // atualiza o grid
+      end
+      else
+        ShowMessage('Erro ao excluir o contato!');
+    end
+    else
+      DataSet.Cancel; // desfaz a exclusão do ClientDataSet
+  end;
+end;
+
 
 procedure TFMain.CarregarContatosDB;
 begin
@@ -252,19 +286,13 @@ var
   I: Integer;
   Contato: Contatos;
 begin
+  LoadingDataset := True; // <- ADICIONE AQUI
   ClientDataSet1.DisableControls;
   try
-    ClientDataSet1.Close;
     ClientDataSet1.EmptyDataSet;
-
-
-    ClientDataSet1.Open;
-
-
     for I := 0 to ContatosLista.Count - 1 do
     begin
       Contato := ContatosLista[I];
-
       ClientDataSet1.Append;
       ClientDataSet1.FieldByName('ID').AsInteger := Contato.Id;
       ClientDataSet1.FieldByName('NOME').AsString := Contato.Nome;
@@ -275,14 +303,45 @@ begin
       ClientDataSet1.Post;
     end;
 
-
     if not ClientDataSet1.IsEmpty then
       ClientDataSet1.First;
   finally
     ClientDataSet1.EnableControls;
+    LoadingDataset := False; // <- E AQUI
   end;
+
   DBGrid2.Refresh;
 end;
+
+
+
+procedure TFMain.SalvarEdicaoGridView(DataSet: TDataSet);
+var
+  Contato: Contatos;
+begin
+  if LoadingDataset then Exit; // <- ADICIONE ESTA LINHA
+
+  try
+    Contato := ContatoSelecionado;
+    if Contato <> nil then
+    begin
+      Contato.Nome := DataSet.FieldByName('NOME').AsString;
+      Contato.Telefone := DataSet.FieldByName('TELEFONE').AsString;
+      Contato.Email := DataSet.FieldByName('EMAIL').AsString;
+      Contato.Empresa := DataSet.FieldByName('EMPRESA').AsString;
+      Contato.Endereco := DataSet.FieldByName('ENDERECO').AsString;
+
+      if ContatosController.AtualizarContato(Contato) then
+        ShowMessage('Contato atualizado com sucesso!')
+      else
+        ShowMessage('Erro ao atualizar o contato no banco!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao salvar: ' + E.Message);
+  end;
+end;
+
 
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
 var
@@ -328,13 +387,14 @@ begin
   Editando := False;
   ContatoAtual := nil;
   SpdAdicionar.Enabled := True;
-  SpdEditar.Caption := 'Editar';
+  SpdEditarContatosGrid.Caption := 'Editar';
 end;
 
 procedure TFMain.SpdEditarClick(Sender: TObject);
 begin
   if Editando and (ContatoAtual <> nil) then
   begin
+    // Se estamos editando, salva as alterações
     if not ValidarFormulario then Exit;
 
     ContatoAtual.Nome := Edit1.Text;
@@ -351,7 +411,7 @@ begin
       Editando := False;
       ContatoAtual := nil;
       SpdAdicionar.Enabled := True;
-      SpdEditar.Caption := 'Editar';
+//      SpdEditarContatosGridClick().Caption := 'Editar'; // volta a ser "Editar"
       ShowMessage('Contato atualizado!');
     end
     else
@@ -359,14 +419,31 @@ begin
   end
   else
   begin
+    // Caso não esteja editando
     ShowMessage('Selecione um contato no grid primeiro!');
   end;
 end;
+
 
 procedure TFMain.SpdEditarContatosGridClick(Sender: TObject);
 var
   Contato: Contatos;
 begin
+  // Se o usuário está editando diretamente no grid (dataset em modo de edição),
+  // então apenas finalize a edição (Post) — isso dispara AfterPost -> SalvarEdicaoGridView
+  if ClientDataSet1.State in [dsEdit, dsInsert] then
+  begin
+    try
+      ClientDataSet1.Post; // dispara AfterPost que você já ligou a SalvarEdicaoGridView
+      ShowMessage('Alterações do grid salvas.');
+    except
+      on E: Exception do
+        ShowMessage('Erro ao salvar edição no grid: ' + E.Message);
+    end;
+    Exit;
+  end;
+
+  // Caso não esteja editando no grid, mantém comportamento atual: carregar no formulário
   Contato := ContatoSelecionado;
   if Contato <> nil then
   begin
@@ -374,8 +451,8 @@ begin
     PreencherFormulario(ContatoAtual);
     Editando := True;
     SpdAdicionar.Enabled := False;
-    SpdEditar.Caption := 'Salvar';
-    Edit1.SetFocus;
+//    SpdEditarContatosGrid.Caption := 'Salvar'; // muda para "Salvar" ao editar
+    // Edit1.SetFocus; // opcional
   end
   else
     ShowMessage('Selecione um contato no grid!');
@@ -386,24 +463,32 @@ var
   Contato: Contatos;
 begin
   Contato := ContatoSelecionado;
-  if Contato <> nil then
+  if Contato = nil then
   begin
-    if MessageDlg('Excluir ' + Contato.Nome + '?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    ShowMessage('Nenhum contato selecionado para excluir!');
+    Exit;
+  end;
+
+  if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Contato.Ativo := False; // exclusão lógica
+    if ContatosController.AtualizarContato(Contato) then
     begin
-
-      ContatosController.RemoverDaLista(ContatosLista, Contato.Id);
-      CarregarContatosDB;
-    end;
-  end
-  else
-    ShowMessage('Selecione um contato!');
+      ShowMessage('Contato excluído com sucesso!');
+      CarregarContatosDB; // atualiza o grid
+    end
+    else
+      ShowMessage('Erro ao excluir o contato!');
+  end;
 end;
 
-procedure TFMain.SpdAtualizarClick(Sender: TObject);
+procedure TFMain.SpdListarClick(Sender: TObject);
 begin
+  LimparFormulario;
   CarregarContatosDB;
-
+//  ShowMessage('Lista de contatos atualizada!');
 end;
+
 
 procedure TFMain.DBGrid2DblClick(Sender: TObject);
 begin
@@ -417,14 +502,14 @@ begin
   if Trim(Edit1.Text) = '' then
   begin
     ShowMessage('Digite o nome!');
-    Edit1.SetFocus;
+//    Edit1.SetFocus;
     Exit;
   end;
 
   if Trim(Numero.Text) = '' then
   begin
     ShowMessage('Digite o telefone!');
-    Numero.SetFocus;
+//    Numero.SetFocus;
     Exit;
   end;
 
@@ -478,7 +563,7 @@ begin
   Edit3.Text := '';
   Endereco.Text := '';
   Edit4.Text := '';
-  Edit1.SetFocus;
+//  Edit1.SetFocus;
 end;
 
 procedure TFMain.AtivarPainel(Panel: TPanel);

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Generics.Collections,
   TContatosModel, ContatosRepository,
-  Vcl.Dialogs, Vcl.Forms, Vcl.Controls;
+  Vcl.Dialogs, Vcl.Forms, Vcl.Controls, Data.DB;
 
 type
   TContatosController = class
@@ -17,12 +17,11 @@ type
 
     function AdicionarContato(AContato: Contatos): Boolean;
     function AtualizarContato(AContato: Contatos): Boolean;
-    function ExcluirContato(AId: Integer): Boolean;
     procedure CarregarContatos(ALista: TObjectList<Contatos>);
     function ListarContatos: TObjectList<Contatos>;
 
-    // *** CORRIGIDO - COM PARÂMETRO ***
-    procedure RemoverDaLista(ALista: TObjectList<Contatos>; AId: Integer);
+    // *** GRID - EDIÇÃO NO BANCO ***
+    procedure SalvarEdicaoGrid(DataSet: TDataSet);
   end;
 
 implementation
@@ -48,26 +47,6 @@ begin
   Result := ContatosRepository.Atualizar(AContato);
 end;
 
-function TContatosController.ExcluirContato(AId: Integer): Boolean;
-begin
-  Result := True;
-end;
-
-
-procedure TContatosController.RemoverDaLista(ALista: TObjectList<Contatos>; AId: Integer);
-var
-  I: Integer;
-begin
-  for I := 0 to ALista.Count - 1 do
-  begin
-    if ALista[I].Id = AId then
-    begin
-      ALista.Delete(I);
-      Break;
-    end;
-  end;
-end;
-
 function TContatosController.ListarContatos: TObjectList<Contatos>;
 begin
   Result := ContatosRepository.ListarTodos;
@@ -86,6 +65,19 @@ begin
 
   ListaNova.OwnsObjects := False;
   ListaNova.Free;
+end;
+
+
+procedure TContatosController.SalvarEdicaoGrid(DataSet: TDataSet);
+begin
+  ContatosRepository.AtualizarPorId(
+    DataSet.FieldByName('ID').AsInteger,
+    DataSet.FieldByName('NOME').AsString,
+    DataSet.FieldByName('TELEFONE').AsString,
+    DataSet.FieldByName('EMAIL').AsString,
+    DataSet.FieldByName('EMPRESA').AsString,
+    DataSet.FieldByName('ENDERECO').AsString
+  );
 end;
 
 end.
