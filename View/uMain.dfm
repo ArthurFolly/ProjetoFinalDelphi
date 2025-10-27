@@ -341,6 +341,7 @@ object FMain: TFMain
       OnClick = PanelFavoritosClick
       OnMouseEnter = PanelFavoritosMouseEnter
       OnMouseLeave = PanelFavoritosMouseLeave
+      ExplicitLeft = 0
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -3731,9 +3732,9 @@ object FMain: TFMain
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitLeft = 0
+                  ExplicitWidth = 95
                 end
-                object SpeedButton1: TSpeedButton
+                object SpdAdicionarFavorito: TSpeedButton
                   Left = 52
                   Top = 448
                   Width = 133
@@ -4524,20 +4525,19 @@ object FMain: TFMain
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
                 end
-                object StringGrid1: TStringGrid
-                  Left = 17
-                  Top = 39
-                  Width = 793
-                  Height = 360
-                  TabOrder = 0
-                  RowHeights = (
-                    24
-                    106
-                    24
-                    24
-                    24)
-                end
               end
+            end
+            object DBGridFavoritos: TDBGrid
+              Left = 40
+              Top = 52
+              Width = 777
+              Height = 390
+              TabOrder = 1
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = 'Segoe UI'
+              TitleFont.Style = []
             end
           end
         end

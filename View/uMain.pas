@@ -8,7 +8,7 @@ uses
   Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
   Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
   ContatosRepository, System.Generics.Collections, Data.FMTBcd, Data.SqlExpr, Datasnap.DBClient,
-   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco;
+   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco,FavoritosModel,FavoritosController,FavoritosRepository;
 
 type
   TFMain = class(TForm)
@@ -66,7 +66,6 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Label5: TLabel;
-    StringGrid1: TStringGrid;
     Bevel3: TBevel;
     SpeedButton4: TSpeedButton;
     Panel7: TPanel;
@@ -78,8 +77,9 @@ type
     SQLConnection1: TSQLConnection;
     SQLQuery1: TSQLQuery;
     DBGrid2: TDBGrid;
-    SpeedButton1: TSpeedButton;
+    SpdAdicionarFavorito: TSpeedButton;
     SpeedButton2: TSpeedButton;
+    DBGridFavoritos: TDBGrid;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -114,32 +114,36 @@ type
     procedure DBGrid2DblClick(Sender: TObject);
     procedure SpdExcluirClick(Sender: TObject);
 
-  private
-    Editando: Boolean;
-    ContatoAtual: Contatos;
-    ContatosLista: TObjectList<Contatos>;
-    ContatosController: TContatosController;
-    LoadingDataset: Boolean;
+private
+  Editando: Boolean;
+  ContatoAtual: Contatos;
+  ContatosLista: TObjectList<Contatos>;
+  ContatosController: TContatosController;
+  FavoritosController: TFavoritosController;
+  ClientDataSetFavoritos: TClientDataSet;
+  DataSourceFavoritos: TDataSource;
+  LoadingDataset: Boolean;
 
-    procedure AtivarPainel(Panel: TPanel);
-    procedure ResetarPainelAnterior;
-    procedure AtualizarDBGrid;
-    procedure LimparFormulario;
-    function ValidarFormulario: Boolean;
-    function ContatoSelecionado: Contatos;
-    procedure PreencherFormulario(Contato: Contatos);
-    procedure ConfigurarDBGrid;
-    procedure CarregarContatosDB;
-    procedure SalvarEdicaoGridView(DataSet: TDataSet);
-    procedure ConfirmarExclusaoGrid(DataSet: TDataSet);
+  procedure AtivarPainel(Panel: TPanel);
+  procedure ResetarPainelAnterior;
+  procedure AtualizarDBGrid;
+  procedure LimparFormulario;
+  function ValidarFormulario: Boolean;
+  function ContatoSelecionado: Contatos;
+  procedure PreencherFormulario(Contato: Contatos);
+  procedure ConfigurarDBGrid;
+  procedure CarregarContatosDB;
+  procedure SalvarEdicaoGridView(DataSet: TDataSet);
+  procedure ConfirmarExclusaoGrid(DataSet: TDataSet);
+  procedure ConfigurarDBGridFavoritos;
+  procedure CarregarFavoritos;
+  procedure SalvarEdicaoFavorito(DataSet: TDataSet);
+  procedure ConfirmarExclusaoFavorito(DataSet: TDataSet);
 
-  public
-    { Public declarations }
+
   end;
-
 var
-  FMain: TFMain;
-
+FMain: TFMain;
 implementation
 
 {$R *.dfm}
@@ -149,16 +153,21 @@ var
 
 procedure TFMain.FormCreate(Sender: TObject);
 begin
-
   DataModule1.FDConnection1.Connected := True;
-
 
   ContatosLista := TObjectList<Contatos>.Create(True);
   ContatosController := TContatosController.Create;
+  FavoritosController := TFavoritosController.Create(1);
+
+  ClientDataSetFavoritos := TClientDataSet.Create(Self);
+  DataSourceFavoritos := TDataSource.Create(Self);
+
   Editando := False;
   ContatoAtual := nil;
 
+  DBGridFavoritos.DataSource := DataSourceFavoritos;
   ConfigurarDBGrid;
+  ConfigurarDBGridFavoritos;
   CarregarContatosDB;
 end;
 
@@ -166,6 +175,9 @@ procedure TFMain.FormDestroy(Sender: TObject);
 begin
   ContatosLista.Free;
   ContatosController.Free;
+  FavoritosController.Free;
+  ClientDataSetFavoritos.Free;
+  DataSourceFavoritos.Free;
 end;
 
 procedure TFMain.ConfigurarDBGrid;
@@ -250,6 +262,74 @@ begin
 
 end;
 
+procedure TFMain.ConfigurarDBGridFavoritos;
+begin
+  DataSourceFavoritos.DataSet := ClientDataSetFavoritos;
+  DBGridFavoritos.DataSource := DataSourceFavoritos;
+
+  ClientDataSetFavoritos.Close;
+  ClientDataSetFavoritos.FieldDefs.Clear;
+
+  // CAMPOS (igual ao contatos)
+  ClientDataSetFavoritos.FieldDefs.Add('ID_FAVORITO', ftInteger);
+  ClientDataSetFavoritos.FieldDefs.Add('NOME', ftString, 100);
+  ClientDataSetFavoritos.FieldDefs.Add('TELEFONE', ftString, 20);
+  ClientDataSetFavoritos.FieldDefs.Add('EMPRESA', ftString, 100);
+
+  ClientDataSetFavoritos.CreateDataSet;
+  ClientDataSetFavoritos.Open;
+
+  DBGridFavoritos.Columns.Clear;
+
+  // COLUNA ID_FAVORITO
+  with DBGridFavoritos.Columns.Add do
+  begin
+    FieldName := 'ID_FAVORITO';
+    Title.Caption := 'ID';
+    Width := 200;
+  end;
+
+  // COLUNA NOME
+  with DBGridFavoritos.Columns.Add do
+  begin
+    FieldName := 'NOME';
+    Title.Caption := 'NOME';
+    Width := 200;
+  end;
+
+  // COLUNA TELEFONE
+  with DBGridFavoritos.Columns.Add do
+  begin
+    FieldName := 'TELEFONE';
+    Title.Caption := 'TELEFONE';
+    Width := 200;
+  end;
+
+  // COLUNA EMPRESA
+  with DBGridFavoritos.Columns.Add do
+  begin
+    FieldName := 'EMPRESA';
+    Title.Caption := 'EMPRESA';
+    Width := 200;
+  end;
+
+  // OPÇÕES IGUAIS AO CONTATOS
+  DBGridFavoritos.ReadOnly := False;
+  DBGridFavoritos.Options := [dgTitles, dgEditing, dgColumnResize];
+
+  // EVENTOS (igual ao contatos)
+  ClientDataSetFavoritos.AfterPost := SalvarEdicaoFavorito;
+  ClientDataSetFavoritos.AfterDelete := ConfirmarExclusaoFavorito;
+
+  DBGridFavoritos.Visible := True;
+end;
+
+
+procedure TFMain.ConfirmarExclusaoFavorito(DataSet: TDataSet);
+begin
+
+end;
+
 procedure TFMain.ConfirmarExclusaoGrid(DataSet: TDataSet);
 var
   Contato: Contatos;
@@ -281,12 +361,23 @@ begin
   AtualizarDBGrid;
 end;
 
+procedure TFMain.CarregarFavoritos;
+begin
+  ClientDataSetFavoritos.EmptyDataSet;
+  FavoritosController.CarregarFavoritos(ClientDataSetFavoritos);
+
+  if not ClientDataSetFavoritos.IsEmpty then
+    ClientDataSetFavoritos.First;
+
+  DBGridFavoritos.Refresh;
+end;
+
 procedure TFMain.AtualizarDBGrid;
 var
   I: Integer;
   Contato: Contatos;
 begin
-  LoadingDataset := True; // <- ADICIONE AQUI
+  LoadingDataset := True;
   ClientDataSet1.DisableControls;
   try
     ClientDataSet1.EmptyDataSet;
@@ -314,6 +405,11 @@ begin
 end;
 
 
+
+procedure TFMain.SalvarEdicaoFavorito(DataSet: TDataSet);
+begin
+
+end;
 
 procedure TFMain.SalvarEdicaoGridView(DataSet: TDataSet);
 var
@@ -666,6 +762,8 @@ begin
   AtivarPainel(PanelFavoritos);
   CardPanel1.ActiveCard := Card3;
   PageControl1.Visible := True;
+  Card3.Visible := True;
+  CarregarFavoritos;
 end;
 
 procedure TFMain.PanelGruposClick(Sender: TObject);
