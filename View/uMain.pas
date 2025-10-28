@@ -86,6 +86,18 @@ type
     Panel8: TPanel;
     Panel9: TPanel;
     Label6: TLabel;
+    CodigoEmpresa: TEdit;
+    Label7: TLabel;
+    NomeDaEmpresa: TEdit;
+    Label8: TLabel;
+    MaskEdit1: TMaskEdit;
+    Label9: TLabel;
+    Edit5: TEdit;
+    Label10: TLabel;
+    MaskEdit2: TMaskEdit;
+    Label11: TLabel;
+    Edit6: TEdit;
+    Label12: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

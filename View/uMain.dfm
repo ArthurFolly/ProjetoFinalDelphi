@@ -1297,6 +1297,8 @@ object FMain: TFMain
       OnClick = PanelContatosClick
       OnMouseEnter = PanelContatosMouseEnter
       OnMouseLeave = PanelContatosMouseLeave
+      ExplicitLeft = 4
+      ExplicitTop = 85
       object ImageContato: TImage
         Left = 0
         Top = 0
@@ -4584,11 +4586,10 @@ object FMain: TFMain
               TabOrder = 0
               ExplicitLeft = -1
               object Panel9: TPanel
-                Left = 16
+                Left = 24
                 Top = 14
                 Width = 841
                 Height = 585
-                Caption = 'Panel9'
                 TabOrder = 0
                 object Label6: TLabel
                   Left = 1
@@ -4596,7 +4597,7 @@ object FMain: TFMain
                   Width = 839
                   Height = 32
                   Align = alTop
-                  Caption = 'Empresa'
+                  Caption = 'Cadastro De Empresa'
                   Color = clSilver
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clWindowText
@@ -4606,7 +4607,97 @@ object FMain: TFMain
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 90
+                  ExplicitWidth = 227
+                end
+                object Label7: TLabel
+                  Left = 32
+                  Top = 69
+                  Width = 39
+                  Height = 15
+                  Caption = 'Codigo'
+                end
+                object Label8: TLabel
+                  Left = 32
+                  Top = 126
+                  Width = 97
+                  Height = 15
+                  Caption = 'Nome d'#225' Empresa'
+                end
+                object Label9: TLabel
+                  Left = 320
+                  Top = 69
+                  Width = 27
+                  Height = 15
+                  Caption = 'CNPJ'
+                end
+                object Label10: TLabel
+                  Left = 31
+                  Top = 183
+                  Width = 49
+                  Height = 15
+                  Caption = 'Endere'#231'o'
+                end
+                object Label11: TLabel
+                  Left = 320
+                  Top = 126
+                  Width = 45
+                  Height = 15
+                  Caption = 'Telefone'
+                end
+                object Label12: TLabel
+                  Left = 320
+                  Top = 183
+                  Width = 34
+                  Height = 15
+                  Caption = 'E-mail'
+                end
+                object CodigoEmpresa: TEdit
+                  Left = 32
+                  Top = 90
+                  Width = 209
+                  Height = 23
+                  TabOrder = 0
+                end
+                object NomeDaEmpresa: TEdit
+                  Left = 32
+                  Top = 147
+                  Width = 209
+                  Height = 23
+                  TabOrder = 1
+                end
+                object MaskEdit1: TMaskEdit
+                  Left = 320
+                  Top = 90
+                  Width = 97
+                  Height = 23
+                  EditMask = '00.000.000/0000-00;0;_'
+                  MaxLength = 18
+                  TabOrder = 2
+                  Text = ''
+                end
+                object Edit5: TEdit
+                  Left = 31
+                  Top = 204
+                  Width = 209
+                  Height = 23
+                  TabOrder = 3
+                end
+                object MaskEdit2: TMaskEdit
+                  Left = 320
+                  Top = 147
+                  Width = 95
+                  Height = 23
+                  EditMask = '!\(99\)00000-0000;1;_'
+                  MaxLength = 14
+                  TabOrder = 4
+                  Text = '(  )     -    '
+                end
+                object Edit6: TEdit
+                  Left = 320
+                  Top = 204
+                  Width = 145
+                  Height = 23
+                  TabOrder = 5
                 end
               end
             end
