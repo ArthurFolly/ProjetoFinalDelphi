@@ -3,91 +3,70 @@ unit FavoritosController;
 interface
 
 uses
-  FavoritosModel, FavoritosRepository, TContatosModel,
-  System.Generics.Collections, SysUtils, FireDAC.Comp.Client, ConexaoBanco;
+  System.SysUtils, FireDAC.Comp.Client, Datasnap.DBClient, ConexaoBanco;
 
 type
   TFavoritosController = class
   private
-    FRepository: TFavoritosRepository;
     FUsuarioId: Integer;
   public
     constructor Create(AUsuarioId: Integer);
-    destructor Destroy; override;
-    function Adicionar(ATipoEntidade: string; AIdEntidade: Integer; out Mensagem: string): Boolean;
+    function Adicionar(AIdEntidade: Integer; out Mensagem: string): Boolean;
     function Remover(AIdFavorito: Integer; out Mensagem: string): Boolean;
-    function JaEstaFavoritado(ATipoEntidade: string; AIdEntidade: Integer): Boolean;
-    function CarregarFavoritosComoContatos: TObjectList<Contatos>;
-    function ObterIdFavorito(ATipoEntidade: string; AIdEntidade: Integer): Integer;
+    function CarregarFavoritos(DataSet: TClientDataSet): Boolean;
   end;
 
 implementation
 
 constructor TFavoritosController.Create(AUsuarioId: Integer);
 begin
-  inherited Create;
   FUsuarioId := AUsuarioId;
-  FRepository := TFavoritosRepository.Create;
 end;
 
-destructor TFavoritosController.Destroy;
-begin
-  FRepository.Free;
-  inherited;
-end;
-
-// ADICIONA FAVORITO
-function TFavoritosController.Adicionar(ATipoEntidade: string; AIdEntidade: Integer; out Mensagem: string): Boolean;
+function TFavoritosController.Adicionar(AIdEntidade: Integer; out Mensagem: string): Boolean;
 var
-  Favorito: TFavorito;
+  Query: TFDQuery;
 begin
-  Mensagem := '';
   Result := False;
-  if JaEstaFavoritado(ATipoEntidade, AIdEntidade) then
-  begin
-    Mensagem := 'Este contato já está favoritado!';
-    Exit(False);
-  end;
-  Favorito := TFavorito.Create;
+  Query := TFDQuery.Create(nil);
   try
-    Favorito.setIdUsuario(FUsuarioId);
-    Favorito.setTipoEntidade(ATipoEntidade);
-    Favorito.setIdEntidade(AIdEntidade);
-    Favorito.setCriadoEm(Now);
-    Favorito.setAtivo(True);
-    if FRepository.Adicionar(Favorito) then
-    begin
-      Mensagem := 'Adicionado aos favoritos!';
-      Result := True;
-    end
+    Query.Connection := DataModule1.FDConnection1;
+    Query.SQL.Text :=
+      'INSERT INTO "Favoritos" (id_usuario, tipo_entidade, id_entidade, criado_em, ativo) ' +
+      'VALUES (:id_usuario, ''contato'', :id_entidade, NOW(), TRUE) ' +
+      'ON CONFLICT (id_usuario, tipo_entidade, id_entidade) DO NOTHING';
+
+    Query.ParamByName('id_usuario').AsInteger := FUsuarioId;
+    Query.ParamByName('id_entidade').AsInteger := AIdEntidade;
+
+    Query.ExecSQL;
+
+    Result := Query.RowsAffected > 0;
+    if Result then
+      Mensagem := 'Adicionado aos favoritos!'
     else
-      Mensagem := 'Erro ao adicionar favorito.';
+      Mensagem := 'Já está nos favoritos.';
   finally
-    Favorito.Free;
+    Query.Free;
   end;
 end;
 
-// REMOVE FAVORITO (SEM BUSCARPORID)
 function TFavoritosController.Remover(AIdFavorito: Integer; out Mensagem: string): Boolean;
 var
   Query: TFDQuery;
 begin
-  Mensagem := '';
   Result := False;
-
   Query := TFDQuery.Create(nil);
   try
     Query.Connection := DataModule1.FDConnection1;
-    Query.SQL.Text := 'UPDATE "Favoritos" SET ativo = 0 WHERE id = :id AND id_usuario = :id_usuario';
+    Query.SQL.Text :=
+      'UPDATE "Favoritos" SET ativo = FALSE WHERE id = :id AND id_usuario = :id_usuario';
     Query.ParamByName('id').AsInteger := AIdFavorito;
     Query.ParamByName('id_usuario').AsInteger := FUsuarioId;
     Query.ExecSQL;
-
-    if Query.RowsAffected > 0 then
-    begin
-      Mensagem := 'Removido dos favoritos!';
-      Result := True;
-    end
+    Result := Query.RowsAffected > 0;
+    if Result then
+      Mensagem := 'Removido dos favoritos!'
     else
       Mensagem := 'Favorito não encontrado.';
   finally
@@ -95,58 +74,55 @@ begin
   end;
 end;
 
-// VERIFICA SE JÁ É FAVORITO
-function TFavoritosController.JaEstaFavoritado(ATipoEntidade: string; AIdEntidade: Integer): Boolean;
-begin
-  Result := FRepository.JaEstaFavoritado(FUsuarioId, ATipoEntidade, AIdEntidade);
-end;
-
-// CARREGA FAVORITOS COMO CONTATOS (SEM ContatosController!)
-function TFavoritosController.CarregarFavoritosComoContatos: TObjectList<Contatos>;
+function TFavoritosController.CarregarFavoritos(DataSet: TClientDataSet): Boolean;
 var
-  ListaFavoritos: TObjectList<TFavorito>;
-  Favorito: TFavorito;
-  Contato: Contatos;
   Query: TFDQuery;
 begin
-  Result := TObjectList<Contatos>.Create(True);
-  ListaFavoritos := FRepository.ListarPorUsuario(FUsuarioId);
+  Result := False;
+  if not Assigned(DataSet) then Exit;
 
-  Query := TFDQuery.Create(nil);
+  DataSet.DisableControls;
   try
-    Query.Connection := DataModule1.FDConnection1;
+    DataSet.EmptyDataSet;
+    Query := TFDQuery.Create(nil);
+    try
+      Query.Connection := DataModule1.FDConnection1;
+      Query.SQL.Text :=
+        'SELECT ' +
+        '  f.id AS id_favorito, ' +
+        '  c.id_contato, c.nome, c.telefone, c.email, c.empresa, c.endereco ' +
+        'FROM "Favoritos" f ' +
+        'JOIN "Contato" c ON f.id_entidade = c.id_contato ' +  // <--- CORRIGIDO!
+        'WHERE f.id_usuario = :id_usuario ' +
+        '  AND f.tipo_entidade = ''contato'' ' +
+        '  AND f.ativo = TRUE ' +
+        '  AND c.ativo = TRUE ' +
+        'ORDER BY c.nome';
 
-    for Favorito in ListaFavoritos do
-    begin
-      if (Favorito.getTipoEntidade <> 'contato') or (not Favorito.getAtivo) then
-        Continue;
-
-      Query.SQL.Text := 'SELECT * FROM "Contatos" WHERE id = :id';
-      Query.ParamByName('id').AsInteger := Favorito.getIdEntidade;
+      Query.ParamByName('id_usuario').AsInteger := FUsuarioId;
       Query.Open;
 
-      if not Query.Eof then
+      while not Query.Eof do
       begin
-        Contato := Contatos.Create;
-        Contato.Id := Query.FieldByName('id').AsInteger;
-        Contato.Nome := Query.FieldByName('nome').AsString;
-        Contato.Telefone := Query.FieldByName('telefone').AsString;
-        // ADICIONE OUTROS CAMPOS AQUI
-        Result.Add(Contato);
+        DataSet.Append;
+        DataSet.FieldByName('ID_FAVORITO').AsInteger := Query.FieldByName('id_favorito').AsInteger;
+        DataSet.FieldByName('ID').AsInteger := Query.FieldByName('id_contato').AsInteger;  // <--- CORRIGIDO!
+        DataSet.FieldByName('NOME').AsString := Query.FieldByName('nome').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('telefone').AsString;
+        DataSet.FieldByName('EMAIL').AsString := Query.FieldByName('email').AsString;
+        DataSet.FieldByName('EMPRESA').AsString := Query.FieldByName('empresa').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('endereco').AsString;
+        DataSet.Post;
+        Query.Next;
       end;
 
-      Query.Close;
+      Result := True;
+    finally
+      Query.Free;
     end;
   finally
-    Query.Free;
-    ListaFavoritos.Free;
+    DataSet.EnableControls;
   end;
-end;
-
-// OBTÉM ID DO FAVORITO
-function TFavoritosController.ObterIdFavorito(ATipoEntidade: string; AIdEntidade: Integer): Integer;
-begin
-  Result := FRepository.ObterIdFavorito(FUsuarioId, ATipoEntidade, AIdEntidade);
 end;
 
 end.

@@ -35,8 +35,8 @@ type
     Card1: TCard;
     Card2: TCard;
     Card3: TCard;
-    Card4: TCard;
     Card5: TCard;
+    Card4: TCard;
     Card6: TCard;
     Card7: TCard;
     PageControl: TPageControl;
@@ -78,8 +78,14 @@ type
     SQLQuery1: TSQLQuery;
     DBGrid2: TDBGrid;
     SpdAdicionarFavorito: TSpeedButton;
-    SpeedButton2: TSpeedButton;
+    SpdRemoverFavorito: TSpeedButton;
     DBGridFavoritos: TDBGrid;
+    ComboBoxContatos: TComboBox;
+    PageControl2: TPageControl;
+    TabSheet2: TTabSheet;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    Label6: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -113,6 +119,8 @@ type
     procedure SpdListarClick(Sender: TObject);
     procedure DBGrid2DblClick(Sender: TObject);
     procedure SpdExcluirClick(Sender: TObject);
+    procedure SpdAdicionarFavoritoClick(Sender: TObject);
+    procedure SpdRemoverFavoritoClick(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -139,6 +147,7 @@ private
   procedure CarregarFavoritos;
   procedure SalvarEdicaoFavorito(DataSet: TDataSet);
   procedure ConfirmarExclusaoFavorito(DataSet: TDataSet);
+  procedure CarregarContatosNoComboBox;
 
 
   end;
@@ -169,6 +178,7 @@ begin
   ConfigurarDBGrid;
   ConfigurarDBGridFavoritos;
   CarregarContatosDB;
+  CarregarFavoritos;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -266,64 +276,62 @@ procedure TFMain.ConfigurarDBGridFavoritos;
 begin
   DataSourceFavoritos.DataSet := ClientDataSetFavoritos;
   DBGridFavoritos.DataSource := DataSourceFavoritos;
-
   ClientDataSetFavoritos.Close;
   ClientDataSetFavoritos.FieldDefs.Clear;
 
-  // CAMPOS (igual ao contatos)
+  // CAMPOS OBRIGATÓRIOS
   ClientDataSetFavoritos.FieldDefs.Add('ID_FAVORITO', ftInteger);
+  ClientDataSetFavoritos.FieldDefs.Add('ID', ftInteger);           // ESSA LINHA!
   ClientDataSetFavoritos.FieldDefs.Add('NOME', ftString, 100);
   ClientDataSetFavoritos.FieldDefs.Add('TELEFONE', ftString, 20);
+  ClientDataSetFavoritos.FieldDefs.Add('EMAIL', ftString, 100);
   ClientDataSetFavoritos.FieldDefs.Add('EMPRESA', ftString, 100);
+  ClientDataSetFavoritos.FieldDefs.Add('ENDERECO', ftString, 200);
 
   ClientDataSetFavoritos.CreateDataSet;
   ClientDataSetFavoritos.Open;
 
   DBGridFavoritos.Columns.Clear;
 
-  // COLUNA ID_FAVORITO
   with DBGridFavoritos.Columns.Add do
   begin
     FieldName := 'ID_FAVORITO';
-    Title.Caption := 'ID';
-    Width := 200;
+    Title.Caption := 'ID Fav';
+    Width := 60;
   end;
 
-  // COLUNA NOME
+  with DBGridFavoritos.Columns.Add do
+  begin
+    FieldName := 'ID';
+    Title.Caption := 'ID Contato';
+    Width := 70;
+    Visible := False; // opcional
+  end;
+
   with DBGridFavoritos.Columns.Add do
   begin
     FieldName := 'NOME';
-    Title.Caption := 'NOME';
-    Width := 200;
+    Title.Caption := 'Nome';
+    Width := 180;
   end;
 
-  // COLUNA TELEFONE
   with DBGridFavoritos.Columns.Add do
   begin
     FieldName := 'TELEFONE';
-    Title.Caption := 'TELEFONE';
-    Width := 200;
+    Title.Caption := 'Telefone';
+    Width := 120;
   end;
 
-  // COLUNA EMPRESA
   with DBGridFavoritos.Columns.Add do
   begin
     FieldName := 'EMPRESA';
-    Title.Caption := 'EMPRESA';
-    Width := 200;
+    Title.Caption := 'Empresa';
+    Width := 150;
   end;
 
-  // OPÇÕES IGUAIS AO CONTATOS
-  DBGridFavoritos.ReadOnly := False;
-  DBGridFavoritos.Options := [dgTitles, dgEditing, dgColumnResize];
-
-  // EVENTOS (igual ao contatos)
-  ClientDataSetFavoritos.AfterPost := SalvarEdicaoFavorito;
-  ClientDataSetFavoritos.AfterDelete := ConfirmarExclusaoFavorito;
-
-  DBGridFavoritos.Visible := True;
+  DBGridFavoritos.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
+  DBGridFavoritos.ReadOnly := True; // favoritos não editáveis
 end;
-
 
 procedure TFMain.ConfirmarExclusaoFavorito(DataSet: TDataSet);
 begin
@@ -361,15 +369,36 @@ begin
   AtualizarDBGrid;
 end;
 
+procedure TFMain.CarregarContatosNoComboBox;
+var
+  Lista: TObjectList<Contatos>;
+  Contato: Contatos;
+begin
+  ComboBoxContatos.Clear;
+
+  Lista := ContatosController.ListarContatos;
+  try
+    for Contato in Lista do
+    begin
+      // PULA SE JÁ É FAVORITO
+      if ClientDataSetFavoritos.Locate('ID', Contato.Id, []) then
+        Continue;
+
+      ComboBoxContatos.Items.AddObject(
+        Format('%s - %s (%s)', [Contato.Nome, Contato.Telefone, Contato.Empresa]),
+        TObject(Contato.Id)
+      );
+    end;
+  finally
+    Lista.Free;
+  end;
+end;
+
 procedure TFMain.CarregarFavoritos;
 begin
-  ClientDataSetFavoritos.EmptyDataSet;
+  // DEIXA O CONTROLLER FAZER TUDO
   FavoritosController.CarregarFavoritos(ClientDataSetFavoritos);
-
-  if not ClientDataSetFavoritos.IsEmpty then
-    ClientDataSetFavoritos.First;
-
-  DBGridFavoritos.Refresh;
+  DBGridFavoritos.Refresh;  // só atualiza o visual
 end;
 
 procedure TFMain.AtualizarDBGrid;
@@ -477,6 +506,30 @@ begin
   end;
 end;
 
+procedure TFMain.SpdAdicionarFavoritoClick(Sender: TObject);
+var
+  IdContato: Integer;
+  Msg: string;
+begin
+  if ComboBoxContatos.ItemIndex = -1 then
+  begin
+    ShowMessage('Selecione um contato no ComboBox!');
+    Exit;
+  end;
+
+  IdContato := Integer(ComboBoxContatos.Items.Objects[ComboBoxContatos.ItemIndex]);
+
+  if FavoritosController.Adicionar(IdContato, Msg) then
+  begin
+    ShowMessage(Msg);
+    CarregarFavoritos;
+    CarregarContatosNoComboBox;  // ← ATUALIZA COMBOBOX
+    ComboBoxContatos.ItemIndex := -1; // limpa seleção
+  end
+  else
+    ShowMessage(Msg);
+end;
+
 procedure TFMain.SpdRemoverClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -486,6 +539,30 @@ begin
   SpdEditarContatosGrid.Caption := 'Editar';
 end;
 
+procedure TFMain.SpdRemoverFavoritoClick(Sender: TObject);
+var
+  IdFavorito: Integer;
+  Msg: string;
+begin
+  if ClientDataSetFavoritos.IsEmpty then
+  begin
+    ShowMessage('Nenhum favorito selecionado.');
+    Exit;
+  end;
+
+  IdFavorito := ClientDataSetFavoritos.FieldByName('ID_FAVORITO').AsInteger;
+
+  if MessageDlg('Remover dos favoritos?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if FavoritosController.Remover(IdFavorito, Msg) then
+    begin
+      ClientDataSetFavoritos.Delete;
+      ShowMessage(Msg);
+    end
+    else
+      ShowMessage(Msg);
+  end;
+end;
 procedure TFMain.SpdEditarClick(Sender: TObject);
 begin
   if Editando and (ContatoAtual <> nil) then
@@ -764,6 +841,7 @@ begin
   PageControl1.Visible := True;
   Card3.Visible := True;
   CarregarFavoritos;
+  CarregarContatosNoComboBox;
 end;
 
 procedure TFMain.PanelGruposClick(Sender: TObject);

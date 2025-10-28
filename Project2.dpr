@@ -15,7 +15,10 @@ uses
   ContatosRepository in 'Repository\ContatosRepository.pas',
   FavoritosRepository in 'Repository\FavoritosRepository.pas',
   FavoritosController in 'Controller\FavoritosController.pas',
-  FavoritosModel in 'Model\FavoritosModel.pas';
+  FavoritosModel in 'Model\FavoritosModel.pas',
+  EmpresaRepository in 'Repository\EmpresaRepository.pas',
+  EmpresaModel in 'Model\EmpresaModel.pas',
+  EmpresaController in 'Controller\EmpresaController.pas';
 
 {$R *.res}
 

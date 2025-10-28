@@ -341,7 +341,6 @@ object FMain: TFMain
       OnClick = PanelFavoritosClick
       OnMouseEnter = PanelFavoritosMouseEnter
       OnMouseLeave = PanelFavoritosMouseLeave
-      ExplicitLeft = 0
       object ImageFavoritos: TImage
         Left = 0
         Top = 0
@@ -1823,7 +1822,7 @@ object FMain: TFMain
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card3
+      ActiveCard = Card5
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -1856,7 +1855,7 @@ object FMain: TFMain
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = Principal
+          ActivePage = Cadastro
           Align = alClient
           TabOrder = 0
           TabWidth = 100
@@ -3708,6 +3707,7 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitLeft = -1
               object Panel6: TPanel
                 Left = 24
                 Top = 13
@@ -4129,8 +4129,9 @@ object FMain: TFMain
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = SpdAdicionarFavoritoClick
                 end
-                object SpeedButton2: TSpeedButton
+                object SpdRemoverFavorito: TSpeedButton
                   Left = 656
                   Top = 472
                   Width = 121
@@ -4524,13 +4525,22 @@ object FMain: TFMain
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = SpdRemoverFavoritoClick
+                end
+                object ComboBoxContatos: TComboBox
+                  Left = 616
+                  Top = 52
+                  Width = 145
+                  Height = 23
+                  TabOrder = 0
+                  Text = 'ComboBoxContatos'
                 end
               end
             end
             object DBGridFavoritos: TDBGrid
               Left = 40
               Top = 52
-              Width = 777
+              Width = 553
               Height = 390
               TabOrder = 1
               TitleFont.Charset = DEFAULT_CHARSET
@@ -4542,23 +4552,76 @@ object FMain: TFMain
           end
         end
       end
-      object Card4: TCard
-        Left = 0
-        Top = 0
-        Width = 882
-        Height = 681
-        Caption = 'Card4'
-        CardIndex = 3
-        TabOrder = 3
-      end
       object Card5: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
         Caption = 'Card5'
+        CardIndex = 3
+        TabOrder = 3
+        ExplicitLeft = 32
+        ExplicitTop = 232
+        object PageControl2: TPageControl
+          Left = 0
+          Top = 0
+          Width = 882
+          Height = 681
+          ActivePage = TabSheet2
+          Align = alClient
+          TabOrder = 0
+          object TabSheet2: TTabSheet
+            Caption = 'TabSheet2'
+            object Panel8: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Caption = 'Panel8'
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+              ExplicitLeft = -1
+              object Panel9: TPanel
+                Left = 16
+                Top = 14
+                Width = 841
+                Height = 585
+                Caption = 'Panel9'
+                TabOrder = 0
+                object Label6: TLabel
+                  Left = 1
+                  Top = 1
+                  Width = 839
+                  Height = 32
+                  Align = alTop
+                  Caption = 'Empresa'
+                  Color = clSilver
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -24
+                  Font.Name = 'Segoe UI'
+                  Font.Style = []
+                  ParentColor = False
+                  ParentFont = False
+                  Transparent = False
+                  ExplicitWidth = 90
+                end
+              end
+            end
+          end
+        end
+      end
+      object Card4: TCard
+        Left = 0
+        Top = 0
+        Width = 882
+        Height = 681
+        Caption = 'Card4'
         CardIndex = 4
         TabOrder = 4
+        ExplicitLeft = 3
       end
       object Card6: TCard
         Left = 0

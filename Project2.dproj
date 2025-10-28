@@ -152,6 +152,9 @@
         <DCCReference Include="Repository\FavoritosRepository.pas"/>
         <DCCReference Include="Controller\FavoritosController.pas"/>
         <DCCReference Include="Model\FavoritosModel.pas"/>
+        <DCCReference Include="Repository\EmpresaRepository.pas"/>
+        <DCCReference Include="Model\EmpresaModel.pas"/>
+        <DCCReference Include="Controller\EmpresaController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
