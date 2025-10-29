@@ -8,7 +8,8 @@ uses
   Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
   Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
   ContatosRepository, System.Generics.Collections, Data.FMTBcd, Data.SqlExpr, Datasnap.DBClient,
-   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco,FavoritosModel,FavoritosController,FavoritosRepository;
+  FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco,FavoritosModel,FavoritosController,FavoritosRepository,
+  EmpresaModel, EmpresaController;
 
 type
   TFMain = class(TForm)
@@ -98,6 +99,19 @@ type
     Label11: TLabel;
     Edit6: TEdit;
     Label12: TLabel;
+    Bevel4: TBevel;
+    Bevel5: TBevel;
+    Bevel6: TBevel;
+    SpeedButton2: TSpeedButton;
+    TabSheet3: TTabSheet;
+    Panel10: TPanel;
+    Label13: TLabel;
+    Label14: TLabel;
+    DBGrid1: TDBGrid;
+    SpdEditarEmpresa: TSpeedButton;
+    SpdRestaurarEmpresa: TSpeedButton;
+    SpdExcluirEmpresa: TSpeedButton;
+    SpdAdicionarEmpresa: TSpeedButton;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -133,6 +147,7 @@ type
     procedure SpdExcluirClick(Sender: TObject);
     procedure SpdAdicionarFavoritoClick(Sender: TObject);
     procedure SpdRemoverFavoritoClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -144,6 +159,15 @@ private
   DataSourceFavoritos: TDataSource;
   LoadingDataset: Boolean;
 
+  // === EMPRESAS ===
+  EditandoEmpresa: Boolean;
+  EmpresaAtual: Empresa;
+  EmpresasController: TEmpresaController;
+  ClientDataSetEmpresas: TClientDataSet;
+  DataSourceEmpresas: TDataSource;
+  LoadingDatasetEmpresas: Boolean;
+
+  // === CONTATOS ===
   procedure AtivarPainel(Panel: TPanel);
   procedure ResetarPainelAnterior;
   procedure AtualizarDBGrid;
@@ -161,6 +185,20 @@ private
   procedure ConfirmarExclusaoFavorito(DataSet: TDataSet);
   procedure CarregarContatosNoComboBox;
 
+  // === EMPRESAS ===
+  procedure ConfigurarDBGridEmpresas;
+  procedure CarregarEmpresas;
+  procedure AtualizarDBGridEmpresas;
+  procedure SalvarEdicaoEmpresaGrid(DataSet: TDataSet);
+  procedure ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
+  procedure LimparFormularioEmpresa;
+  function ValidarFormularioEmpresa: Boolean;
+  function EmpresaSelecionada: Empresa;
+  procedure PreencherFormularioEmpresa(Empresa: Empresa);
+  procedure SpdAdicionarEmpresaClick(Sender: TObject);
+  procedure SpdEditarEmpresaClick(Sender: TObject);
+  procedure SpdExcluirEmpresaClick(Sender: TObject);
+  procedure DBGrid1DblClick(Sender: TObject);
 
   end;
 var
@@ -191,15 +229,29 @@ begin
   ConfigurarDBGridFavoritos;
   CarregarContatosDB;
   CarregarFavoritos;
+
+  EmpresasController := TEmpresaController.Create;
+  ClientDataSetEmpresas := TClientDataSet.Create(Self);
+  DataSourceEmpresas := TDataSource.Create(Self);
+  EditandoEmpresa := False;
+  EmpresaAtual := nil;
+
+  DBGrid1.DataSource := DataSourceEmpresas;
+  ConfigurarDBGridEmpresas;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
 begin
   ContatosLista.Free;
   ContatosController.Free;
+
   FavoritosController.Free;
   ClientDataSetFavoritos.Free;
   DataSourceFavoritos.Free;
+
+  EmpresasController.Free;
+  ClientDataSetEmpresas.Free;
+  DataSourceEmpresas.Free;
 end;
 
 procedure TFMain.ConfigurarDBGrid;
@@ -284,6 +336,89 @@ begin
 
 end;
 
+procedure TFMain.ConfigurarDBGridEmpresas;
+begin
+  // === DATASET ===
+  DataSourceEmpresas.DataSet := ClientDataSetEmpresas;
+  DBGrid1.DataSource := DataSourceEmpresas;
+
+  ClientDataSetEmpresas.Close;
+  ClientDataSetEmpresas.FieldDefs.Clear;
+
+  ClientDataSetEmpresas.FieldDefs.Add('ID', ftInteger);
+  ClientDataSetEmpresas.FieldDefs.Add('CNPJ', ftString, 18);
+  ClientDataSetEmpresas.FieldDefs.Add('NOME', ftString, 100);
+  ClientDataSetEmpresas.FieldDefs.Add('TELEFONE', ftString, 20);
+  ClientDataSetEmpresas.FieldDefs.Add('EMAIL', ftString, 100);
+  ClientDataSetEmpresas.FieldDefs.Add('ENDERECO', ftString, 200);
+  ClientDataSetEmpresas.FieldDefs.Add('UF', ftString, 2);
+
+  ClientDataSetEmpresas.CreateDataSet;
+  ClientDataSetEmpresas.Open;
+
+  // === COLUNAS ===
+  DBGrid1.Columns.Clear;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'ID';
+    Title.Caption := 'ID';
+    Width := 50;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'CNPJ';
+    Title.Caption := 'CNPJ';
+    Width := 130;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'NOME';
+    Title.Caption := 'NOME';
+    Width := 180;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'TELEFONE';
+    Title.Caption := 'TELEFONE';
+    Width := 110;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'EMAIL';
+    Title.Caption := 'EMAIL';
+    Width := 150;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'ENDERECO';
+    Title.Caption := 'ENDEREÇO';
+    Width := 200;
+  end;
+
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName := 'UF';
+    Title.Caption := 'UF';
+    Width := 50;
+  end;
+
+
+  DBGrid1.ReadOnly := False;
+  DBGrid1.Options := [dgEditing, dgColumnResize, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect];
+
+
+  ClientDataSetEmpresas.AfterPost := SalvarEdicaoEmpresaGrid;
+  ClientDataSetEmpresas.AfterDelete := ConfirmarExclusaoEmpresaGrid;
+
+  DBGrid1.Visible := True;
+end;
+
 procedure TFMain.ConfigurarDBGridFavoritos;
 begin
   DataSourceFavoritos.DataSet := ClientDataSetFavoritos;
@@ -343,6 +478,11 @@ begin
 
   DBGridFavoritos.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
   DBGridFavoritos.ReadOnly := True; // favoritos não editáveis
+end;
+
+procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
+begin
+
 end;
 
 procedure TFMain.ConfirmarExclusaoFavorito(DataSet: TDataSet);
@@ -406,6 +546,11 @@ begin
   end;
 end;
 
+procedure TFMain.CarregarEmpresas;
+begin
+
+end;
+
 procedure TFMain.CarregarFavoritos;
 begin
   // DEIXA O CONTROLLER FAZER TUDO
@@ -446,6 +591,16 @@ begin
 end;
 
 
+
+procedure TFMain.AtualizarDBGridEmpresas;
+begin
+
+end;
+
+procedure TFMain.SalvarEdicaoEmpresaGrid(DataSet: TDataSet);
+begin
+
+end;
 
 procedure TFMain.SalvarEdicaoFavorito(DataSet: TDataSet);
 begin
@@ -518,6 +673,11 @@ begin
   end;
 end;
 
+procedure TFMain.SpdAdicionarEmpresaClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.SpdAdicionarFavoritoClick(Sender: TObject);
 var
   IdContato: Integer;
@@ -575,6 +735,8 @@ begin
       ShowMessage(Msg);
   end;
 end;
+
+
 procedure TFMain.SpdEditarClick(Sender: TObject);
 begin
   if Editando and (ContatoAtual <> nil) then
@@ -643,6 +805,11 @@ begin
     ShowMessage('Selecione um contato no grid!');
 end;
 
+procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
@@ -667,6 +834,11 @@ begin
   end;
 end;
 
+procedure TFMain.SpdExcluirEmpresaClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.SpdListarClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -675,9 +847,19 @@ begin
 end;
 
 
+procedure TFMain.DBGrid1DblClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.DBGrid2DblClick(Sender: TObject);
 begin
   SpdEditarContatosGridClick(Sender);
+end;
+
+function TFMain.EmpresaSelecionada: Empresa;
+begin
+
 end;
 
 function TFMain.ValidarFormulario: Boolean;
@@ -699,6 +881,11 @@ begin
   end;
 
   Result := True;
+end;
+
+function TFMain.ValidarFormularioEmpresa: Boolean;
+begin
+
 end;
 
 function TFMain.ContatoSelecionado: Contatos;
@@ -740,6 +927,11 @@ begin
   end;
 end;
 
+procedure TFMain.PreencherFormularioEmpresa(Empresa: Empresa);
+begin
+
+end;
+
 procedure TFMain.LimparFormulario;
 begin
   Edit1.Text := '';
@@ -749,6 +941,11 @@ begin
   Endereco.Text := '';
   Edit4.Text := '';
 //  Edit1.SetFocus;
+end;
+
+procedure TFMain.LimparFormularioEmpresa;
+begin
+
 end;
 
 procedure TFMain.AtivarPainel(Panel: TPanel);
@@ -869,6 +1066,10 @@ end;
 procedure TFMain.PanelEmpresaClick(Sender: TObject);
 begin
   AtivarPainel(PanelEmpresa);
+  CardPanel1.ActiveCard := Card8;
+  PageControl2.Visible := True;
+  Card5.Visible := True;
+  CarregarEmpresas;
 end;
 
 procedure TFMain.PanelImportExportClick(Sender: TObject);
