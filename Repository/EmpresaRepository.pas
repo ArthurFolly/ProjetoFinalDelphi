@@ -14,13 +14,13 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function Adicionar(AEmpresa: Empresa): Boolean;
-    function Atualizar(AEmpresa: Empresa): Boolean; // ← soft delete aqui!
-    function BuscarPorId(ACodigo: Integer): Empresa;
-    function BuscarPorCnpj(ACnpj: string): Empresa;
-    function ListarTodas: TObjectList<Empresa>;
-    function ListarPorNome(Nome: string): TObjectList<Empresa>;
-    function ListarPorUF(UF: string): TObjectList<Empresa>;
+    function Adicionar(AEmpresa: TEmpresa): Boolean;
+    function Atualizar(AEmpresa: TEmpresa): Boolean; // ← soft delete aqui!
+    function BuscarPorId(ACodigo: Integer): TEmpresa;
+    function BuscarPorCnpj(ACnpj: string): TEmpresa;
+    function ListarTodas: TObjectList<TEmpresa>;
+    function ListarPorNome(Nome: string): TObjectList<TEmpresa>;
+    function ListarPorUF(UF: string): TObjectList<TEmpresa>;
   end;
 
 implementation
@@ -41,7 +41,7 @@ begin
 end;
 
 // === ADICIONAR ===
-function TEmpresaRepository.Adicionar(AEmpresa: Empresa): Boolean;
+function TEmpresaRepository.Adicionar(AEmpresa: TEmpresa): Boolean;
 begin
   Result := False;
   Self.query.SQL.Clear;
@@ -67,7 +67,7 @@ begin
 end;
 
 // === ATUALIZAR (inclui soft delete) ===
-function TEmpresaRepository.Atualizar(AEmpresa: Empresa): Boolean;
+function TEmpresaRepository.Atualizar(AEmpresa: TEmpresa): Boolean;
 begin
   Result := False;
   Self.query.SQL.Clear;
@@ -96,7 +96,7 @@ begin
 end;
 
 // === BUSCAR POR ID (apenas ativas) ===
-function TEmpresaRepository.BuscarPorId(ACodigo: Integer): Empresa;
+function TEmpresaRepository.BuscarPorId(ACodigo: Integer): TEmpresa;
 begin
   Result := nil;
   Self.query.SQL.Clear;
@@ -106,7 +106,7 @@ begin
 
   if not Self.query.Eof then
   begin
-    Result := Empresa.Create;
+    Result := TEmpresa.Create;
     Result.setCodigo(Self.query.FieldByName('codigo').AsInteger);
     Result.setCNPJ(Self.query.FieldByName('cnpj').AsString);
     Result.setNome(Self.query.FieldByName('nome_empresa').AsString);
@@ -120,7 +120,7 @@ begin
 end;
 
 // === BUSCAR POR CNPJ (ativa) ===
-function TEmpresaRepository.BuscarPorCnpj(ACnpj: string): Empresa;
+function TEmpresaRepository.BuscarPorCnpj(ACnpj: string): TEmpresa;
 begin
   Result := nil;
   Self.query.SQL.Clear;
@@ -130,7 +130,7 @@ begin
 
   if not Self.query.Eof then
   begin
-    Result := Empresa.Create;
+    Result := TEmpresa.Create;
     Result.setCodigo(Self.query.FieldByName('codigo').AsInteger);
     Result.setCNPJ(Self.query.FieldByName('cnpj').AsString);
     Result.setNome(Self.query.FieldByName('nome_empresa').AsString);
@@ -144,18 +144,18 @@ begin
 end;
 
 // === LISTAR TODAS (ativas) ===
-function TEmpresaRepository.ListarTodas: TObjectList<Empresa>;
+function TEmpresaRepository.ListarTodas: TObjectList<TEmpresa>;
 var
-  emp: Empresa;
+  emp: TEmpresa;
 begin
-  Result := TObjectList<Empresa>.Create(True);
+  Result := TObjectList<TEmpresa>.Create(True);
   Self.query.SQL.Clear;
   Self.query.SQL.Text := 'SELECT * FROM empresa WHERE ativo = TRUE ORDER BY nome_empresa';
   Self.query.Open;
 
   while not Self.query.Eof do
   begin
-    emp := Empresa.Create;
+    emp := TEmpresa.Create;
     emp.setCodigo(Self.query.FieldByName('codigo').AsInteger);
     emp.setCNPJ(Self.query.FieldByName('cnpj').AsString);
     emp.setNome(Self.query.FieldByName('nome_empresa').AsString);
@@ -171,11 +171,11 @@ begin
 end;
 
 // === LISTAR POR NOME (ativas) ===
-function TEmpresaRepository.ListarPorNome(Nome: string): TObjectList<Empresa>;
+function TEmpresaRepository.ListarPorNome(Nome: string): TObjectList<TEmpresa>;
 var
-  emp: Empresa;
+  emp: TEmpresa;
 begin
-  Result := TObjectList<Empresa>.Create(True);
+  Result := TObjectList<TEmpresa>.Create(True);
   Self.query.SQL.Clear;
   Self.query.SQL.Text :=
     'SELECT * FROM empresa ' +
@@ -186,7 +186,7 @@ begin
 
   while not Self.query.Eof do
   begin
-    emp := Empresa.Create;
+    emp := TEmpresa.Create;
     emp.setCodigo(Self.query.FieldByName('codigo').AsInteger);
     emp.setCNPJ(Self.query.FieldByName('cnpj').AsString);
     emp.setNome(Self.query.FieldByName('nome_empresa').AsString);
@@ -202,11 +202,11 @@ begin
 end;
 
 // === LISTAR POR UF (ativas) ===
-function TEmpresaRepository.ListarPorUF(UF: string): TObjectList<Empresa>;
+function TEmpresaRepository.ListarPorUF(UF: string): TObjectList<TEmpresa>;
 var
-  emp: Empresa;
+  emp: TEmpresa;
 begin
-  Result := TObjectList<Empresa>.Create(True);
+  Result := TObjectList<TEmpresa>.Create(True);
   Self.query.SQL.Clear;
   Self.query.SQL.Text :=
     'SELECT * FROM empresa ' +
@@ -217,7 +217,7 @@ begin
 
   while not Self.query.Eof do
   begin
-    emp := Empresa.Create;
+    emp := TEmpresa.Create;
     emp.setCodigo(Self.query.FieldByName('codigo').AsInteger);
     emp.setCNPJ(Self.query.FieldByName('cnpj').AsString);
     emp.setNome(Self.query.FieldByName('nome_empresa').AsString);

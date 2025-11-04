@@ -3,7 +3,7 @@ unit EmpresaModel;
 interface
 
 type
-  Empresa = class
+  TEmpresa = class
   public
     Codigo   : Integer;
     Nome     : string;
@@ -33,72 +33,72 @@ implementation
 
 { Empresa }
 
-function Empresa.getCodigo: Integer;
+function TEmpresa.getCodigo: Integer;
 begin
   Result := Self.Codigo;
 end;
 
-function Empresa.getNome: string;
+function TEmpresa.getNome: string;
 begin
   Result := Self.Nome;
 end;
 
-function Empresa.getUF: string;
+function TEmpresa.getUF: string;
 begin
   Result := Self.UF;
 end;
 
-function Empresa.getCNPJ: string;
+function TEmpresa.getCNPJ: string;
 begin
   Result := Self.CNPJ;
 end;
 
-function Empresa.getTelefone: string;
+function TEmpresa.getTelefone: string;
 begin
   Result := Self.Telefone;
 end;
 
-function Empresa.getEndereco: string;
+function TEmpresa.getEndereco: string;
 begin
   Result := Self.Endereco;
 end;
 
-function Empresa.getEmail: string;
+function TEmpresa.getEmail: string;
 begin
   Result := Self.Email;
 end;
 
-procedure Empresa.setCodigo(aCodigo: Integer);
+procedure TEmpresa.setCodigo(aCodigo: Integer);
 begin
   Self.Codigo := aCodigo;
 end;
 
-procedure Empresa.setNome(aNome: string);
+procedure TEmpresa.setNome(aNome: string);
 begin
   Self.Nome := aNome;
 end;
 
-procedure Empresa.setUF(aUF: string);
+procedure TEmpresa.setUF(aUF: string);
 begin
   Self.UF := aUF;
 end;
 
-procedure Empresa.setCNPJ(aCNPJ: string);
+procedure TEmpresa.setCNPJ(aCNPJ: string);
 begin
   Self.CNPJ := aCNPJ;
 end;
 
-procedure Empresa.setTelefone(aTelefone: string);
+procedure TEmpresa.setTelefone(aTelefone: string);
 begin
   Self.Telefone := aTelefone;
 end;
 
-procedure Empresa.setEndereco(aEndereco: string);
+procedure TEmpresa.setEndereco(aEndereco: string);
 begin
   Self.Endereco := aEndereco;
 end;
 
-procedure Empresa.setEmail(aEmail: string);
+procedure TEmpresa.setEmail(aEmail: string);
 begin
   Self.Email := aEmail;
 end;

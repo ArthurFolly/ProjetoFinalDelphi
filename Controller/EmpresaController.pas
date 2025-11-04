@@ -12,11 +12,11 @@ type
   public
     constructor Create(AUsuarioId: Integer = 0);
 
-    function Adicionar(var AEmpresa: Empresa; out Mensagem: string): Boolean;
-    function Atualizar(var AEmpresa: Empresa; out Mensagem: string): Boolean;
+    function Adicionar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
+    function Atualizar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
     function Remover(ACodigo: Integer; out Mensagem: string): Boolean;
     function Restaurar(ACodigo: Integer; out Mensagem: string): Boolean;
-    function BuscarPorId(ACodigo: Integer; out AEmpresa: Empresa): Boolean;
+    function BuscarPorId(ACodigo: Integer; out AEmpresa: TEmpresa): Boolean;
 
     function CarregarEmpresas(DataSet: TClientDataSet): Boolean;        // Ativas
     function CarregarInativas(DataSet: TClientDataSet): Boolean;        // Excluídas
@@ -35,7 +35,7 @@ end;
 
 
 // === ADICIONAR ===
-function TEmpresaController.Adicionar(var AEmpresa: Empresa; out Mensagem: string): Boolean;
+function TEmpresaController.Adicionar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
 var
   Query: TFDQuery;
 begin
@@ -75,7 +75,7 @@ begin
 end;
 
 // === ATUALIZAR ===
-function TEmpresaController.Atualizar(var AEmpresa: Empresa; out Mensagem: string): Boolean;
+function TEmpresaController.Atualizar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
 var
   Query: TFDQuery;
 begin
@@ -165,7 +165,7 @@ begin
 end;
 
 // === BUSCAR POR ID (para edição) ===
-function TEmpresaController.BuscarPorId(ACodigo: Integer; out AEmpresa: Empresa): Boolean;
+function TEmpresaController.BuscarPorId(ACodigo: Integer; out AEmpresa: TEmpresa): Boolean;
 var
   Query: TFDQuery;
 begin
@@ -181,7 +181,7 @@ begin
 
     if not Query.Eof then
     begin
-      AEmpresa := Empresa.Create;
+      AEmpresa := TEmpresa.Create;
       AEmpresa.setCodigo(Query.FieldByName('codigo').AsInteger);
       AEmpresa.setCNPJ(Query.FieldByName('cnpj').AsString);
       AEmpresa.setNome(Query.FieldByName('nome_empresa').AsString);

@@ -18,7 +18,10 @@ uses
   FavoritosModel in 'Model\FavoritosModel.pas',
   EmpresaRepository in 'Repository\EmpresaRepository.pas',
   EmpresaModel in 'Model\EmpresaModel.pas',
-  EmpresaController in 'Controller\EmpresaController.pas';
+  EmpresaController in 'Controller\EmpresaController.pas',
+  MensagensRepository in 'Repository\MensagensRepository.pas',
+  MensagensController in 'Controller\MensagensController.pas',
+  MensagensModel in 'Model\MensagensModel.pas';
 
 {$R *.res}
 

@@ -68,7 +68,6 @@ type
     Panel6: TPanel;
     Label5: TLabel;
     Bevel3: TBevel;
-    SpeedButton4: TSpeedButton;
     Panel7: TPanel;
     SpdEditarContatosGrid: TSpeedButton;
     SpdExcluir: TSpeedButton;
@@ -102,7 +101,7 @@ type
     Bevel4: TBevel;
     Bevel5: TBevel;
     Bevel6: TBevel;
-    SpeedButton2: TSpeedButton;
+    SpdListarEmpresa: TSpeedButton;
     TabSheet3: TTabSheet;
     Panel10: TPanel;
     Label13: TLabel;
@@ -147,7 +146,7 @@ type
     procedure SpdExcluirClick(Sender: TObject);
     procedure SpdAdicionarFavoritoClick(Sender: TObject);
     procedure SpdRemoverFavoritoClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+
 
 private
   Editando: Boolean;
@@ -161,7 +160,7 @@ private
 
   // === EMPRESAS ===
   EditandoEmpresa: Boolean;
-  EmpresaAtual: Empresa;
+  EmpresaAtual: TEmpresa;
   EmpresasController: TEmpresaController;
   ClientDataSetEmpresas: TClientDataSet;
   DataSourceEmpresas: TDataSource;
@@ -193,8 +192,8 @@ private
   procedure ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
   procedure LimparFormularioEmpresa;
   function ValidarFormularioEmpresa: Boolean;
-  function EmpresaSelecionada: Empresa;
-  procedure PreencherFormularioEmpresa(Empresa: Empresa);
+  function EmpresaSelecionada: TEmpresa;
+  procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
   procedure SpdAdicionarEmpresaClick(Sender: TObject);
   procedure SpdEditarEmpresaClick(Sender: TObject);
   procedure SpdExcluirEmpresaClick(Sender: TObject);
@@ -230,14 +229,16 @@ begin
   CarregarContatosDB;
   CarregarFavoritos;
 
-  EmpresasController := TEmpresaController.Create;
+  EmpresasController := TEmpresaController.Create(1);
   ClientDataSetEmpresas := TClientDataSet.Create(Self);
   DataSourceEmpresas := TDataSource.Create(Self);
   EditandoEmpresa := False;
   EmpresaAtual := nil;
+  LoadingDatasetEmpresas := False;
 
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
+  CarregarEmpresas;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -481,13 +482,37 @@ begin
 end;
 
 procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
+var
+  IdEmpresa: Integer;
+  Msg: string;
 begin
+  if ClientDataSetEmpresas.IsEmpty then Exit;
 
+  IdEmpresa := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+
+  if MessageDlg('Deseja realmente excluir esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if Assigned(EmpresasController) then
+    begin
+      if EmpresasController.Remover(IdEmpresa, Msg) then
+      begin
+        ShowMessage('Empresa excluída com sucesso!');
+        CarregarEmpresas;
+      end
+      else
+        ShowMessage('Erro ao excluir empresa: ' + Msg);
+    end
+    else
+      DataSet.Cancel;
+  end
+  else
+    DataSet.Cancel;
 end;
 
 procedure TFMain.ConfirmarExclusaoFavorito(DataSet: TDataSet);
 begin
-
+  // A exclusão de favoritos é tratada no evento SpdRemoverFavoritoClick
+  ShowMessage('Use o botão "Remover Favorito" para excluir favoritos.');
 end;
 
 procedure TFMain.ConfirmarExclusaoGrid(DataSet: TDataSet);
@@ -548,7 +573,17 @@ end;
 
 procedure TFMain.CarregarEmpresas;
 begin
-
+  if Assigned(EmpresasController) then
+  begin
+    if EmpresasController.CarregarEmpresas(ClientDataSetEmpresas) then
+    begin
+      DBGrid1.Refresh;
+      if not ClientDataSetEmpresas.IsEmpty then
+        ClientDataSetEmpresas.First;
+    end
+    else
+      ShowMessage('Erro ao carregar empresas!');
+  end;
 end;
 
 procedure TFMain.CarregarFavoritos;
@@ -594,17 +629,45 @@ end;
 
 procedure TFMain.AtualizarDBGridEmpresas;
 begin
-
+  CarregarEmpresas;
 end;
 
 procedure TFMain.SalvarEdicaoEmpresaGrid(DataSet: TDataSet);
+var
+  Empresa: TEmpresa;
+  Msg: string;
 begin
+  if LoadingDatasetEmpresas then Exit;
 
+  try
+    if Assigned(EmpresasController) then
+    begin
+      Empresa := EmpresaSelecionada;
+      if Empresa <> nil then
+      begin
+        Empresa.setCNPJ(DataSet.FieldByName('CNPJ').AsString);
+        Empresa.setNome(DataSet.FieldByName('NOME').AsString);
+        Empresa.setTelefone(DataSet.FieldByName('TELEFONE').AsString);
+        Empresa.setEmail(DataSet.FieldByName('EMAIL').AsString);
+        Empresa.setEndereco(DataSet.FieldByName('ENDERECO').AsString);
+        Empresa.setUF(DataSet.FieldByName('UF').AsString);
+
+        if EmpresasController.Atualizar(Empresa, Msg) then
+          ShowMessage('Empresa atualizada com sucesso!')
+        else
+          ShowMessage('Erro ao atualizar empresa: ' + Msg);
+      end;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao salvar edição: ' + E.Message);
+  end;
 end;
 
 procedure TFMain.SalvarEdicaoFavorito(DataSet: TDataSet);
 begin
-
+  // Favoritos não são editáveis diretamente no grid
+  ShowMessage('Favoritos não podem ser editados diretamente. Use os botões Adicionar/Remover.');
 end;
 
 procedure TFMain.SalvarEdicaoGridView(DataSet: TDataSet);
@@ -674,8 +737,36 @@ begin
 end;
 
 procedure TFMain.SpdAdicionarEmpresaClick(Sender: TObject);
+var
+  NovaEmpresa: TEmpresa;
+  Msg: string;
 begin
+  if not ValidarFormularioEmpresa then Exit;
 
+  NovaEmpresa := TEmpresa.Create;
+  try
+    NovaEmpresa.setCNPJ(CodigoEmpresa.Text);
+    NovaEmpresa.setNome(NomeDaEmpresa.Text);
+    NovaEmpresa.setTelefone(MaskEdit1.Text);
+    NovaEmpresa.setEmail(Edit5.Text);
+    NovaEmpresa.setEndereco(Edit6.Text);
+    NovaEmpresa.setUF(MaskEdit2.Text);
+
+    if EmpresasController.Adicionar(NovaEmpresa, Msg) then
+    begin
+      ShowMessage('Empresa adicionada com sucesso!');
+      LimparFormularioEmpresa;
+      CarregarEmpresas;
+    end
+    else
+      ShowMessage('Erro ao adicionar empresa: ' + Msg);
+  except
+    on E: Exception do
+    begin
+      NovaEmpresa.Free;
+      ShowMessage('Erro: ' + E.Message);
+    end;
+  end;
 end;
 
 procedure TFMain.SpdAdicionarFavoritoClick(Sender: TObject);
@@ -806,8 +897,46 @@ begin
 end;
 
 procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
+var
+  Empresa: TEmpresa;
+  Msg: string;
 begin
+  if EditandoEmpresa and (EmpresaAtual <> nil) then
+  begin
+    // Salvar alterações
+    if not ValidarFormularioEmpresa then Exit;
 
+    EmpresaAtual.setCNPJ(CodigoEmpresa.Text);
+    EmpresaAtual.setNome(NomeDaEmpresa.Text);
+    EmpresaAtual.setTelefone(MaskEdit1.Text);
+    EmpresaAtual.setEmail(Edit5.Text);
+    EmpresaAtual.setEndereco(Edit6.Text);
+    EmpresaAtual.setUF(MaskEdit2.Text);
+
+    if EmpresasController.Atualizar(EmpresaAtual, Msg) then
+    begin
+      ShowMessage('Empresa atualizada com sucesso!');
+      LimparFormularioEmpresa;
+      EditandoEmpresa := False;
+      EmpresaAtual := nil;
+      CarregarEmpresas;
+    end
+    else
+      ShowMessage('Erro ao atualizar empresa: ' + Msg);
+  end
+  else
+  begin
+    // Carregar empresa para edição
+    Empresa := EmpresaSelecionada;
+    if Empresa <> nil then
+    begin
+      EmpresaAtual := Empresa;
+      PreencherFormularioEmpresa(EmpresaAtual);
+      EditandoEmpresa := True;
+    end
+    else
+      ShowMessage('Selecione uma empresa no grid primeiro!');
+  end;
 end;
 
 procedure TFMain.SpdExcluirClick(Sender: TObject);
@@ -835,8 +964,30 @@ begin
 end;
 
 procedure TFMain.SpdExcluirEmpresaClick(Sender: TObject);
+var
+  Empresa: TEmpresa;
+  Msg: string;
 begin
+  Empresa := EmpresaSelecionada;
+  if Empresa = nil then
+  begin
+    ShowMessage('Nenhuma empresa selecionada para excluir!');
+    Exit;
+  end;
 
+  if MessageDlg('Deseja realmente excluir esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if EmpresasController.Remover(Empresa.getCodigo, Msg) then
+    begin
+      ShowMessage('Empresa excluída com sucesso!');
+      CarregarEmpresas;
+      LimparFormularioEmpresa;
+      EditandoEmpresa := False;
+      EmpresaAtual := nil;
+    end
+    else
+      ShowMessage('Erro ao excluir empresa: ' + Msg);
+  end;
 end;
 
 procedure TFMain.SpdListarClick(Sender: TObject);
@@ -849,7 +1000,7 @@ end;
 
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
 begin
-
+  SpdEditarEmpresaClick(Sender);
 end;
 
 procedure TFMain.DBGrid2DblClick(Sender: TObject);
@@ -857,9 +1008,26 @@ begin
   SpdEditarContatosGridClick(Sender);
 end;
 
-function TFMain.EmpresaSelecionada: Empresa;
+function TFMain.EmpresaSelecionada: TEmpresa;
+var
+  IdSelecionado: Integer;
 begin
+  Result := nil;
 
+  if not ClientDataSetEmpresas.IsEmpty then
+  begin
+    try
+      IdSelecionado := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+
+      if EmpresasController.BuscarPorId(IdSelecionado, Result) then
+        // Empresa encontrada e carregada em Result
+      else
+        ShowMessage('Empresa não encontrada!');
+    except
+      on E: Exception do
+        ShowMessage('Erro ao selecionar empresa: ' + E.Message);
+    end;
+  end;
 end;
 
 function TFMain.ValidarFormulario: Boolean;
@@ -885,7 +1053,51 @@ end;
 
 function TFMain.ValidarFormularioEmpresa: Boolean;
 begin
+  Result := False;
 
+  if Trim(CodigoEmpresa.Text) = '' then
+  begin
+    ShowMessage('Digite o CNPJ!');
+    CodigoEmpresa.SetFocus;
+    Exit;
+  end;
+
+  if Trim(NomeDaEmpresa.Text) = '' then
+  begin
+    ShowMessage('Digite o nome da empresa!');
+    NomeDaEmpresa.SetFocus;
+    Exit;
+  end;
+
+  if Trim(MaskEdit1.Text) = '' then
+  begin
+    ShowMessage('Digite o telefone!');
+    MaskEdit1.SetFocus;
+    Exit;
+  end;
+
+  if Trim(Edit5.Text) = '' then
+  begin
+    ShowMessage('Digite o email!');
+    Edit5.SetFocus;
+    Exit;
+  end;
+
+  if Trim(Edit6.Text) = '' then
+  begin
+    ShowMessage('Digite o endereço!');
+    Edit6.SetFocus;
+    Exit;
+  end;
+
+  if Trim(MaskEdit2.Text) = '' then
+  begin
+    ShowMessage('Digite a UF!');
+    MaskEdit2.SetFocus;
+    Exit;
+  end;
+
+  Result := True;
 end;
 
 function TFMain.ContatoSelecionado: Contatos;
@@ -927,9 +1139,17 @@ begin
   end;
 end;
 
-procedure TFMain.PreencherFormularioEmpresa(Empresa: Empresa);
+procedure TFMain.PreencherFormularioEmpresa(TEmpresa: TEmpresa);
 begin
-
+  if Empresa <> nil then
+  begin
+    CodigoEmpresa.Text := TEmpresa.getCNPJ;
+    NomeDaEmpresa.Text := TEmpresa.getNome;
+    MaskEdit1.Text := TEmpresa.getTelefone;
+    Edit5.Text := TEmpresa.getEmail;
+    Edit6.Text := TEmpresa.getEndereco;
+    MaskEdit2.Text := TEmpresa.getUF;
+  end;
 end;
 
 procedure TFMain.LimparFormulario;
@@ -945,7 +1165,13 @@ end;
 
 procedure TFMain.LimparFormularioEmpresa;
 begin
-
+  CodigoEmpresa.Text := '';
+  NomeDaEmpresa.Text := '';
+  MaskEdit1.Text := '';
+  Edit5.Text := '';
+  Edit6.Text := '';
+  MaskEdit2.Text := '';
+  CodigoEmpresa.SetFocus;
 end;
 
 procedure TFMain.AtivarPainel(Panel: TPanel);

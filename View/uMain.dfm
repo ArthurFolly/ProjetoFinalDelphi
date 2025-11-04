@@ -31,6 +31,7 @@ object FMain: TFMain
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
+    ExplicitHeight = 673
     object PanelEmpresa: TPanel
       AlignWithMargins = True
       Left = 3
@@ -1360,6 +1361,8 @@ object FMain: TFMain
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 880
+    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1828,10 +1831,12 @@ object FMain: TFMain
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card5
+      ActiveCard = Card3
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
+      ExplicitWidth = 880
+      ExplicitHeight = 673
       object Card1: TCard
         Left = 0
         Top = 0
@@ -1850,18 +1855,12 @@ object FMain: TFMain
         CardIndex = 1
         CardVisible = False
         TabOrder = 1
-        object SpeedButton4: TSpeedButton
-          Left = 120
-          Top = 16
-          Width = 23
-          Height = 22
-        end
         object PageControl: TPageControl
           Left = 0
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = Principal
+          ActivePage = Cadastro
           Align = alClient
           TabOrder = 0
           TabWidth = 100
@@ -4565,6 +4564,8 @@ object FMain: TFMain
         Caption = 'Card5'
         CardIndex = 3
         TabOrder = 3
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object PageControl2: TPageControl
           Left = 0
           Top = 0
@@ -4573,6 +4574,8 @@ object FMain: TFMain
           ActivePage = TabSheet2
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object TabSheet2: TTabSheet
             Caption = 'Cadastro'
             object Label13: TLabel
@@ -4592,6 +4595,8 @@ object FMain: TFMain
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel9: TPanel
                 Left = 32
                 Top = 38
@@ -4670,7 +4675,7 @@ object FMain: TFMain
                   Width = 840
                   Height = 25
                 end
-                object SpeedButton2: TSpeedButton
+                object SpdListarEmpresa: TSpeedButton
                   Left = 552
                   Top = 423
                   Width = 105
