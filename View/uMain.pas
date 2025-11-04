@@ -18,15 +18,13 @@ type
     Logo: TImage;
     PanelContatos: TPanel;
     ImageContato: TImage;
-    PanelEmpresa: TPanel;
-    PanelConfiguracao: TPanel;
-    PanelMensagens: TPanel;
-    PanelGrupos: TPanel;
-    PanelFavoritos: TPanel;
     PanelImportExport: TPanel;
+    PanelEmpresa: TPanel;
+    PanelMensagens: TPanel;
+    PanelFavoritos: TPanel;
+    PanelConfiguracao: TPanel;
     ContactHub: TPanel;
     ImageFavoritos: TImage;
-    ImageGrupos: TImage;
     ImageMensagens: TImage;
     ImageEmpresa: TImage;
     ImageImpExp: TImage;
@@ -118,25 +116,23 @@ type
     procedure LogoClick(Sender: TObject);
     procedure PanelContatosClick(Sender: TObject);
     procedure PanelFavoritosClick(Sender: TObject);
-    procedure PanelGruposClick(Sender: TObject);
     procedure PanelMensagensClick(Sender: TObject);
     procedure PanelEmpresaClick(Sender: TObject);
     procedure PanelImportExportClick(Sender: TObject);
+    procedure PanelConfigClick(Sender: TObject);
     procedure PanelConfiguracaoClick(Sender: TObject);
     procedure PanelContatosMouseEnter(Sender: TObject);
     procedure PanelContatosMouseLeave(Sender: TObject);
     procedure PanelFavoritosMouseEnter(Sender: TObject);
     procedure PanelFavoritosMouseLeave(Sender: TObject);
-    procedure PanelGruposMouseEnter(Sender: TObject);
-    procedure PanelGruposMouseLeave(Sender: TObject);
     procedure PanelMensagensMouseEnter(Sender: TObject);
     procedure PanelMensagensMouseLeave(Sender: TObject);
     procedure PanelEmpresaMouseEnter(Sender: TObject);
     procedure PanelEmpresaMouseLeave(Sender: TObject);
     procedure PanelImportExportMouseEnter(Sender: TObject);
     procedure PanelImportExportMouseLeave(Sender: TObject);
-    procedure PanelConfiguracaoMouseEnter(Sender: TObject);
-    procedure PanelConfiguracaoMouseLeave(Sender: TObject);
+    procedure PanelConfigMouseEnter(Sender: TObject);
+    procedure PanelConfigMouseLeave(Sender: TObject);
     procedure SpdAdicionarClick(Sender: TObject);
     procedure SpdRemoverClick(Sender: TObject);
     procedure SpdEditarClick(Sender: TObject);
@@ -146,7 +142,14 @@ type
     procedure SpdExcluirClick(Sender: TObject);
     procedure SpdAdicionarFavoritoClick(Sender: TObject);
     procedure SpdRemoverFavoritoClick(Sender: TObject);
+<<<<<<< HEAD
 
+=======
+    procedure SpdAdicionarEmpresaClick(Sender: TObject);
+    procedure SpdEditarEmpresaClick(Sender: TObject);
+    procedure SpdExcluirEmpresaClick(Sender: TObject);
+    procedure SpdRestaurarEmpresaClick(Sender: TObject);
+>>>>>>> f2a73bb (Terminando crud de empresa)
 
 private
   Editando: Boolean;
@@ -157,6 +160,7 @@ private
   ClientDataSetFavoritos: TClientDataSet;
   DataSourceFavoritos: TDataSource;
   LoadingDataset: Boolean;
+
 
   // === EMPRESAS ===
   EditandoEmpresa: Boolean;
@@ -194,9 +198,12 @@ private
   function ValidarFormularioEmpresa: Boolean;
   function EmpresaSelecionada: TEmpresa;
   procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
+<<<<<<< HEAD
   procedure SpdAdicionarEmpresaClick(Sender: TObject);
   procedure SpdEditarEmpresaClick(Sender: TObject);
   procedure SpdExcluirEmpresaClick(Sender: TObject);
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
   procedure DBGrid1DblClick(Sender: TObject);
 
   end;
@@ -238,7 +245,13 @@ begin
 
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
+<<<<<<< HEAD
   CarregarEmpresas;
+=======
+
+  Card5.visible := false;
+  PageControl2.Visible := false;
+>>>>>>> f2a73bb (Terminando crud de empresa)
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -416,7 +429,7 @@ begin
 
   ClientDataSetEmpresas.AfterPost := SalvarEdicaoEmpresaGrid;
   ClientDataSetEmpresas.AfterDelete := ConfirmarExclusaoEmpresaGrid;
-
+  DBGrid1.Options := DBGrid1.Options + [dgEditing, dgAlwaysShowEditor];
   DBGrid1.Visible := True;
 end;
 
@@ -484,7 +497,11 @@ end;
 procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
 var
   IdEmpresa: Integer;
+<<<<<<< HEAD
   Msg: string;
+=======
+  Mensagem: string;
+>>>>>>> f2a73bb (Terminando crud de empresa)
 begin
   if ClientDataSetEmpresas.IsEmpty then Exit;
 
@@ -492,6 +509,7 @@ begin
 
   if MessageDlg('Deseja realmente excluir esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
+<<<<<<< HEAD
     if Assigned(EmpresasController) then
     begin
       if EmpresasController.Remover(IdEmpresa, Msg) then
@@ -504,6 +522,18 @@ begin
     end
     else
       DataSet.Cancel;
+=======
+    if EmpresasController.Remover(IdEmpresa, Mensagem) then
+    begin
+      ShowMessage(Mensagem);
+      CarregarEmpresas;
+    end
+    else
+    begin
+      ShowMessage(Mensagem);
+      DataSet.Cancel;
+    end;
+>>>>>>> f2a73bb (Terminando crud de empresa)
   end
   else
     DataSet.Cancel;
@@ -573,6 +603,7 @@ end;
 
 procedure TFMain.CarregarEmpresas;
 begin
+<<<<<<< HEAD
   if Assigned(EmpresasController) then
   begin
     if EmpresasController.CarregarEmpresas(ClientDataSetEmpresas) then
@@ -584,6 +615,22 @@ begin
     else
       ShowMessage('Erro ao carregar empresas!');
   end;
+=======
+  if LoadingDatasetEmpresas then Exit;
+  LoadingDatasetEmpresas := True;
+  try
+    ClientDataSetEmpresas.DisableControls;
+    try
+      ClientDataSetEmpresas.EmptyDataSet;
+      EmpresasController.CarregarEmpresas(ClientDataSetEmpresas);
+    finally
+      ClientDataSetEmpresas.EnableControls;
+    end;
+  finally
+    LoadingDatasetEmpresas := False;
+  end;
+  DBGrid1.Refresh;
+>>>>>>> f2a73bb (Terminando crud de empresa)
 end;
 
 procedure TFMain.CarregarFavoritos;
@@ -626,15 +673,28 @@ begin
 end;
 
 
-
 procedure TFMain.AtualizarDBGridEmpresas;
 begin
+<<<<<<< HEAD
   CarregarEmpresas;
+=======
+  LoadingDatasetEmpresas := True;
+  ClientDataSetEmpresas.DisableControls;
+  try
+    ClientDataSetEmpresas.EmptyDataSet;
+    EmpresasController.CarregarEmpresas(ClientDataSetEmpresas);
+  finally
+    ClientDataSetEmpresas.EnableControls;
+    LoadingDatasetEmpresas := False;
+  end;
+  DBGrid1.Refresh;
+>>>>>>> f2a73bb (Terminando crud de empresa)
 end;
 
 procedure TFMain.SalvarEdicaoEmpresaGrid(DataSet: TDataSet);
 var
   Empresa: TEmpresa;
+<<<<<<< HEAD
   Msg: string;
 begin
   if LoadingDatasetEmpresas then Exit;
@@ -661,6 +721,34 @@ begin
   except
     on E: Exception do
       ShowMessage('Erro ao salvar edição: ' + E.Message);
+=======
+  Mensagem: string;
+begin
+  if LoadingDatasetEmpresas then Exit;
+  Empresa := EmpresaSelecionada;
+  if Empresa = nil then Exit;
+
+  try
+    Empresa.setCNPJ(DataSet.FieldByName('CNPJ').AsString);
+    Empresa.setNome(DataSet.FieldByName('NOME').AsString);
+    Empresa.setTelefone(DataSet.FieldByName('TELEFONE').AsString);
+    Empresa.setEmail(DataSet.FieldByName('EMAIL').AsString);
+    Empresa.setEndereco(DataSet.FieldByName('ENDERECO').AsString);
+    Empresa.setUF(DataSet.FieldByName('UF').AsString);
+
+    if not EmpresasController.Atualizar(Empresa, Mensagem) then
+    begin
+      Application.MessageBox(PChar('Erro: ' + Mensagem), 'Erro', MB_OK + MB_ICONERROR);
+      DataSet.Cancel;
+    end;
+    // SEM NENHUMA MENSAGEM DE SUCESSO → EVITA LOOP
+  except
+    on E: Exception do
+    begin
+      Application.MessageBox(PChar('Erro ao salvar: ' + E.Message), 'Erro', MB_OK + MB_ICONERROR);
+      DataSet.Cancel;
+    end;
+>>>>>>> f2a73bb (Terminando crud de empresa)
   end;
 end;
 
@@ -739,9 +827,16 @@ end;
 procedure TFMain.SpdAdicionarEmpresaClick(Sender: TObject);
 var
   NovaEmpresa: TEmpresa;
+<<<<<<< HEAD
   Msg: string;
 begin
   if not ValidarFormularioEmpresa then Exit;
+=======
+  Mensagem: string;
+begin
+  if not ValidarFormularioEmpresa then
+    Exit;
+>>>>>>> f2a73bb (Terminando crud de empresa)
 
   NovaEmpresa := TEmpresa.Create;
   try
@@ -752,13 +847,20 @@ begin
     NovaEmpresa.setEndereco(Edit6.Text);
     NovaEmpresa.setUF(MaskEdit2.Text);
 
+<<<<<<< HEAD
     if EmpresasController.Adicionar(NovaEmpresa, Msg) then
     begin
       ShowMessage('Empresa adicionada com sucesso!');
+=======
+    if EmpresasController.Adicionar(NovaEmpresa, Mensagem) then
+    begin
+      ShowMessage(Mensagem);
+>>>>>>> f2a73bb (Terminando crud de empresa)
       LimparFormularioEmpresa;
       CarregarEmpresas;
     end
     else
+<<<<<<< HEAD
       ShowMessage('Erro ao adicionar empresa: ' + Msg);
   except
     on E: Exception do
@@ -766,6 +868,11 @@ begin
       NovaEmpresa.Free;
       ShowMessage('Erro: ' + E.Message);
     end;
+=======
+      ShowMessage(Mensagem);
+  finally
+    NovaEmpresa.Free;
+>>>>>>> f2a73bb (Terminando crud de empresa)
   end;
 end;
 
@@ -896,6 +1003,7 @@ begin
     ShowMessage('Selecione um contato no grid!');
 end;
 
+<<<<<<< HEAD
 procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
 var
   Empresa: TEmpresa;
@@ -906,6 +1014,19 @@ begin
     // Salvar alterações
     if not ValidarFormularioEmpresa then Exit;
 
+=======
+
+procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
+var
+  EmpresaTemp: TEmpresa;
+  Mensagem: string;
+begin
+  // === SALVAR EDIÇÃO ===
+  if EditandoEmpresa and (EmpresaAtual <> nil) then
+  begin
+    if not ValidarFormularioEmpresa then Exit;
+
+>>>>>>> f2a73bb (Terminando crud de empresa)
     EmpresaAtual.setCNPJ(CodigoEmpresa.Text);
     EmpresaAtual.setNome(NomeDaEmpresa.Text);
     EmpresaAtual.setTelefone(MaskEdit1.Text);
@@ -913,6 +1034,7 @@ begin
     EmpresaAtual.setEndereco(Edit6.Text);
     EmpresaAtual.setUF(MaskEdit2.Text);
 
+<<<<<<< HEAD
     if EmpresasController.Atualizar(EmpresaAtual, Msg) then
     begin
       ShowMessage('Empresa atualizada com sucesso!');
@@ -933,6 +1055,32 @@ begin
       EmpresaAtual := Empresa;
       PreencherFormularioEmpresa(EmpresaAtual);
       EditandoEmpresa := True;
+=======
+    if EmpresasController.Atualizar(EmpresaAtual, Mensagem) then
+    begin
+      ShowMessage(Mensagem);
+      LimparFormularioEmpresa;
+      EditandoEmpresa := False;
+      EmpresaAtual := nil;
+      SpdAdicionarEmpresa.Enabled := True;
+      PageControl2.ActivePage := TabSheet3;  // ← VOLTA PRO GRID
+      CarregarEmpresas;
+    end
+    else
+      ShowMessage(Mensagem);
+  end
+  else
+  // === INICIAR EDIÇÃO ===
+  begin
+    EmpresaTemp := EmpresaSelecionada;
+    if EmpresaTemp <> nil then
+    begin
+      EmpresaAtual := EmpresaTemp;
+      PreencherFormularioEmpresa(EmpresaAtual);
+      EditandoEmpresa := True;
+      SpdAdicionarEmpresa.Enabled := False;
+      PageControl2.ActivePage := TabSheet2;  // ← VAI PRO FORMULÁRIO
+>>>>>>> f2a73bb (Terminando crud de empresa)
     end
     else
       ShowMessage('Selecione uma empresa no grid primeiro!');
@@ -965,16 +1113,24 @@ end;
 
 procedure TFMain.SpdExcluirEmpresaClick(Sender: TObject);
 var
+<<<<<<< HEAD
   Empresa: TEmpresa;
   Msg: string;
 begin
   Empresa := EmpresaSelecionada;
   if Empresa = nil then
+=======
+  IdEmpresa: Integer;
+  Mensagem: string;
+begin
+  if ClientDataSetEmpresas.IsEmpty then
+>>>>>>> f2a73bb (Terminando crud de empresa)
   begin
     ShowMessage('Nenhuma empresa selecionada para excluir!');
     Exit;
   end;
 
+<<<<<<< HEAD
   if MessageDlg('Deseja realmente excluir esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     if EmpresasController.Remover(Empresa.getCodigo, Msg) then
@@ -987,6 +1143,44 @@ begin
     end
     else
       ShowMessage('Erro ao excluir empresa: ' + Msg);
+=======
+  IdEmpresa := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+
+  if MessageDlg('Deseja realmente excluir esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if EmpresasController.Remover(IdEmpresa, Mensagem) then
+    begin
+      ShowMessage(Mensagem);
+      CarregarEmpresas;
+    end
+    else
+      ShowMessage(Mensagem);
+  end;
+end;
+
+procedure TFMain.SpdRestaurarEmpresaClick(Sender: TObject);
+var
+  Mensagem: string;
+  IdEmpresa: Integer;
+begin
+  if ClientDataSetEmpresas.IsEmpty then
+  begin
+    ShowMessage('Nenhuma empresa selecionada para restaurar!');
+    Exit;
+  end;
+
+  IdEmpresa := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+
+  if MessageDlg('Deseja realmente restaurar esta empresa?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if EmpresasController.Restaurar(IdEmpresa, Mensagem) then
+    begin
+      ShowMessage(Mensagem);
+      CarregarEmpresas;
+    end
+    else
+      ShowMessage(Mensagem);
+>>>>>>> f2a73bb (Terminando crud de empresa)
   end;
 end;
 
@@ -1018,6 +1212,7 @@ begin
   begin
     try
       IdSelecionado := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+<<<<<<< HEAD
 
       if EmpresasController.BuscarPorId(IdSelecionado, Result) then
         // Empresa encontrada e carregada em Result
@@ -1026,6 +1221,12 @@ begin
     except
       on E: Exception do
         ShowMessage('Erro ao selecionar empresa: ' + E.Message);
+=======
+      EmpresasController.BuscarPorId(IdSelecionado, Result);
+    except
+      on E: Exception do
+        ShowMessage('Erro ao buscar empresa: ' + E.Message);
+>>>>>>> f2a73bb (Terminando crud de empresa)
     end;
   end;
 end;
@@ -1058,42 +1259,60 @@ begin
   if Trim(CodigoEmpresa.Text) = '' then
   begin
     ShowMessage('Digite o CNPJ!');
+<<<<<<< HEAD
     CodigoEmpresa.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
   if Trim(NomeDaEmpresa.Text) = '' then
   begin
     ShowMessage('Digite o nome da empresa!');
+<<<<<<< HEAD
     NomeDaEmpresa.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
   if Trim(MaskEdit1.Text) = '' then
   begin
     ShowMessage('Digite o telefone!');
+<<<<<<< HEAD
     MaskEdit1.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
   if Trim(Edit5.Text) = '' then
   begin
     ShowMessage('Digite o email!');
+<<<<<<< HEAD
     Edit5.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
   if Trim(Edit6.Text) = '' then
   begin
     ShowMessage('Digite o endereço!');
+<<<<<<< HEAD
     Edit6.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
   if Trim(MaskEdit2.Text) = '' then
   begin
     ShowMessage('Digite a UF!');
+<<<<<<< HEAD
     MaskEdit2.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
     Exit;
   end;
 
@@ -1141,7 +1360,11 @@ end;
 
 procedure TFMain.PreencherFormularioEmpresa(TEmpresa: TEmpresa);
 begin
+<<<<<<< HEAD
   if Empresa <> nil then
+=======
+  if TEmpresa <> nil then
+>>>>>>> f2a73bb (Terminando crud de empresa)
   begin
     CodigoEmpresa.Text := TEmpresa.getCNPJ;
     NomeDaEmpresa.Text := TEmpresa.getNome;
@@ -1171,7 +1394,10 @@ begin
   Edit5.Text := '';
   Edit6.Text := '';
   MaskEdit2.Text := '';
+<<<<<<< HEAD
   CodigoEmpresa.SetFocus;
+=======
+>>>>>>> f2a73bb (Terminando crud de empresa)
 end;
 
 procedure TFMain.AtivarPainel(Panel: TPanel);
@@ -1229,8 +1455,7 @@ begin
     PanelFavoritos.Margins.Top := 20;
     PanelFavoritos.Font.Size := 18;
 
-    PanelGrupos.Margins.Top := 20;
-    PanelGrupos.Font.Size := 18;
+
 
     PanelMensagens.Margins.Top := 20;
     PanelMensagens.Font.Size := 19;
@@ -1279,11 +1504,6 @@ begin
   CarregarContatosNoComboBox;
 end;
 
-procedure TFMain.PanelGruposClick(Sender: TObject);
-begin
-  AtivarPainel(PanelGrupos);
-end;
-
 procedure TFMain.PanelMensagensClick(Sender: TObject);
 begin
   AtivarPainel(PanelMensagens);
@@ -1291,16 +1511,27 @@ end;
 
 procedure TFMain.PanelEmpresaClick(Sender: TObject);
 begin
-  AtivarPainel(PanelEmpresa);
+ AtivarPainel(PanelEmpresa);
+  CardPanel1.ActiveCard := Card5;
+  PageControl2.Visible := True;
+  Card5.Visible := True;
+  CarregarEmpresas;
+  PageControl2.ActivePage := TabSheet3;
+  //CarregarContatosNoComboBox;
+end;
+
+procedure TFMain.PanelImportExportClick(Sender: TObject);
+begin
+  AtivarPainel(PanelImportExport);
   CardPanel1.ActiveCard := Card8;
   PageControl2.Visible := True;
   Card5.Visible := True;
   CarregarEmpresas;
 end;
 
-procedure TFMain.PanelImportExportClick(Sender: TObject);
+procedure TFMain.PanelConfigClick(Sender: TObject);
 begin
-  AtivarPainel(PanelImportExport);
+  AtivarPainel(PanelConfiguracao);
 end;
 
 procedure TFMain.PanelConfiguracaoClick(Sender: TObject);
@@ -1349,28 +1580,6 @@ begin
     PanelFavoritos.Color := $00121212;
     PanelFavoritos.Cursor := crDefault;
     ImageFavoritos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\FavoritosRoxa.png');
-  end;
-end;
-
-procedure TFMain.PanelGruposMouseEnter(Sender: TObject);
-begin
-  if PainelPressionado <> PanelGrupos then
-  begin
-    PanelGrupos.BevelOuter := bvRaised;
-    PanelGrupos.Color := $00D6498F;
-    PanelGrupos.Cursor := crHandPoint;
-    ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposPreta.png');
-  end;
-end;
-
-procedure TFMain.PanelGruposMouseLeave(Sender: TObject);
-begin
-  if PainelPressionado <> PanelGrupos then
-  begin
-    PanelGrupos.BevelOuter := bvNone;
-    PanelGrupos.Color := $00121212;
-    PanelGrupos.Cursor := crDefault;
-    ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposRoxa.png');
   end;
 end;
 
@@ -1440,26 +1649,28 @@ begin
   end;
 end;
 
-procedure TFMain.PanelConfiguracaoMouseEnter(Sender: TObject);
+procedure TFMain.PanelConfigMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelConfiguracao then
+  if PainelPressionado <>  PanelConfiguracao then
   begin
-    PanelConfiguracao.BevelOuter := bvRaised;
-    PanelConfiguracao.Color := $00D6498F;
-    PanelConfiguracao.Cursor := crHandPoint;
-    ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
+    PanelImportExport.BevelOuter := bvRaised;
+    PanelImportExport.Color := $00D6498F;
+    PanelImportExport.Cursor := crHandPoint;
+    ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
   end;
 end;
 
-procedure TFMain.PanelConfiguracaoMouseLeave(Sender: TObject);
+procedure TFMain.PanelConfigMouseLeave(Sender: TObject);
 begin
   if PainelPressionado <> PanelConfiguracao then
   begin
-    PanelConfiguracao.BevelOuter := bvNone;
-    PanelConfiguracao.Color := $00121212;
-    PanelConfiguracao.Cursor := crDefault;
-    ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
+    PanelImportExport.BevelOuter := bvNone;
+    PanelImportExport.Color := $00121212;
+    PanelImportExport.Cursor := crDefault;
+    ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
   end;
 end;
+
+
 
 end.
