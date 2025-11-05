@@ -11,16 +11,15 @@ type
     FUsuarioId: Integer;
   public
     constructor Create(AUsuarioId: Integer = 0);
-
     function Adicionar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
     function Atualizar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
     function Remover(ACodigo: Integer; out Mensagem: string): Boolean;
     function Restaurar(ACodigo: Integer; out Mensagem: string): Boolean;
+    function RestaurarTodas(out Mensagem: string): Boolean; // NOVA FUNÇÃO
     function BuscarPorId(ACodigo: Integer; out AEmpresa: TEmpresa): Boolean;
-
-    function CarregarEmpresas(DataSet: TClientDataSet): Boolean;        // Ativas
-    function CarregarInativas(DataSet: TClientDataSet): Boolean;        // Excluídas
-    function CarregarTodas(DataSet: TClientDataSet): Boolean;           // Todas com status
+    function CarregarEmpresas(DataSet: TClientDataSet): Boolean; // Ativas
+    function CarregarInativas(DataSet: TClientDataSet): Boolean; // Excluídas
+    function CarregarTodas(DataSet: TClientDataSet): Boolean; // Todas com status
   end;
 
 implementation
@@ -31,8 +30,6 @@ constructor TEmpresaController.Create(AUsuarioId: Integer);
 begin
   FUsuarioId := AUsuarioId;
 end;
-
-
 
 // === ADICIONAR ===
 function TEmpresaController.Adicionar(var AEmpresa: TEmpresa; out Mensagem: string): Boolean;
@@ -49,16 +46,13 @@ begin
       'VALUES (:cnpj, :nome, :telefone, :endereco, :email, :uf, TRUE) ' +
       'ON CONFLICT (cnpj) DO NOTHING ' +
       'RETURNING codigo';
-
-    Query.ParamByName('cnpj').AsString      := AEmpresa.getCNPJ;
-    Query.ParamByName('nome').AsString      := AEmpresa.getNome;
-    Query.ParamByName('telefone').AsString  := AEmpresa.getTelefone;
-    Query.ParamByName('endereco').AsString  := AEmpresa.getEndereco;
-    Query.ParamByName('email').AsString     := AEmpresa.getEmail;
-    Query.ParamByName('uf').AsString        := AEmpresa.getUF;
-
+    Query.ParamByName('cnpj').AsString := AEmpresa.getCNPJ;
+    Query.ParamByName('nome').AsString := AEmpresa.getNome;
+    Query.ParamByName('telefone').AsString := AEmpresa.getTelefone;
+    Query.ParamByName('endereco').AsString := AEmpresa.getEndereco;
+    Query.ParamByName('email').AsString := AEmpresa.getEmail;
+    Query.ParamByName('uf').AsString := AEmpresa.getUF;
     Query.Open;
-
     if not Query.Eof then
     begin
       AEmpresa.setCodigo(Query.FieldByName('codigo').AsInteger);
@@ -93,17 +87,14 @@ begin
       'email = :email, ' +
       'uf = :uf ' +
       'WHERE codigo = :codigo AND ativo = TRUE';
-
-    Query.ParamByName('codigo').AsInteger    := AEmpresa.getCodigo;
-    Query.ParamByName('cnpj').AsString       := AEmpresa.getCNPJ;
-    Query.ParamByName('nome').AsString       := AEmpresa.getNome;
-    Query.ParamByName('telefone').AsString   := AEmpresa.getTelefone;
-    Query.ParamByName('endereco').AsString   := AEmpresa.getEndereco;
-    Query.ParamByName('email').AsString      := AEmpresa.getEmail;
-    Query.ParamByName('uf').AsString         := AEmpresa.getUF;
-
+    Query.ParamByName('codigo').AsInteger := AEmpresa.getCodigo;
+    Query.ParamByName('cnpj').AsString := AEmpresa.getCNPJ;
+    Query.ParamByName('nome').AsString := AEmpresa.getNome;
+    Query.ParamByName('telefone').AsString := AEmpresa.getTelefone;
+    Query.ParamByName('endereco').AsString := AEmpresa.getEndereco;
+    Query.ParamByName('email').AsString := AEmpresa.getEmail;
+    Query.ParamByName('uf').AsString := AEmpresa.getUF;
     Query.ExecSQL;
-
     Result := Query.RowsAffected > 0;
     if Result then
       Mensagem := 'Empresa atualizada com sucesso!'
@@ -128,7 +119,6 @@ begin
       'UPDATE empresa SET ativo = FALSE WHERE codigo = :codigo AND ativo = TRUE';
     Query.ParamByName('codigo').AsInteger := ACodigo;
     Query.ExecSQL;
-
     Result := Query.RowsAffected > 0;
     if Result then
       Mensagem := 'Empresa removida com sucesso!'
@@ -153,12 +143,51 @@ begin
       'UPDATE empresa SET ativo = TRUE WHERE codigo = :codigo AND ativo = FALSE';
     Query.ParamByName('codigo').AsInteger := ACodigo;
     Query.ExecSQL;
-
     Result := Query.RowsAffected > 0;
     if Result then
       Mensagem := 'Empresa restaurada com sucesso!'
     else
       Mensagem := 'Empresa não encontrada ou já ativa.';
+  finally
+    Query.Free;
+  end;
+end;
+
+// === RESTAURAR TODAS AS EMPRESAS INATIVAS ===
+function TEmpresaController.RestaurarTodas(out Mensagem: string): Boolean;
+var
+  Query: TFDQuery;
+  Total: Integer;
+begin
+  Result := False;
+  Mensagem := '';
+  Total := 0;
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DataModule1.FDConnection1;
+
+    // 1. Busca todos os IDs inativos
+    Query.SQL.Text := 'SELECT codigo FROM empresa WHERE ativo = FALSE';
+    Query.Open;
+
+    // 2. Restaura um por um usando SEU MÉTODO
+    while not Query.Eof do
+    begin
+      if Self.Restaurar(Query.FieldByName('codigo').AsInteger, Mensagem) then
+        Inc(Total);
+      Query.Next;
+    end;
+
+    // 3. Mensagem final
+    if Total > 0 then
+    begin
+      Mensagem := Format('Restauradas %d empresa(s) com sucesso!', [Total]);
+      Result := True;
+    end
+    else
+    begin
+      Mensagem := 'Nenhuma empresa inativa para restaurar.';
+    end;
   finally
     Query.Free;
   end;
@@ -178,7 +207,6 @@ begin
       'SELECT * FROM empresa WHERE codigo = :codigo AND ativo = TRUE';
     Query.ParamByName('codigo').AsInteger := ACodigo;
     Query.Open;
-
     if not Query.Eof then
     begin
       AEmpresa := TEmpresa.Create;
@@ -196,6 +224,8 @@ begin
   end;
 end;
 
+// ===================== CARREGAR DADOS =====================
+
 // === CARREGAR ATIVAS ===
 function TEmpresaController.CarregarEmpresas(DataSet: TClientDataSet): Boolean;
 var
@@ -203,7 +233,6 @@ var
 begin
   Result := False;
   if not Assigned(DataSet) then Exit;
-
   DataSet.DisableControls;
   try
     DataSet.EmptyDataSet;
@@ -212,33 +241,30 @@ begin
       Query.Connection := DataModule1.FDConnection1;
       Query.SQL.Text :=
         'SELECT ' +
-        '  codigo AS ID, ' +
-        '  cnpj AS CNPJ, ' +
-        '  nome_empresa AS NOME, ' +
-        '  telefone AS TELEFONE, ' +
-        '  email AS EMAIL, ' +
-        '  endereco AS ENDERECO, ' +
-        '  uf AS UF ' +
+        ' codigo AS ID, ' +
+        ' cnpj AS CNPJ, ' +
+        ' nome_empresa AS NOME, ' +
+        ' telefone AS TELEFONE, ' +
+        ' email AS EMAIL, ' +
+        ' endereco AS ENDERECO, ' +
+        ' uf AS UF ' +
         'FROM empresa ' +
         'WHERE ativo = TRUE ' +
         'ORDER BY nome_empresa';
-
       Query.Open;
-
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger       := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString      := Query.FieldByName('CNPJ').AsString;
-        DataSet.FieldByName('NOME').AsString      := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('TELEFONE').AsString  := Query.FieldByName('TELEFONE').AsString;
-        DataSet.FieldByName('EMAIL').AsString     := Query.FieldByName('EMAIL').AsString;
-        DataSet.FieldByName('ENDERECO').AsString  := Query.FieldByName('ENDERECO').AsString;
-        DataSet.FieldByName('UF').AsString        := Query.FieldByName('UF').AsString;
+        DataSet.FieldByName('ID').AsInteger := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString := Query.FieldByName('CNPJ').AsString;
+        DataSet.FieldByName('NOME').AsString := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('TELEFONE').AsString;
+        DataSet.FieldByName('EMAIL').AsString := Query.FieldByName('EMAIL').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('ENDERECO').AsString;
+        DataSet.FieldByName('UF').AsString := Query.FieldByName('UF').AsString;
         DataSet.Post;
         Query.Next;
       end;
-
       Result := True;
     finally
       Query.Free;
@@ -255,7 +281,6 @@ var
 begin
   Result := False;
   if not Assigned(DataSet) then Exit;
-
   DataSet.DisableControls;
   try
     DataSet.EmptyDataSet;
@@ -264,33 +289,30 @@ begin
       Query.Connection := DataModule1.FDConnection1;
       Query.SQL.Text :=
         'SELECT ' +
-        '  codigo AS ID, ' +
-        '  cnpj AS CNPJ, ' +
-        '  nome_empresa AS NOME, ' +
-        '  telefone AS TELEFONE, ' +
-        '  email AS EMAIL, ' +
-        '  endereco AS ENDERECO, ' +
-        '  uf AS UF ' +
+        ' codigo AS ID, ' +
+        ' cnpj AS CNPJ, ' +
+        ' nome_empresa AS NOME, ' +
+        ' telefone AS TELEFONE, ' +
+        ' email AS EMAIL, ' +
+        ' endereco AS ENDERECO, ' +
+        ' uf AS UF ' +
         'FROM empresa ' +
         'WHERE ativo = FALSE ' +
         'ORDER BY nome_empresa';
-
       Query.Open;
-
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger       := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString      := Query.FieldByName('CNPJ').AsString;
-        DataSet.FieldByName('NOME').AsString      := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('TELEFONE').AsString  := Query.FieldByName('TELEFONE').AsString;
-        DataSet.FieldByName('EMAIL').AsString     := Query.FieldByName('EMAIL').AsString;
-        DataSet.FieldByName('ENDERECO').AsString  := Query.FieldByName('ENDERECO').AsString;
-        DataSet.FieldByName('UF').AsString        := Query.FieldByName('UF').AsString;
+        DataSet.FieldByName('ID').AsInteger := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString := Query.FieldByName('CNPJ').AsString;
+        DataSet.FieldByName('NOME').AsString := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('TELEFONE').AsString;
+        DataSet.FieldByName('EMAIL').AsString := Query.FieldByName('EMAIL').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('ENDERECO').AsString;
+        DataSet.FieldByName('UF').AsString := Query.FieldByName('UF').AsString;
         DataSet.Post;
         Query.Next;
       end;
-
       Result := True;
     finally
       Query.Free;
@@ -307,7 +329,6 @@ var
 begin
   Result := False;
   if not Assigned(DataSet) then Exit;
-
   DataSet.DisableControls;
   try
     DataSet.EmptyDataSet;
@@ -316,34 +337,31 @@ begin
       Query.Connection := DataModule1.FDConnection1;
       Query.SQL.Text :=
         'SELECT ' +
-        '  codigo AS ID, ' +
-        '  cnpj AS CNPJ, ' +
-        '  nome_empresa AS NOME, ' +
-        '  CASE WHEN ativo THEN ''Ativa'' ELSE ''Inativa'' END AS STATUS, ' +
-        '  telefone AS TELEFONE, ' +
-        '  email AS EMAIL, ' +
-        '  endereco AS ENDERECO, ' +
-        '  uf AS UF ' +
+        ' codigo AS ID, ' +
+        ' cnpj AS CNPJ, ' +
+        ' nome_empresa AS NOME, ' +
+        ' CASE WHEN ativo THEN ''Ativa'' ELSE ''Inativa'' END AS STATUS, ' +
+        ' telefone AS TELEFONE, ' +
+        ' email AS EMAIL, ' +
+        ' endereco AS ENDERECO, ' +
+        ' uf AS UF ' +
         'FROM empresa ' +
         'ORDER BY nome_empresa';
-
       Query.Open;
-
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger       := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString      := Query.FieldByName('CNPJ').AsString;
-        DataSet.FieldByName('NOME').AsString      := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('STATUS').AsString    := Query.FieldByName('STATUS').AsString;
-        DataSet.FieldByName('TELEFONE').AsString  := Query.FieldByName('TELEFONE').AsString;
-        DataSet.FieldByName('EMAIL').AsString     := Query.FieldByName('EMAIL').AsString;
-        DataSet.FieldByName('ENDERECO').AsString  := Query.FieldByName('ENDERECO').AsString;
-        DataSet.FieldByName('UF').AsString        := Query.FieldByName('UF').AsString;
+        DataSet.FieldByName('ID').AsInteger := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString := Query.FieldByName('CNPJ').AsString;
+        DataSet.FieldByName('NOME').AsString := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('STATUS').AsString := Query.FieldByName('STATUS').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('TELEFONE').AsString;
+        DataSet.FieldByName('EMAIL').AsString := Query.FieldByName('EMAIL').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('ENDERECO').AsString;
+        DataSet.FieldByName('UF').AsString := Query.FieldByName('UF').AsString;
         DataSet.Post;
         Query.Next;
       end;
-
       Result := True;
     finally
       Query.Free;

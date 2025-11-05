@@ -13,6 +13,8 @@ type
     Endereco : string;
     Email    : string;
 
+    function  getId: Integer; inline;
+    procedure setId(aId: Integer); inline;
     function  getCodigo: Integer;
     procedure setCodigo(aCodigo: Integer);
     function  getNome: string;
@@ -101,6 +103,15 @@ end;
 procedure TEmpresa.setEmail(aEmail: string);
 begin
   Self.Email := aEmail;
+end;
+function TEmpresa.getId: Integer;
+begin
+  Result := getCodigo;
+end;
+
+procedure TEmpresa.setId(aId: Integer);
+begin
+  setCodigo(aId);
 end;
 
 end.

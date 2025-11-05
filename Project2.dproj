@@ -158,6 +158,9 @@
         <DCCReference Include="Repository\MensagensRepository.pas"/>
         <DCCReference Include="Controller\MensagensController.pas"/>
         <DCCReference Include="Model\MensagensModel.pas"/>
+        <DCCReference Include="Repository\ConfiguracaoRepository.pas"/>
+        <DCCReference Include="Model\ConfiguracaoModel.pas"/>
+        <DCCReference Include="Controller\ConfiguracaoController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

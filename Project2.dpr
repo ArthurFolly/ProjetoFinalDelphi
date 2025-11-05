@@ -21,7 +21,10 @@ uses
   EmpresaController in 'Controller\EmpresaController.pas',
   MensagensRepository in 'Repository\MensagensRepository.pas',
   MensagensController in 'Controller\MensagensController.pas',
-  MensagensModel in 'Model\MensagensModel.pas';
+  MensagensModel in 'Model\MensagensModel.pas',
+  ConfiguracaoRepository in 'Repository\ConfiguracaoRepository.pas',
+  ConfiguracaoModel in 'Model\ConfiguracaoModel.pas',
+  ConfiguracaoController in 'Controller\ConfiguracaoController.pas';
 
 {$R *.res}
 
