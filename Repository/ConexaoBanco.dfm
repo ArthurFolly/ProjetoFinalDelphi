@@ -1,6 +1,7 @@
 object DataModule1: TDataModule1
-  Height = 518
-  Width = 713
+  Height = 648
+  Width = 891
+  PixelsPerInch = 120
   object FDConnection1: TFDConnection
     Params.Strings = (
       'DriverID=PG'
@@ -10,14 +11,12 @@ object DataModule1: TDataModule1
       'User=postgres'
       'Password=root'
       'User_Name=postgres')
-    Left = 456
-    Top = 168
+    Left = 570
+    Top = 210
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
-    VendorLib = 
-      'C:\Users\leo mendes\OneDrive\Documents\Projeto_Delphi\ProjetoFin' +
-      'alDelphi\lib\libpq.dll'
-    Left = 328
-    Top = 168
+    VendorLib = 'C:\Users\ARTHUR\Documents\ProjetoFinalDelphi\lib\libpq.dll'
+    Left = 410
+    Top = 210
   end
 end

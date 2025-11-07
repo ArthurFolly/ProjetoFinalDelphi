@@ -31,6 +31,7 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
+    ExplicitHeight = 673
     object PanelImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -53,8 +54,6 @@
       OnClick = PanelImportExportClick
       OnMouseEnter = PanelImportExportMouseEnter
       OnMouseLeave = PanelImportExportMouseLeave
-      ExplicitLeft = 0
-      ExplicitTop = 411
       object ImageImpExp: TImage
         Left = 0
         Top = 0
@@ -153,7 +152,6 @@
       OnClick = PanelEmpresaClick
       OnMouseEnter = PanelEmpresaMouseEnter
       OnMouseLeave = PanelEmpresaMouseLeave
-      ExplicitLeft = 0
       object ImageEmpresa: TImage
         Left = 0
         Top = 0
@@ -248,7 +246,6 @@
       OnClick = PanelMensagensClick
       OnMouseEnter = PanelMensagensMouseEnter
       OnMouseLeave = PanelMensagensMouseLeave
-      ExplicitLeft = 0
       object ImageMensagens: TImage
         Left = 0
         Top = 0
@@ -363,7 +360,6 @@
       OnClick = PanelConfiguraçaoClick
       OnMouseEnter = PanelConfiguracaoMouseEnter
       OnMouseLeave = PanelConfiguracaoMouseLeave
-      ExplicitLeft = 0
       object ImageConfig: TImage
         Left = 0
         Top = 0
@@ -1295,6 +1291,8 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 880
+    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1763,10 +1761,12 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card6
+      ActiveCard = Card2
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
+      ExplicitWidth = 880
+      ExplicitHeight = 673
       object Card1: TCard
         Left = 0
         Top = 0
@@ -4494,6 +4494,8 @@
         Caption = 'Card5'
         CardIndex = 3
         TabOrder = 3
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object PageControl2: TPageControl
           Left = 0
           Top = 0
@@ -4502,6 +4504,8 @@
           ActivePage = TabSheet2
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object TabSheet2: TTabSheet
             Caption = 'Cadastro'
             object Label13: TLabel
@@ -4521,6 +4525,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel9: TPanel
                 Left = 32
                 Top = 38
@@ -6832,24 +6838,22 @@
         Caption = 'Card6'
         CardIndex = 5
         TabOrder = 5
-      end
-      object Card7: TCard
-        Left = 0
-        Top = 0
-        Width = 882
-        Height = 681
-        Caption = 'Card7'
-        CardIndex = 6
-        TabOrder = 6
-      end
-      object Card8: TCard
-        Left = 0
-        Top = 0
-        Width = 882
-        Height = 681
-        Caption = 'Card8'
-        CardIndex = 7
-        TabOrder = 7
+        object PageControl3: TPageControl
+          Left = 0
+          Top = 0
+          Width = 882
+          Height = 681
+          ActivePage = TabSheet5
+          Align = alClient
+          TabOrder = 0
+          object TabSheet4: TTabSheet
+            Caption = 'TabSheet4'
+          end
+          object TabSheet5: TTabSheet
+            Caption = 'TabSheet5'
+            ImageIndex = 1
+          end
+        end
       end
     end
   end

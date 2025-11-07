@@ -2,7 +2,7 @@ unit ConfiguracaoModel;
 
 interface
 
-Type Configuracao = Class
+Type TConfiguracao = Class
   Id : Integer;
   Chave : String;
   Valor : String;
@@ -35,82 +35,82 @@ implementation
 
 { Configuracao }
 
-function Configuracao.getAtivo: Boolean;
+function TConfiguracao.getAtivo: Boolean;
 begin
   Result := Self.Ativo;
 end;
 
-function Configuracao.getChave: String;
+function TConfiguracao.getChave: String;
 begin
   Result := Self.Chave;
 end;
 
-function Configuracao.getDataAtualizacao: TDateTime;
+function TConfiguracao.getDataAtualizacao: TDateTime;
 begin
   Result := Self.DataAtualizacao;
 end;
 
-function Configuracao.getDataCriacao: TDateTime;
+function TConfiguracao.getDataCriacao: TDateTime;
 begin
   Result := Self.DataCriacao;
 end;
 
-function Configuracao.getDescricao: String;
+function TConfiguracao.getDescricao: String;
 begin
   Result := Self.Descricao;
 end;
 
-function Configuracao.getId: Integer;
+function TConfiguracao.getId: Integer;
 begin
   Result := Self.Id;
 end;
 
-function Configuracao.getUsuarioId: Integer;
+function TConfiguracao.getUsuarioId: Integer;
 begin
   Result := Self.UsuarioId;
 end;
 
-function Configuracao.getValor: String;
+function TConfiguracao.getValor: String;
 begin
   Result := Self.Valor;
 end;
 
-procedure Configuracao.setAtivo(aAtivo: Boolean);
+procedure TConfiguracao.setAtivo(aAtivo: Boolean);
 begin
   Self.Ativo := aAtivo;
 end;
 
-procedure Configuracao.setChave(aChave: String);
+procedure TConfiguracao.setChave(aChave: String);
 begin
   Self.Chave := aChave;
 end;
 
-procedure Configuracao.setDataAtualizacao(aDataAtualizacao: TDateTime);
+procedure TConfiguracao.setDataAtualizacao(aDataAtualizacao: TDateTime);
 begin
   Self.DataAtualizacao := aDataAtualizacao;
 end;
 
-procedure Configuracao.setDataCriacao(aDataCriacao: TDateTime);
+procedure TConfiguracao.setDataCriacao(aDataCriacao: TDateTime);
 begin
   Self.DataCriacao := aDataCriacao;
 end;
 
-procedure Configuracao.setDescricao(aDescricao: String);
+procedure TConfiguracao.setDescricao(aDescricao: String);
 begin
   Self.Descricao := aDescricao;
 end;
 
-procedure Configuracao.setId(aId: Integer);
+procedure TConfiguracao.setId(aId: Integer);
 begin
   Self.Id := aId;
 end;
 
-procedure Configuracao.setUsuarioId(aUsuarioId: Integer);
+procedure TConfiguracao.setUsuarioId(aUsuarioId: Integer);
 begin
   Self.UsuarioId := aUsuarioId;
 end;
 
-procedure Configuracao.setValor(aValor: String);
+procedure TConfiguracao.setValor(aValor: String);
 begin
   Self.Valor := aValor;
 end;

@@ -1,0 +1,44 @@
+I'll create a professional mockup image of a Delphi V-style CRUD interface for your configuration management system. Let me generate this visual representation for you.
+
+[Image would be displayed here showing a professional Windows desktop application interface with:
+
+**Main Window Layout:**
+- Window title: "Configurações do Sistema"
+- Clean gray/blue theme typical of business applications
+- Professional Windows styling with proper shadows and borders
+
+**Top Section - Data Grid:**
+- Grid titled "Configurações Cadastradas"
+- Columns: ID, Chave, Valor, Descrição, Ativo, Data Criação, Data Atualização, Usuário ID
+- Sample data showing 4-5 configuration entries
+- Grid with proper headers, alternating row colors, and selection highlighting
+- Checkbox column for "Ativo" with proper visual indicators
+- Date columns formatted in Brazilian format (DD/MM/YYYY)
+
+**Middle Section - Input Form:**
+- Form titled "Dados da Configuração"
+- Left-aligned labels with corresponding input fields:
+  - Chave: [Text input box]
+  - Valor: [Text input box]
+  - Descrição: [Larger text input box]
+  - Ativo: [☑ Checkbox]
+- Read-only fields with grayed appearance:
+  - Data Criação: [31/10/2025 14:30:15] (grayed)
+  - Data Atualização: [31/10/2025 14:30:15] (grayed)
+  - Usuário ID: [1] (grayed)
+
+**Bottom Section - Action Buttons:**
+- Standard CRUD buttons with icons:
+  - [+] Novo - Green button
+  - [💾] Salvar - Blue button
+  - [🗑️] Excluir - Red button
+  - [❌] Cancelar - Gray button
+- Buttons properly aligned and styled like typical business applications
+
+**Visual Design Elements:**
+- Clean, professional color scheme (blues, grays, whites)
+- Proper spacing and alignment
+- Clear visual hierarchy
+- Business application aesthetic
+- Windows 11-style interface elements
+- Professional typography and sizing]

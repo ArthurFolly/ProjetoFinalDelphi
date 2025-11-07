@@ -37,11 +37,9 @@ type
     Card5: TCard;
     Card4: TCard;
     Card6: TCard;
-    Card7: TCard;
     PageControl: TPageControl;
     Principal: TTabSheet;
     Cadastro: TTabSheet;
-    Card8: TCard;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -108,6 +106,9 @@ type
     SpdRestaurarEmpresa: TSpeedButton;
     SpdExcluirEmpresa: TSpeedButton;
     SpdAdicionarEmpresa: TSpeedButton;
+    PageControl3: TPageControl;
+    TabSheet4: TTabSheet;
+    TabSheet5: TTabSheet;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -235,6 +236,7 @@ begin
   EditandoEmpresa := False;
   EmpresaAtual := nil;
 
+
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
 
@@ -347,6 +349,7 @@ begin
   DBGrid1.DataSource := DataSourceEmpresas;
 
   ClientDataSetEmpresas.Close;
+//  ClientDataSetEmpresas.Open;
   ClientDataSetEmpresas.FieldDefs.Clear;
 
   ClientDataSetEmpresas.FieldDefs.Add('ID', ftInteger);
@@ -577,10 +580,15 @@ begin
   try
     ClientDataSetEmpresas.DisableControls;
     try
-      ClientDataSetEmpresas.Close;
-      ClientDataSetEmpresas.EmptyDataSet;
+      // NÃO FECHE! SÓ LIMPE SE ESTIVER ABERTO
+      if ClientDataSetEmpresas.Active then
+        ClientDataSetEmpresas.EmptyDataSet
+      else
+        ClientDataSetEmpresas.Open;  // Já foi aberto em ConfigurarDBGridEmpresas
+
+      // CARREGA DADOS
       EmpresasController.CarregarEmpresas(ClientDataSetEmpresas);
-      ClientDataSetEmpresas.Open;
+
     finally
       ClientDataSetEmpresas.EnableControls;
     end;
@@ -750,6 +758,8 @@ var
   NovaEmpresa: TEmpresa;
   Mensagem: string;
 begin
+
+
   if not ValidarFormularioEmpresa then
     Exit;
 
@@ -1347,10 +1357,12 @@ begin
   CardPanel1.ActiveCard := Card5;
   PageControl2.Visible := True;
   Card5.Visible := True;
-  CarregarEmpresas;
-  PageControl2.ActivePage := TabSheet3
-end;
 
+
+  ConfigurarDBGridEmpresas;
+  CarregarEmpresas;
+  PageControl2.ActivePage := TabSheet3;
+end;
 procedure TFMain.PanelImportExportClick(Sender: TObject);
 begin
  AtivarPainel(PanelImportExport);
