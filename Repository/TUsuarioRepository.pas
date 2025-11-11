@@ -1,4 +1,4 @@
-unit TUsuarioRepository;
+ï»¿unit TUsuarioRepository;
 
 interface
 
@@ -63,6 +63,7 @@ begin
       Usuario.CPF := Self.query.FieldByName('cpf').AsString;
       Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
       Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
+      //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
       Result := Usuario;
     end;
     Self.query.Close;
@@ -108,11 +109,11 @@ begin
 
 
 
-//     Self.query.ExecSQL;          // SÓ EXECUTA O COMANDO E NÃO RETORNA NADA
+//     Self.query.ExecSQL;          // Sï¿½ EXECUTA O COMANDO E Nï¿½O RETORNA NADA
 
 
      // PARA ACESSAR OS DADOS
-     // CASO SEJAM VÁRIOS RESULTADOS
+     // CASO SEJAM Vï¿½RIOS RESULTADOS
      if not Self.query.IsEmpty then begin
        Usuario.Email := Self.query.FieldByName('email').AsString;
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger;
@@ -120,20 +121,22 @@ begin
         Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
+        //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
 
 
 
-      while not Self.query.Eof do begin // Percorre os resultados até chegar ao final (query.Eof)
+      while not Self.query.Eof do begin // Percorre os resultados atï¿½ chegar ao final (query.Eof)
         Usuario.Email := Self.query.FieldByName('email').AsString; // acessa o campo email e retorna com string
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
         Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
-        Self.query.Next; // Vai para o próximo usuário
+        //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
+        Self.query.Next; // Vai para o prï¿½ximo usuï¿½rio
       end;
      end;
-     // CASO SEJA SÓ UM RESULTADO
+     // CASO SEJA Sï¿½ UM RESULTADO
 //     Self.query.FieldByName('');
 
      // Depois que terminar de usar tudo
@@ -184,6 +187,7 @@ begin
     Self.query.ParamByName('senha_hash').AsString := senhaHash;
     Self.query.ParamByName('cpf').AsString := usuario.getCPF;
     Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
+   //Self.query.ParamByName('tipo_usuario').AsString := usuario.getTipoUsuario;
     Self.query.ExecSQL;
     Result := True;
   except

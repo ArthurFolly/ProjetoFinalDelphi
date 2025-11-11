@@ -9,6 +9,7 @@ Type TUsuario = Class
   Telefone : String;
   CPF : String;
   Senha : String;
+  TipoUsuario : String;
 
 function getNome :String;
 procedure setNome (aNome:String);
@@ -20,8 +21,8 @@ function getCPF :String;
 procedure setCPF (aCPF:String);
 function getSenha :String;
 procedure setSenha (aSenha:String);
-
-
+//function getTipoUsuario :String;
+//procedure setTipoUsuario (aTipoUsuario:String);
 
 End;
 
@@ -78,5 +79,15 @@ procedure TUsuario.setTelefone(aTelefone: String);
 begin
   aTelefone := Self.Telefone
 end;
+
+//function TUsuario.getTipoUsuario: String;
+//begin
+//  Result := Self.TipoUsuario;
+//end;
+//
+//procedure TUsuario.setTipoUsuario(aTipoUsuario: String);
+//begin
+//  Self.TipoUsuario := aTipoUsuario;
+//end;
 
 end.

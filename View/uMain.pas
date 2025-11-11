@@ -22,13 +22,13 @@ type
     PanelImportExport: TPanel;
     PanelEmpresa: TPanel;
     PanelFavoritos: TPanel;
-    PanelMensagens: TPanel;
+    PanelGrupos: TPanel;
     ContactHub: TPanel;
     ImageFavoritos: TImage;
     ImageEmpresa: TImage;
     ImageImpExp: TImage;
     ImageConfig: TImage;
-    ImageMensagens: TImage;
+    ImageGrupos: TImage;
     PanelForm: TPanel;
     CardPanel1: TCardPanel;
     Card1: TCard;
@@ -109,6 +109,22 @@ type
     PageControl3: TPageControl;
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
+    PageControl4: TPageControl;
+    TabSheet6: TTabSheet;
+    Panel13: TPanel;
+    Panel14: TPanel;
+    Label15: TLabel;
+    DBGrid3: TDBGrid;
+    Edit7: TEdit;
+    Edit8: TEdit;
+    Label16: TLabel;
+    Label17: TLabel;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
+    Bevel7: TBevel;
+    Bevel8: TBevel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -147,9 +163,9 @@ type
     procedure SpdExcluirEmpresaClick(Sender: TObject);
     procedure SpdRestaurarEmpresaClick(Sender: TObject);
     procedure SpdListarEmpresaClick(Sender: TObject);
-    procedure PanelMensagensClick(Sender: TObject);
-    procedure PanelMensagensMouseLeave(Sender: TObject);
-    procedure PanelMensagensMouseEnter(Sender: TObject);
+    procedure PanelGruposClick(Sender: TObject);
+    procedure PanelGruposMouseLeave(Sender: TObject);
+    procedure PanelGruposMouseEnter(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -1303,8 +1319,8 @@ begin
     PanelFavoritos.Font.Size := 18;
 
 
-    PanelMensagens.Margins.Top := 20;
-    PanelMensagens.Font.Size := 19;
+    PanelGrupos.Margins.Top := 20;
+    PanelGrupos.Font.Size := 19;
 
 
     PanelEmpresa.Margins.Top := 20;
@@ -1377,7 +1393,7 @@ end;
 procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
   AtivarPainel(PanelConfiguracao);
-  CardPanel1.ActiveCard := Card8;
+  CardPanel1.ActiveCard := Card6;
   PageControl2.Visible := True;
   Card5.Visible := True;
   CarregarEmpresas;
@@ -1482,30 +1498,30 @@ begin
   end;
 end;
 
-procedure TFMain.PanelMensagensClick(Sender: TObject);
+procedure TFMain.PanelGruposClick(Sender: TObject);
 begin
-AtivarPainel(PanelMensagens);
+AtivarPainel(PanelGrupos);
 end;
 
-procedure TFMain.PanelMensagensMouseEnter(Sender: TObject);
+procedure TFMain.PanelGruposMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelMensagens then
+  if PainelPressionado <> PanelGrupos then
   begin
-    PanelMensagens.BevelOuter := bvRaised;
-    PanelMensagens.Color := $00D6498F;
-    PanelMensagens.Cursor := crHandPoint;
-    ImageMensagens.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoMensagensPreta.png');
+    PanelGrupos.BevelOuter := bvRaised;
+    PanelGrupos.Color := $00D6498F;
+    PanelGrupos.Cursor := crHandPoint;
+    ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposPreta.png');
   end;
 end;
 
-procedure TFMain.PanelMensagensMouseLeave(Sender: TObject);
+procedure TFMain.PanelGruposMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelMensagens then
+  if PainelPressionado <> PanelGrupos then
   begin
-    PanelMensagens.BevelOuter := bvNone;
-    PanelMensagens.Color := $00121212;
-    PanelMensagens.Cursor := crDefault;
-    ImageMensagens.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoMensagensRoxa.png');
+    PanelGrupos.BevelOuter := bvNone;
+    PanelGrupos.Color := $00121212;
+    PanelGrupos.Cursor := crDefault;
+    ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposRoxa.png');
   end;
 end;
 
