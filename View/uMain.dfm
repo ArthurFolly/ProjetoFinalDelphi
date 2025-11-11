@@ -6893,7 +6893,7 @@
                   Height = 15
                   Caption = 'Codigo Do Grupo'
                 end
-                object SpeedButton1: TSpeedButton
+                object SpdAdicionarGrupo: TSpeedButton
                   Left = 56
                   Top = 432
                   Width = 129
@@ -7288,7 +7288,7 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
                 end
-                object SpeedButton2: TSpeedButton
+                object SpdExcluirGrupo: TSpeedButton
                   Left = 280
                   Top = 438
                   Width = 97
@@ -7683,7 +7683,7 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
                 end
-                object SpeedButton3: TSpeedButton
+                object SpdEditarGrupo: TSpeedButton
                   Left = 520
                   Top = 438
                   Width = 73
@@ -8078,7 +8078,7 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
                 end
-                object SpeedButton4: TSpeedButton
+                object SpdListarGrupo: TSpeedButton
                   Left = 720
                   Top = 438
                   Width = 89
@@ -8487,7 +8487,7 @@
                   Height = 24
                   Shape = bsBottomLine
                 end
-                object DBGrid3: TDBGrid
+                object DBGridGrupos: TDBGrid
                   Left = 464
                   Top = 61
                   Width = 353

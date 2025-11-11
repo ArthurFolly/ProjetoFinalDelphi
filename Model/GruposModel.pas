@@ -66,6 +66,7 @@ end;
 
 procedure TGrupos.setId(aId: integer);
 begin
+  ValidarId(aId);
   FId := aId;
 end;
 
@@ -76,47 +77,80 @@ end;
 
 function TGrupos.PermissaoDescricao: String;
 begin
-
+  case FIdPermissao of
+    1: Result := 'Usuário';
+    2: Result := 'Supervisor';
+    3: Result := 'Administrador';
+  else
+    Result := 'Desconhecido';
+  end;
 end;
 
 procedure TGrupos.setNome(aNome: String);
 begin
-  FNome := aNome;
+  ValidarNome(aNome);
+  FNome := Trim(aNome);
 end;
 
 function TGrupos.ToString: String;
 begin
-
+  Result := Format('Grupo: %s (ID: %d) - Permissão: %s - %s', [
+    FNome,
+    FId,
+    PermissaoDescricao,
+    FDescricao
+  ]);
 end;
 
 function TGrupos.Validar: Boolean;
 begin
-
+  try
+    ValidarNome(FNome);
+    ValidarDescricao(FDescricao);
+    ValidarIdPermissao(FIdPermissao);
+    Result := True;
+  except
+    Result := False;
+  end;
 end;
 
 procedure TGrupos.ValidarDataCriacao(AData: TDateTime);
 begin
+  if AData = 0 then
+    raise Exception.Create('Data de criação não pode ser vazia');
 
+  if AData > Now then
+    raise Exception.Create('Data de criação não pode ser futura');
 end;
 
 procedure TGrupos.ValidarDescricao(const ADescricao: String);
 begin
+  if Trim(ADescricao).IsEmpty then
+    raise Exception.Create('Descrição do grupo não pode ser vazia');
 
+  if Length(Trim(ADescricao)) > 200 then
+    raise Exception.Create('Descrição do grupo não pode ter mais de 200 caracteres');
 end;
 
 procedure TGrupos.ValidarId(AId: Integer);
 begin
-
+  if AId < 0 then
+    raise Exception.Create('ID do grupo não pode ser negativo');
 end;
 
 procedure TGrupos.ValidarIdPermissao(AIdPermissao: Integer);
 begin
-
+  if (AIdPermissao < 1) or (AIdPermissao > 3) then
+    raise Exception.Create('ID da permissão deve ser entre 1 e 3');
 end;
 
 procedure TGrupos.ValidarNome(const ANome: String);
 begin
+  if Trim(ANome).IsEmpty then
+    raise Exception.Create('Nome do grupo não pode ser vazio');
 
+  if Length(Trim(ANome)) > 100 then
+    raise Exception.Create('Nome do grupo não pode ter mais de 100 caracteres');
 end;
 
 function TGrupos.getDescricao: String;
@@ -126,7 +160,8 @@ end;
 
 procedure TGrupos.setDescricao(aDescricao: String);
 begin
-  FDescricao := aDescricao;
+  ValidarDescricao(aDescricao);
+  FDescricao := Trim(aDescricao);
 end;
 
 function TGrupos.getIdPermissao: Integer;
@@ -136,6 +171,7 @@ end;
 
 procedure TGrupos.setIdPermissao(aIdPermissao: Integer);
 begin
+  ValidarIdPermissao(aIdPermissao);
   FIdPermissao := aIdPermissao;
 end;
 
@@ -146,12 +182,19 @@ end;
 
 procedure TGrupos.setDataCriacao(aDataCriacao: TDateTime);
 begin
+  ValidarDataCriacao(aDataCriacao);
   FDataCriacao := aDataCriacao;
 end;
 
 constructor TGrupos.Create;
 begin
-
+  inherited Create;
+  FId := 0;
+  FNome := '';
+  FDescricao := '';
+  FIdPermissao := 1; // Padrão: Usuário
+  FDataCriacao := Now;
+  FAtivo := True;
 end;
 
 function TGrupos.getAtivo: Boolean;

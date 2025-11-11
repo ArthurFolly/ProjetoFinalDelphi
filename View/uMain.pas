@@ -9,7 +9,7 @@ uses
   Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
   ContatosRepository, System.Generics.Collections, Data.FMTBcd, Data.SqlExpr, Datasnap.DBClient,
   FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco,FavoritosModel,FavoritosController,FavoritosRepository,
-  EmpresaModel, EmpresaController;
+  EmpresaModel, EmpresaController,GruposModel,GruposRepository,GruposController;
 
 type
   TFMain = class(TForm)
@@ -114,15 +114,15 @@ type
     Panel13: TPanel;
     Panel14: TPanel;
     Label15: TLabel;
-    DBGrid3: TDBGrid;
+    DBGridGrupos: TDBGrid;
     Edit7: TEdit;
     Edit8: TEdit;
     Label16: TLabel;
     Label17: TLabel;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
+    SpdAdicionarGrupo: TSpeedButton;
+    SpdExcluirGrupo: TSpeedButton;
+    SpdEditarGrupo: TSpeedButton;
+    SpdListarGrupo: TSpeedButton;
     Bevel9: TBevel;
     Bevel7: TBevel;
 
@@ -178,6 +178,8 @@ private
   LoadingDataset: Boolean;
 
 
+
+
   // === EMPRESAS ===
   EditandoEmpresa: Boolean;
   EmpresaAtual: TEmpresa;
@@ -185,6 +187,13 @@ private
   ClientDataSetEmpresas: TClientDataSet;
   DataSourceEmpresas: TDataSource;
   LoadingDatasetEmpresas: Boolean;
+
+  // === GRUPOS ===
+  GruposController: TGruposController;
+  ClientDataSetGrupos: TClientDataSet;
+  DataSourceGrupos: TDataSource;
+  LoadingGrupos: Boolean;
+
 
   // === CONTATOS ===
   procedure AtivarPainel(Panel: TPanel);
@@ -215,6 +224,16 @@ private
   function EmpresaSelecionada: TEmpresa;
   procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
   procedure DBGrid1DblClick(Sender: TObject);
+
+  // === PROCEDURES DOS GRUPOS ===
+  procedure ConfigurarDBGridGrupos;
+  procedure CarregarGrupos;
+  procedure SalvarEdicaoGrupo(DataSet: TDataSet);
+  procedure ExcluirGrupo(DataSet: TDataSet);
+  procedure SpdAdicionarGrupoClick(Sender: TObject);
+  procedure SpdEditarGrupoClick(Sender: TObject);
+  procedure SpdExcluirGrupoClick(Sender: TObject);
+  procedure SpdListarGrupoClick(Sender: TObject);
 
   end;
 var
@@ -258,6 +277,16 @@ begin
 
   Card5.visible := false;
   PageControl2.Visible := false;
+    Card5.visible := false;
+  PageControl2.Visible := false;
+
+  // === GRUPOS ===
+  GruposController := TGruposController.Create(3); // 3 = Admin
+  ClientDataSetGrupos := TClientDataSet.Create(Self);
+  DataSourceGrupos := TDataSource.Create(Self);
+  DataSourceGrupos.DataSet := ClientDataSetGrupos;
+  DBGridGrupos.DataSource := DataSourceGrupos;
+  
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -506,6 +535,64 @@ begin
   DBGridFavoritos.ReadOnly := True; // favoritos não editáveis
 end;
 
+procedure TFMain.ConfigurarDBGridGrupos;
+begin
+  // === DATASET ===
+  DataSourceGrupos.DataSet := ClientDataSetGrupos;
+  DBGridGrupos.DataSource := DataSourceGrupos;
+
+  ClientDataSetGrupos.Close;
+  ClientDataSetGrupos.FieldDefs.Clear;
+  ClientDataSetGrupos.FieldDefs.Add('ID', ftInteger);
+  ClientDataSetGrupos.FieldDefs.Add('NOME', ftString, 100);
+  ClientDataSetGrupos.FieldDefs.Add('DESCRICAO', ftString, 300);
+  ClientDataSetGrupos.CreateDataSet;
+  ClientDataSetGrupos.Open;
+
+  // === COLUNAS ===
+  DBGridGrupos.Columns.Clear;
+
+  with DBGridGrupos.Columns.Add do
+  begin
+    FieldName := 'ID';
+    Title.Caption := 'CÓDIGO';
+    Width := 80;
+    Title.Font.Style := [fsBold];
+  end;
+
+  with DBGridGrupos.Columns.Add do
+  begin
+    FieldName := 'NOME';
+    Title.Caption := 'NOME DO GRUPO';
+    Width := 320;
+    Title.Font.Style := [fsBold];
+  end;
+
+  with DBGridGrupos.Columns.Add do
+  begin
+    FieldName := 'DESCRICAO';
+    Title.Caption := 'DESCRIÇÃO';
+    Width := 500;
+    Title.Font.Style := [fsBold];
+  end;
+
+  // === ESTILO PADRÃO DO SISTEMA ===
+  DBGridGrupos.Options := [
+    dgEditing, dgTitles, dgIndicator, dgColumnResize,
+    dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowEditor
+  ];
+
+  DBGridGrupos.TitleFont.Name := 'Segoe UI';
+  DBGridGrupos.TitleFont.Size := 10;
+  DBGridGrupos.TitleFont.Style := [fsBold];
+  DBGridGrupos.Font.Size := 10;
+
+  // === EVENTOS ===
+  ClientDataSetGrupos.AfterPost := SalvarEdicaoGrupo;
+  ClientDataSetGrupos.AfterDelete := ExcluirGrupo;
+
+  DBGridGrupos.Refresh;
+end;
 procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
 var
   IdEmpresa: Integer;
@@ -617,6 +704,11 @@ begin
   // DEIXA O CONTROLLER FAZER TUDO
   FavoritosController.CarregarFavoritos(ClientDataSetFavoritos);
   DBGridFavoritos.Refresh;  // só atualiza o visual
+end;
+
+procedure TFMain.CarregarGrupos;
+begin
+
 end;
 
 procedure TFMain.AtualizarDBGrid;
@@ -731,6 +823,11 @@ begin
 end;
 
 
+procedure TFMain.SalvarEdicaoGrupo(DataSet: TDataSet);
+begin
+
+end;
+
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
 var
   NovoContato: Contatos;
@@ -823,6 +920,11 @@ begin
   end
   else
     ShowMessage(Msg);
+end;
+
+procedure TFMain.SpdAdicionarGrupoClick(Sender: TObject);
+begin
+
 end;
 
 procedure TFMain.SpdRemoverClick(Sender: TObject);
@@ -1026,6 +1128,11 @@ begin
     PageControl2.ActivePage := TabSheet2;
   end;
 end;
+procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
@@ -1075,6 +1182,11 @@ begin
   end;
 end;
 
+procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFMain.SpdListarClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -1095,6 +1207,11 @@ begin
 
   // ATUALIZA O GRID AUTOMATICAMENTE
   CarregarEmpresas;
+end;
+
+procedure TFMain.SpdListarGrupoClick(Sender: TObject);
+begin
+
 end;
 
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
@@ -1124,6 +1241,11 @@ begin
         ShowMessage('Erro ao buscar empresa: ' + E.Message);
     end;
   end;
+end;
+
+procedure TFMain.ExcluirGrupo(DataSet: TDataSet);
+begin
+
 end;
 
 function TFMain.ValidarFormulario: Boolean;
