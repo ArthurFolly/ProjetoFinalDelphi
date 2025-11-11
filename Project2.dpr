@@ -22,9 +22,12 @@ uses
   MensagensRepository in 'Repository\MensagensRepository.pas',
   MensagensController in 'Controller\MensagensController.pas',
   MensagensModel in 'Model\MensagensModel.pas',
-  ConfiguracaoRepository in 'Repository\ConfiguracaoRepository.pas',
-  ConfiguracaoModel in 'Model\ConfiguracaoModel.pas',
-  ConfiguracaoController in 'Controller\ConfiguracaoController.pas';
+  GruposRepository in 'Repository\GruposRepository.pas',
+  GruposController in 'Controller\GruposController.pas',
+  GruposModel in 'Model\GruposModel.pas',
+  PermissoesModel in 'Model\PermissoesModel.pas',
+  PermissoesController in 'Controller\PermissoesController.pas',
+  PermissoesRepository in 'Repository\PermissoesRepository.pas';
 
 {$R *.res}
 

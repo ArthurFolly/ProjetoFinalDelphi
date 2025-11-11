@@ -31,7 +31,6 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 673
     object PanelImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -1306,8 +1305,6 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 880
-    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1780,8 +1777,6 @@
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
-      ExplicitWidth = 880
-      ExplicitHeight = 673
       object Card1: TCard
         Left = 0
         Top = 0
@@ -3119,7 +3114,7 @@
               end
               object Bevel2: TBevel
                 Left = 1
-                Top = 345
+                Top = 348
                 Width = 824
                 Height = 24
                 Shape = bsBottomLine
@@ -6858,10 +6853,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitLeft = 3
-              ExplicitTop = 3
-              ExplicitWidth = 862
-              ExplicitHeight = 545
               object Panel14: TPanel
                 Left = 16
                 Top = 23
@@ -6874,33 +6865,33 @@
                   Left = 1
                   Top = 1
                   Width = 839
-                  Height = 41
+                  Height = 37
                   Align = alTop
-                  Caption = 'Label15'
+                  Caption = 'Grupos'
                   Color = clSilver
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clWindowText
-                  Font.Height = -30
+                  Font.Height = -27
                   Font.Name = 'Segoe UI'
                   Font.Style = []
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 102
+                  ExplicitWidth = 86
                 end
                 object Label16: TLabel
                   Left = 32
                   Top = 148
-                  Width = 40
+                  Width = 86
                   Height = 15
-                  Caption = 'Label16'
+                  Caption = 'Nome do Grupo'
                 end
                 object Label17: TLabel
                   Left = 32
-                  Top = 77
-                  Width = 40
-                  Height = 23
-                  Caption = 'Label17'
+                  Top = 85
+                  Width = 93
+                  Height = 15
+                  Caption = 'Codigo Do Grupo'
                 end
                 object SpeedButton1: TSpeedButton
                   Left = 56
@@ -7298,8 +7289,8 @@
                   Layout = blGlyphTop
                 end
                 object SpeedButton2: TSpeedButton
-                  Left = 344
-                  Top = 443
+                  Left = 280
+                  Top = 438
                   Width = 97
                   Height = 92
                   Caption = 'Excluir Grupo'
@@ -7693,8 +7684,8 @@
                   Layout = blGlyphTop
                 end
                 object SpeedButton3: TSpeedButton
-                  Left = 568
-                  Top = 443
+                  Left = 520
+                  Top = 438
                   Width = 73
                   Height = 92
                   Caption = 'Editar Grupo'
@@ -8088,10 +8079,10 @@
                   Layout = blGlyphTop
                 end
                 object SpeedButton4: TSpeedButton
-                  Left = 696
-                  Top = 443
+                  Left = 720
+                  Top = 438
                   Width = 89
-                  Height = 86
+                  Height = 92
                   Caption = 'Listar Grupo'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -8482,22 +8473,24 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
                 end
-                object Bevel7: TBevel
-                  Left = 0
-                  Top = 369
-                  Width = 841
-                  Height = 15
-                end
-                object Bevel8: TBevel
+                object Bevel9: TBevel
                   Left = 1
-                  Top = 348
+                  Top = 343
+                  Width = 824
+                  Height = 24
+                  Shape = bsBottomLine
+                end
+                object Bevel7: TBevel
+                  Left = 1
+                  Top = 357
                   Width = 840
-                  Height = 23
+                  Height = 24
+                  Shape = bsBottomLine
                 end
                 object DBGrid3: TDBGrid
-                  Left = 536
+                  Left = 464
                   Top = 61
-                  Width = 281
+                  Width = 353
                   Height = 233
                   TabOrder = 0
                   TitleFont.Charset = DEFAULT_CHARSET
@@ -8512,7 +8505,7 @@
                   Width = 206
                   Height = 23
                   TabOrder = 1
-                  Text = 'Edit7'
+                  TextHint = 'Informe o codigo do seu grupo'
                 end
                 object Edit8: TEdit
                   Left = 32
@@ -8520,7 +8513,7 @@
                   Width = 206
                   Height = 23
                   TabOrder = 2
-                  Text = 'Edit8'
+                  TextHint = 'Informe o nome do Grupo'
                 end
               end
             end
@@ -8535,8 +8528,6 @@
         Caption = 'Card6'
         CardIndex = 5
         TabOrder = 5
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object PageControl3: TPageControl
           Left = 0
           Top = 0
@@ -8545,8 +8536,6 @@
           ActivePage = TabSheet4
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object TabSheet4: TTabSheet
             Caption = 'TabSheet4'
             object Panel11: TPanel
@@ -8558,8 +8547,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel12: TPanel
                 Left = 24
                 Top = 24

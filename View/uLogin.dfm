@@ -897,8 +897,6 @@ object FLogin: TFLogin
     Color = 2561564
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 894
-    ExplicitHeight = 673
     object PanelLogin: TPanel
       AlignWithMargins = True
       Left = 0
@@ -914,7 +912,6 @@ object FLogin: TFLogin
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
-      ExplicitHeight = 673
       object Contact: TLabel
         AlignWithMargins = True
         Left = 30
@@ -1787,7 +1784,6 @@ object FLogin: TFLogin
         PasswordChar = '*'
         TabOrder = 1
         TextHint = 'Senha'
-        ExplicitTop = 382
       end
       object Panel1: TPanel
         AlignWithMargins = True
@@ -1813,7 +1809,6 @@ object FLogin: TFLogin
         OnClick = Panel1Click
         OnMouseEnter = Panel1MouseEnter
         OnMouseLeave = Panel1MouseLeave
-        ExplicitTop = 444
       end
       object BtnMostrarSenha: TButton
         Left = 304

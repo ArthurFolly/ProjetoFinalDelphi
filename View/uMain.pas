@@ -123,8 +123,8 @@ type
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
+    Bevel9: TBevel;
     Bevel7: TBevel;
-    Bevel8: TBevel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
