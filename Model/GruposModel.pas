@@ -20,8 +20,6 @@ type
     procedure ValidarNome(const ANome: String);
     procedure ValidarDescricao(const ADescricao: String);
     procedure ValidarIdPermissao(AIdPermissao: Integer);
-    procedure ValidarDataCriacao(AData: TDateTime);
-
   public
     constructor Create;
 
@@ -114,14 +112,7 @@ begin
   end;
 end;
 
-procedure TGrupos.ValidarDataCriacao(AData: TDateTime);
-begin
-  if AData = 0 then
-    raise Exception.Create('Data de criação não pode ser vazia');
 
-  if AData > Now then
-    raise Exception.Create('Data de criação não pode ser futura');
-end;
 
 procedure TGrupos.ValidarDescricao(const ADescricao: String);
 begin
@@ -182,7 +173,7 @@ end;
 
 procedure TGrupos.setDataCriacao(aDataCriacao: TDateTime);
 begin
-  ValidarDataCriacao(aDataCriacao);
+
   FDataCriacao := aDataCriacao;
 end;
 

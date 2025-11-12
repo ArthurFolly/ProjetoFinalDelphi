@@ -3090,7 +3090,7 @@
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 823
+                Width = 248
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -3103,7 +3103,6 @@
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
-                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -4542,7 +4541,7 @@
                 object Label6: TLabel
                   Left = 1
                   Top = 1
-                  Width = 791
+                  Width = 227
                   Height = 32
                   Align = alTop
                   Caption = 'Cadastro De Empresa'
@@ -4555,7 +4554,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 227
                 end
                 object Label7: TLabel
                   Left = 32
@@ -5605,7 +5603,7 @@
                 object Label14: TLabel
                   Left = 1
                   Top = 1
-                  Width = 799
+                  Width = 188
                   Height = 32
                   Align = alTop
                   Caption = 'Lista de Empresas'
@@ -5618,7 +5616,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 188
                 end
                 object SpdEditarEmpresa: TSpeedButton
                   Left = 368
@@ -7287,6 +7284,7 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = SpdAdicionarGrupoClick
                 end
                 object SpdExcluirGrupo: TSpeedButton
                   Left = 280
@@ -8615,8 +8613,15 @@
                   Height = 24
                   Shape = bsBottomLine
                 end
+                object Label20: TLabel
+                  Left = 32
+                  Top = 198
+                  Width = 51
+                  Height = 15
+                  Caption = 'Descri'#231#227'o'
+                end
                 object DBGridGrupos: TDBGrid
-                  Left = 464
+                  Left = 448
                   Top = 61
                   Width = 353
                   Height = 233
@@ -8641,6 +8646,14 @@
                   Width = 206
                   Height = 23
                   TabOrder = 2
+                  TextHint = 'Informe o nome do Grupo'
+                end
+                object Edit9: TEdit
+                  Left = 32
+                  Top = 224
+                  Width = 206
+                  Height = 23
+                  TabOrder = 3
                   TextHint = 'Informe o nome do Grupo'
                 end
               end

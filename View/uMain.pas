@@ -134,6 +134,8 @@ type
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
+    Edit9: TEdit;
+    Label20: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -175,6 +177,7 @@ type
     procedure PanelGruposClick(Sender: TObject);
     procedure PanelGruposMouseLeave(Sender: TObject);
     procedure PanelGruposMouseEnter(Sender: TObject);
+    procedure SpdAdicionarGrupoClick(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -197,11 +200,23 @@ private
   DataSourceEmpresas: TDataSource;
   LoadingDatasetEmpresas: Boolean;
 
-  // === GRUPOS ===
-  GruposController: TGruposController;
+// === GRUPOS - VARIÁVEIS ===
   ClientDataSetGrupos: TClientDataSet;
   DataSourceGrupos: TDataSource;
   LoadingGrupos: Boolean;
+  EditandoGrupo: Boolean;
+  GrupoAtualId: Integer;
+  GruposController: TGruposController;
+
+
+  // === GRUPOS - MÉTODOS ===
+  procedure ConfigurarDBGridGrupos;
+  procedure CarregarGrupos;
+  procedure SalvarEdicaoGrupo(DataSet: TDataSet);
+  procedure ExcluirGrupo(DataSet: TDataSet);
+  procedure LimparFormularioGrupo;
+  function ValidarFormularioGrupo: Boolean;
+  function ValidarPermissaoGrupo(Operacao: string): Boolean;
 
 
   // === CONTATOS ===
@@ -234,15 +249,6 @@ private
   procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
   procedure DBGrid1DblClick(Sender: TObject);
 
-  // === PROCEDURES DOS GRUPOS ===
-  procedure ConfigurarDBGridGrupos;
-  procedure CarregarGrupos;
-  procedure SalvarEdicaoGrupo(DataSet: TDataSet);
-  procedure ExcluirGrupo(DataSet: TDataSet);
-  procedure SpdAdicionarGrupoClick(Sender: TObject);
-  procedure SpdEditarGrupoClick(Sender: TObject);
-  procedure SpdExcluirGrupoClick(Sender: TObject);
-  procedure SpdListarGrupoClick(Sender: TObject);
 
   end;
 var
@@ -258,44 +264,54 @@ procedure TFMain.FormCreate(Sender: TObject);
 begin
   DataModule1.FDConnection1.Connected := True;
 
+
+
   ContatosLista := TObjectList<Contatos>.Create(True);
   ContatosController := TContatosController.Create;
-  FavoritosController := TFavoritosController.Create(1);
+  ConfigurarDBGrid;
+  CarregarContatosDB;
 
+
+  FavoritosController := TFavoritosController.Create(1);
   ClientDataSetFavoritos := TClientDataSet.Create(Self);
   DataSourceFavoritos := TDataSource.Create(Self);
-
-  Editando := False;
-  ContatoAtual := nil;
-
   DBGridFavoritos.DataSource := DataSourceFavoritos;
-  ConfigurarDBGrid;
   ConfigurarDBGridFavoritos;
-  CarregarContatosDB;
   CarregarFavoritos;
+
 
   EmpresasController := TEmpresaController.Create;
   ClientDataSetEmpresas := TClientDataSet.Create(Self);
   DataSourceEmpresas := TDataSource.Create(Self);
-  EditandoEmpresa := False;
-  EmpresaAtual := nil;
-
-
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
 
-  Card5.visible := false;
-  PageControl2.Visible := false;
-    Card5.visible := false;
-  PageControl2.Visible := false;
 
-  // === GRUPOS ===
+
+
   GruposController := TGruposController.Create(3); // 3 = Admin
+
   ClientDataSetGrupos := TClientDataSet.Create(Self);
   DataSourceGrupos := TDataSource.Create(Self);
   DataSourceGrupos.DataSet := ClientDataSetGrupos;
   DBGridGrupos.DataSource := DataSourceGrupos;
-  
+
+  LoadingGrupos := False;
+  EditandoGrupo := False;
+  GrupoAtualId := 0;
+
+  ConfigurarDBGridGrupos;
+  CarregarGrupos;
+
+
+  Editando := False;
+  ContatoAtual := nil;
+  EditandoEmpresa := False;
+  EmpresaAtual := nil;
+
+
+  Card5.Visible := False;
+  PageControl2.Visible := False;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -312,6 +328,13 @@ begin
   EmpresasController.Free;
   ClientDataSetEmpresas.Free;
   DataSourceEmpresas.Free;
+
+
+  GruposController.Free;
+  ClientDataSetGrupos.Free;
+  DataSourceGrupos.Free;
+
+
 end;
 
 procedure TFMain.ConfigurarDBGrid;
@@ -716,8 +739,45 @@ begin
 end;
 
 procedure TFMain.CarregarGrupos;
+var
+  Lista: TObjectList<TGrupos>;
+  Grupo: TGrupos;
 begin
+  if LoadingGrupos then Exit;
+  LoadingGrupos := True;
+  ClientDataSetGrupos.DisableControls;
+  try
+    ClientDataSetGrupos.Close;
+    ClientDataSetGrupos.FieldDefs.Clear;
+    ClientDataSetGrupos.FieldDefs.Add('ID', ftInteger);
+    ClientDataSetGrupos.FieldDefs.Add('NOME', ftString, 100);
+    ClientDataSetGrupos.FieldDefs.Add('DESCRICAO', ftString, 300);
+    ClientDataSetGrupos.FieldDefs.Add('ID_PERMISSAO', ftInteger);
+    ClientDataSetGrupos.CreateDataSet;
+    ClientDataSetGrupos.Open;
+    ClientDataSetGrupos.EmptyDataSet;
 
+    // USA O MÉTODO QUE JÁ EXISTE NO SEU CONTROLLER: ListarGrupos!
+    Lista := GruposController.ListarGrupos;
+    try
+      for Grupo in Lista do
+      begin
+        ClientDataSetGrupos.Append;
+        ClientDataSetGrupos.FieldByName('ID').AsInteger := Grupo.getId;
+        ClientDataSetGrupos.FieldByName('NOME').AsString := Grupo.getNome;
+        ClientDataSetGrupos.FieldByName('DESCRICAO').AsString := Grupo.getDescricao;
+        ClientDataSetGrupos.FieldByName('ID_PERMISSAO').AsInteger := Grupo.getIdPermissao;
+        ClientDataSetGrupos.Post;
+      end;
+    finally
+      Lista.Free; // libera a lista
+    end;
+
+  finally
+    ClientDataSetGrupos.EnableControls;
+    LoadingGrupos := False;
+  end;
+  DBGridGrupos.Refresh;
 end;
 
 procedure TFMain.AtualizarDBGrid;
@@ -932,10 +992,76 @@ begin
 end;
 
 procedure TFMain.SpdAdicionarGrupoClick(Sender: TObject);
+var
+  Grupo: TGrupos;
+  Editando: Boolean;
+  GrupoId: Integer;
 begin
+  // === VALIDAÇÕES COM FOCO NO CAMPO ERRADO ===
+  if Trim(Edit7.Text) = '' then
+  begin
+    ShowMessage('Digite o nome do grupo!');
+    Edit7.SetFocus;
+    Exit;
+  end;
 
+  if Trim(Edit8.Text) = '' then
+  begin
+    ShowMessage('Digite a descrição do grupo!');
+    Edit8.SetFocus;
+    Exit;
+  end;
+
+  if ComboBox1.ItemIndex = -1 then
+  begin
+    ShowMessage('Selecione o nível de permissão!');
+    ComboBox1.SetFocus;
+    Exit;
+  end;
+
+  // === VERIFICA SE É EDIÇÃO ===
+  GrupoId := 0;
+  Editando := False;
+  if not ClientDataSetGrupos.IsEmpty then
+  begin
+    GrupoId := ClientDataSetGrupos.FieldByName('ID').AsInteger;
+    Editando := (GrupoId > 0);
+  end;
+
+  Grupo := TGrupos.Create;
+  try
+    // USA OS SETTERS CORRETOS DO MODEL
+    Grupo.setNome(Trim(Edit7.Text));
+    Grupo.setDescricao(Trim(Edit8.Text));
+    Grupo.setIdPermissao(ComboBox1.ItemIndex + 1); // 0=Usuário, 1=Supervisor, 2=Admin
+
+    if Editando then
+    begin
+      Grupo.setId(GrupoId);
+      if GruposController.AtualizarGrupo(Grupo) then
+        ShowMessage('Grupo atualizado com sucesso!')
+      else
+        ShowMessage('Erro ao atualizar grupo!');
+    end
+    else
+    begin
+      if GruposController.AdicionarGrupo(Grupo) then
+        ShowMessage('Grupo adicionado com sucesso!')
+      else
+        ShowMessage('Erro ao adicionar grupo!');
+    end;
+
+    LimparFormularioGrupo;
+    CarregarGrupos;
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro de validação: ' + E.Message);
+      // NÃO DEIXA O EXCEPT "ENGOLIR" O ERRO
+    end;
+  end;
 end;
-
 procedure TFMain.SpdRemoverClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -1137,11 +1263,6 @@ begin
     PageControl2.ActivePage := TabSheet2;
   end;
 end;
-procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
-begin
-
-end;
-
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
@@ -1191,11 +1312,6 @@ begin
   end;
 end;
 
-procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
-begin
-
-end;
-
 procedure TFMain.SpdListarClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -1216,11 +1332,6 @@ begin
 
   // ATUALIZA O GRID AUTOMATICAMENTE
   CarregarEmpresas;
-end;
-
-procedure TFMain.SpdListarGrupoClick(Sender: TObject);
-begin
-
 end;
 
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
@@ -1321,6 +1432,16 @@ begin
   Result := True;
 end;
 
+function TFMain.ValidarFormularioGrupo: Boolean;
+begin
+
+end;
+
+function TFMain.ValidarPermissaoGrupo(Operacao: string): Boolean;
+begin
+
+end;
+
 function TFMain.ContatoSelecionado: Contatos;
 var
   IdSelecionado: Integer;
@@ -1392,6 +1513,11 @@ begin
   Edit5.Text := '';
   Edit6.Text := '';
   MaskEdit2.Text := '';
+end;
+
+procedure TFMain.LimparFormularioGrupo;
+begin
+
 end;
 
 procedure TFMain.AtivarPainel(Panel: TPanel);
