@@ -108,7 +108,6 @@ type
     SpdAdicionarEmpresa: TSpeedButton;
     PageControl3: TPageControl;
     TabSheet4: TTabSheet;
-    TabSheet5: TTabSheet;
     PageControl4: TPageControl;
     TabSheet6: TTabSheet;
     Panel13: TPanel;
@@ -125,6 +124,16 @@ type
     SpdListarGrupo: TSpeedButton;
     Bevel9: TBevel;
     Bevel7: TBevel;
+    Label18: TLabel;
+    DBGrid3: TDBGrid;
+    ComboBox1: TComboBox;
+    Label19: TLabel;
+    Bevel8: TBevel;
+    Bevel10: TBevel;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1623,6 +1632,19 @@ end;
 procedure TFMain.PanelGruposClick(Sender: TObject);
 begin
 AtivarPainel(PanelGrupos);
+CardPanel1.ActiveCard := Card4;
+
+
+  PageControl4.Visible := True;
+  TabSheet6.Visible := True;
+  Card6.Visible := True;
+
+
+  ConfigurarDBGridGrupos;
+  CarregarGrupos;
+
+
+
 end;
 
 procedure TFMain.PanelGruposMouseEnter(Sender: TObject);
