@@ -3,13 +3,18 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
-  Vcl.Imaging.pngimage, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask,
-  Vcl.Buttons, Vcl.Grids, Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
-  ContatosRepository, System.Generics.Collections, Data.FMTBcd, Data.SqlExpr, Datasnap.DBClient,
-  FireDAC.Phys.PGDef, FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco,FavoritosModel,FavoritosController,FavoritosRepository,
-  EmpresaModel, EmpresaController,GruposModel,GruposRepository,GruposController;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.WinXPanels, Vcl.Mask, Vcl.Buttons, Vcl.Grids,
+  Data.DB, Vcl.DBGrids, ContatosController, TContatosModel,
+  ContatosRepository, System.Generics.Collections, Data.FMTBcd,
+  Data.SqlExpr, Datasnap.DBClient, FireDAC.Phys.PGDef,
+  FireDAC.Phys.PG, FireDAC.Comp.Client,ConexaoBanco, FavoritosModel,
+  FavoritosController,FavoritosRepository, EmpresaModel,
+  EmpresaController,GruposModel,GruposRepository,GruposController,
+  System.ImageList, Vcl.ImgList, System.Net.HttpClient,
+  System.Net.URLClient, System.JSON;
 
 type
   TFMain = class(TForm)
@@ -52,7 +57,7 @@ type
     Label2: TLabel;
     Numero: TMaskEdit;
     Label3: TLabel;
-    Endereco: TEdit;
+    txtLogradouro: TEdit;
     Label4: TLabel;
     Empresa: TLabel;
     Edit3: TEdit;
@@ -134,6 +139,14 @@ type
     SpeedButton4: TSpeedButton;
     Label17: TLabel;
     Edit7: TEdit;
+    txtNumero: TEdit;
+    txtComplemento: TEdit;
+    txtBairro: TEdit;
+    txtCEP: TEdit;
+    lblPesquisarCEP: TLabel;
+    txtLocalidade: TEdit;
+    txtUF: TEdit;
+    SpeedButton5: TSpeedButton;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -179,6 +192,7 @@ type
     procedure SpdEditarGrupoClick(Sender: TObject);
     procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure SpdRestaurarGruposClick(Sender: TObject);
+    procedure SpeedButton5Click(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -344,80 +358,129 @@ var
 begin
   DataSource1.DataSet := ClientDataSet1;
   DBGrid2.DataSource := DataSource1;
-
   ClientDataSet1.Close;
   ClientDataSet1.FieldDefs.Clear;
 
+  // === CAMPOS COMPLETOS ===
   ClientDataSet1.FieldDefs.Add('ID', ftInteger);
   ClientDataSet1.FieldDefs.Add('NOME', ftString, 100);
   ClientDataSet1.FieldDefs.Add('TELEFONE', ftString, 20);
   ClientDataSet1.FieldDefs.Add('EMAIL', ftString, 100);
   ClientDataSet1.FieldDefs.Add('EMPRESA', ftString, 100);
   ClientDataSet1.FieldDefs.Add('ENDERECO', ftString, 200);
+  ClientDataSet1.FieldDefs.Add('CEP', ftString, 10);
+  ClientDataSet1.FieldDefs.Add('LOGRADOURO', ftString, 150);
+  ClientDataSet1.FieldDefs.Add('NUMERO', ftString, 20);
+  ClientDataSet1.FieldDefs.Add('COMPLEMENTO', ftString, 100);
+  ClientDataSet1.FieldDefs.Add('BAIRRO', ftString, 100);
+  ClientDataSet1.FieldDefs.Add('CIDADE', ftString, 100);
+  ClientDataSet1.FieldDefs.Add('UF', ftString, 2);
 
   ClientDataSet1.CreateDataSet;
   ClientDataSet1.Open;
 
-
   DBGrid2.Columns.Clear;
 
-  // ID
+  // === TODAS AS COLUNAS VISÍVEIS ===
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'ID';
     Title.Caption := 'ID';
-    Width := 40;
+    Width := 50;
   end;
 
-  // NOME
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'NOME';
-    Title.Caption := 'NOME';
+    Title.Caption := 'Nome';
     Width := 150;
   end;
 
-  // TELEFONE
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'TELEFONE';
-    Title.Caption := 'TELEFONE';
-    Width := 120;
+    Title.Caption := 'Telefone';
+    Width := 110;
   end;
 
-  // EMAIL
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'EMAIL';
-    Title.Caption := 'EMAIL';
+    Title.Caption := 'Email';
     Width := 150;
   end;
 
-  // EMPRESA
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'EMPRESA';
-    Title.Caption := 'EMPRESA';
+    Title.Caption := 'Empresa';
     Width := 120;
   end;
 
-  // ENDEREÇO
   with DBGrid2.Columns.Add do
   begin
     FieldName := 'ENDERECO';
-    Title.Caption := 'ENDEREÇO';
-    Width := 200;
+    Title.Caption := 'Endereço';
+    Width := 180;
   end;
 
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'CEP';
+    Title.Caption := 'CEP';
+    Width := 90;
+  end;
 
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'LOGRADOURO';
+    Title.Caption := 'Logradouro';
+    Width := 180;
+  end;
+
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'NUMERO';
+    Title.Caption := 'Número';
+    Width := 70;
+  end;
+
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'COMPLEMENTO';
+    Title.Caption := 'Complemento';
+    Width := 100;
+  end;
+
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'BAIRRO';
+    Title.Caption := 'Bairro';
+    Width := 120;
+  end;
+
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'CIDADE';
+    Title.Caption := 'Cidade';
+    Width := 130;
+  end;
+
+  with DBGrid2.Columns.Add do
+  begin
+    FieldName := 'UF';
+    Title.Caption := 'UF';
+    Width := 50;
+  end;
+
+  // === CONFIGURAÇÕES DO GRID ===
   DBGrid2.ReadOnly := False;
-  DBGrid2.Options := [dgEditing, dgColumnResize];
+  DBGrid2.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgEditing];
+  // dgEditing mantido se quiser editar no grid
+
+  // Eventos
   ClientDataSet1.AfterPost := SalvarEdicaoGridView;
   ClientDataSet1.AfterDelete := ConfirmarExclusaoGrid;
-  DBGrid2.Visible := True;
-  DBGrid2.Refresh;
-  DBGrid2.Options := [dgTitles, dgEditing, dgColumnResize];
-
 end;
 
 procedure TFMain.ConfigurarDBGridEmpresas;
@@ -634,6 +697,7 @@ end;
 procedure TFMain.ConfirmarExclusaoGrid(DataSet: TDataSet);
 var
   Contato: Contatos;
+  mensagem : string;
 begin
   Contato := ContatoSelecionado;
   if Contato <> nil then
@@ -641,7 +705,7 @@ begin
     if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       Contato.Ativo := False; // exclusão lógica
-      if ContatosController.AtualizarContato(Contato) then
+      if ContatosController.AtualizarContato(Contato,  Mensagem) then
       begin
         ShowMessage('Contato excluído com sucesso!');
         CarregarContatosDB; // atualiza o grid
@@ -657,9 +721,9 @@ end;
 
 procedure TFMain.CarregarContatosDB;
 begin
-
+  ContatosLista.Clear;
   ContatosController.CarregarContatos(ContatosLista);
-  AtualizarDBGrid;
+  AtualizarDBGrid;  // <-- recria colunas + dados
 end;
 
 procedure TFMain.CarregarContatosNoComboBox;
@@ -760,17 +824,16 @@ begin
 end;
 
 procedure TFMain.AtualizarDBGrid;
-var
-  I: Integer;
-  Contato: Contatos;
 begin
   LoadingDataset := True;
   ClientDataSet1.DisableControls;
   try
     ClientDataSet1.EmptyDataSet;
-    for I := 0 to ContatosLista.Count - 1 do
+    ContatosController.CarregarContatos(ContatosLista);
+    // Preenche com dados completos
+    var Contato: Contatos;
+    for Contato in ContatosLista do
     begin
-      Contato := ContatosLista[I];
       ClientDataSet1.Append;
       ClientDataSet1.FieldByName('ID').AsInteger := Contato.Id;
       ClientDataSet1.FieldByName('NOME').AsString := Contato.Nome;
@@ -778,17 +841,19 @@ begin
       ClientDataSet1.FieldByName('EMAIL').AsString := Contato.Email;
       ClientDataSet1.FieldByName('EMPRESA').AsString := Contato.Empresa;
       ClientDataSet1.FieldByName('ENDERECO').AsString := Contato.Endereco;
+      ClientDataSet1.FieldByName('CEP').AsString := Contato.CEP;
+      ClientDataSet1.FieldByName('LOGRADOURO').AsString := Contato.Logradouro;
+      ClientDataSet1.FieldByName('NUMERO').AsString := Contato.Numero;
+      ClientDataSet1.FieldByName('COMPLEMENTO').AsString := Contato.Complemento;
+      ClientDataSet1.FieldByName('BAIRRO').AsString := Contato.Bairro;
+      ClientDataSet1.FieldByName('CIDADE').AsString := Contato.Cidade;
+      ClientDataSet1.FieldByName('UF').AsString := Contato.UF;
       ClientDataSet1.Post;
     end;
-
-    if not ClientDataSet1.IsEmpty then
-      ClientDataSet1.First;
   finally
     ClientDataSet1.EnableControls;
-    LoadingDataset := False; // <- E AQUI
+    LoadingDataset := False;
   end;
-
-  DBGrid2.Refresh;
 end;
 
 
@@ -846,27 +911,42 @@ end;
 procedure TFMain.SalvarEdicaoGridView(DataSet: TDataSet);
 var
   Contato: Contatos;
+  Mensagem: string;
 begin
-  if LoadingDataset then Exit; // <- ADICIONE ESTA LINHA
+  if LoadingDataset then Exit;
+
+  Contato := ContatoSelecionado;
+  if Contato = nil then Exit;
 
   try
-    Contato := ContatoSelecionado;
-    if Contato <> nil then
-    begin
-      Contato.Nome := DataSet.FieldByName('NOME').AsString;
-      Contato.Telefone := DataSet.FieldByName('TELEFONE').AsString;
-      Contato.Email := DataSet.FieldByName('EMAIL').AsString;
-      Contato.Empresa := DataSet.FieldByName('EMPRESA').AsString;
-      Contato.Endereco := DataSet.FieldByName('ENDERECO').AsString;
+    Contato.Nome := DataSet.FieldByName('NOME').AsString;
+    Contato.Telefone := DataSet.FieldByName('TELEFONE').AsString;
+    Contato.Email := DataSet.FieldByName('EMAIL').AsString;
+    Contato.Empresa := DataSet.FieldByName('EMPRESA').AsString;
+    Contato.Endereco := DataSet.FieldByName('ENDERECO').AsString;
+    Contato.CEP := DataSet.FieldByName('CEP').AsString;
+    Contato.Logradouro := DataSet.FieldByName('LOGRADOURO').AsString;
+    Contato.Numero := DataSet.FieldByName('NUMERO').AsString;
+    Contato.Complemento := DataSet.FieldByName('COMPLEMENTO').AsString;
+    Contato.Bairro := DataSet.FieldByName('BAIRRO').AsString;
+    Contato.Cidade := DataSet.FieldByName('CIDADE').AsString;
+    Contato.UF := DataSet.FieldByName('UF').AsString;
 
-      if ContatosController.AtualizarContato(Contato) then
-        ShowMessage('Contato atualizado com sucesso!')
-      else
-        ShowMessage('Erro ao atualizar o contato no banco!');
+    if ContatosController.AtualizarContato(Contato, Mensagem) then
+    begin
+      // ShowMessage('Atualizado com sucesso!');
+    end
+    else
+    begin
+      ShowMessage('Erro: ' + Mensagem);
+      DataSet.Cancel;
     end;
   except
     on E: Exception do
+    begin
       ShowMessage('Erro ao salvar: ' + E.Message);
+      DataSet.Cancel;
+    end;
   end;
 end;
 
@@ -879,6 +959,7 @@ end;
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
 var
   NovoContato: Contatos;
+  mensagem : string;
 begin
   if not ValidarFormulario then Exit;
 
@@ -888,12 +969,12 @@ begin
     NovoContato.Telefone := Numero.Text;
     NovoContato.Email := Edit2.Text;
     NovoContato.Empresa := Edit3.Text;
-    NovoContato.Endereco := Endereco.Text;
+    NovoContato.Endereco := txtLogradouro.Text;
     NovoContato.Observacoes := Edit4.Text;
     NovoContato.Favorito := False;
     NovoContato.Ativo := True;
 
-    if ContatosController.AdicionarContato(NovoContato) then
+    if ContatosController.AdicionarContato(NovoContato, Mensagem) then
     begin
       ContatosLista.Add(NovoContato);
       AtualizarDBGrid;
@@ -903,7 +984,7 @@ begin
     else
     begin
       NovoContato.Free;
-      ShowMessage('Erro ao adicionar contato!');
+      ShowMessage('Email ou Telefone ja cadastrados');
     end;
   except
     on E: Exception do
@@ -1154,7 +1235,118 @@ begin
   end;
 end;
 
+procedure TFMain.SpeedButton5Click(Sender: TObject);
+
+  var
+  cep, url: string;                 // Variáveis para CEP e URL da API
+  http: THTTPClient;                // Cliente HTTP usado na requisição
+  resp: IHTTPResponse;              // Resposta da API
+  json: string;                     // Texto JSON obtido da resposta
+  jo: TJSONObject;                  // Objeto JSON para leitura
+  logradouro, bairro, cidade, uf: string;
+begin
+  // ---------------------------------------------------------
+  // 0) LIMPAR TODOS OS CAMPOS ANTES DE UMA NOVA PESQUISA
+  // ---------------------------------------------------------
+  txtLogradouro.Clear;
+  txtBairro.Clear;
+  txtLocalidade.Clear;
+  txtUF.Clear;
+  txtComplemento.Clear;  // também limpar!
+  txtNumero.Clear;       // também limpar!
+
+  // ---------------------------------------------------------
+  // 1) LER O CEP DIGITADO PELO USUÁRIO
+  // ---------------------------------------------------------
+  cep := Trim(txtCEP.Text);         // Remove espaços extras
+
+  // Padronizar removendo caracteres inválidos
+  cep := StringReplace(cep, '-', '', [rfReplaceAll]);
+  cep := StringReplace(cep, '.', '', [rfReplaceAll]);
+  cep := StringReplace(cep, ' ', '', [rfReplaceAll]);
+
+  // Verificar se o campo ficou vazio
+  if cep = '' then
+  begin
+    ShowMessage('Digite um CEP.');
+    Exit;
+  end;
+
+  // ---------------------------------------------------------
+  // 2) MONTAR A URL PARA CONSULTAR A API
+  // ---------------------------------------------------------
+  url := Format('https://viacep.com.br/ws/%s/json/', [cep]);
+
+  // Criar o cliente HTTP
+  http := THTTPClient.Create;
+  try
+    try
+      // -----------------------------------------------------
+      // 3) FAZER A REQUISIÇÃO PARA A API
+      // -----------------------------------------------------
+      resp := http.Get(url);
+
+      // Conferir se retornou HTTP 200 (OK)
+      if resp.StatusCode <> 200 then
+      begin
+        ShowMessage('Erro ao consultar CEP. Código HTTP: ' +
+                    resp.StatusCode.ToString);
+        Exit;
+      end;
+
+      // Converter conteúdo retornado para JSON string
+      json := resp.ContentAsString(TEncoding.UTF8);
+
+      // -----------------------------------------------------
+      // 4) PARSE DO JSON → TJSONObject
+      // -----------------------------------------------------
+      jo := TJSONObject.ParseJSONValue(json) as TJSONObject;
+      try
+        // Verificar se o CEP existe (API traz "erro": true)
+        if (jo = nil) or (jo.GetValue('erro') <> nil) then
+        begin
+          ShowMessage('CEP não encontrado.');
+          Exit;
+        end;
+
+        // ---------------------------------------------------
+        // 5) EXTRAIR OS CAMPOS DO JSON
+        // ---------------------------------------------------
+        logradouro := jo.GetValue<string>('logradouro', '');
+        bairro     := jo.GetValue<string>('bairro', '');
+        cidade     := jo.GetValue<string>('localidade', '');
+        uf         := jo.GetValue<string>('uf', '');
+
+        // ---------------------------------------------------
+        // 6) PREENCHER OS EDITS DO FORMULÁRIO
+        // ---------------------------------------------------
+        txtlogradouro.Text := logradouro;
+        txtBairro.Text     := bairro;
+        txtLocalidade.Text := cidade;
+        txtUF.Text         := uf;
+
+        // IMPORTANTE:
+        // txtComplemento e txtNumero continuam vazios,
+        // pois devem ser preenchidos MANUALMENTE pelo usuário.
+
+      finally
+        jo.Free; // liberar memória
+      end;
+
+    except
+      on E: Exception do
+        ShowMessage('Erro ao consultar CEP: ' + E.Message);
+    end;
+
+  finally
+    http.Free; // liberar cliente HTTP
+  end;
+end;
+
 procedure TFMain.SpdEditarClick(Sender: TObject);
+var
+Mensagem: String;
+
 begin
   if Editando and (ContatoAtual <> nil) then
   begin
@@ -1165,10 +1357,10 @@ begin
     ContatoAtual.Telefone := Numero.Text;
     ContatoAtual.Email := Edit2.Text;
     ContatoAtual.Empresa := Edit3.Text;
-    ContatoAtual.Endereco := Endereco.Text;
+    ContatoAtual.Endereco := txtLogradouro.Text;
     ContatoAtual.Observacoes := Edit4.Text;
 
-    if ContatosController.AtualizarContato(ContatoAtual) then
+    if ContatosController.AtualizarContato(ContatoAtual, Mensagem) then
     begin
       AtualizarDBGrid;
       LimparFormulario;
@@ -1337,6 +1529,7 @@ end;
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
+  Mensagem:String;
 begin
   Contato := ContatoSelecionado;
   if Contato = nil then
@@ -1348,7 +1541,7 @@ begin
   if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     Contato.Ativo := False; // exclusão lógica
-    if ContatosController.AtualizarContato(Contato) then
+    if ContatosController.AtualizarContato(Contato, Mensagem) then
     begin
       ShowMessage('Contato excluído com sucesso!');
       CarregarContatosDB; // atualiza o grid
@@ -1574,7 +1767,7 @@ begin
     Numero.Text := Contato.Telefone;
     Edit2.Text := Contato.Email;
     Edit3.Text := Contato.Empresa;
-    Endereco.Text := Contato.Endereco;
+    txtLogradouro.Text := Contato.Endereco;
     Edit4.Text := Contato.Observacoes;
   end;
 end;
@@ -1598,7 +1791,7 @@ begin
   Numero.Text := '';
   Edit2.Text := '';
   Edit3.Text := '';
-  Endereco.Text := '';
+  txtLogradouro.Text := '';
   Edit4.Text := '';
 //  Edit1.SetFocus;
 end;

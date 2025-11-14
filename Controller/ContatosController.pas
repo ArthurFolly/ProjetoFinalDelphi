@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Generics.Collections,
   TContatosModel, ContatosRepository,
-  Vcl.Dialogs, Vcl.Forms, Vcl.Controls, Data.DB;
+  Data.DB;
 
 type
   TContatosController = class
@@ -15,16 +15,19 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function AdicionarContato(AContato: Contatos): Boolean;
-    function AtualizarContato(AContato: Contatos): Boolean;
-    procedure CarregarContatos(ALista: TObjectList<Contatos>);
-    function ListarContatos: TObjectList<Contatos>;
+    function AdicionarContato(AContato: Contatos; out Mensagem: string): Boolean;
+    function AtualizarContato(AContato: Contatos; out Mensagem: string): Boolean;
 
-    // *** GRID - EDIÇÃO NO BANCO ***
-    procedure SalvarEdicaoGrid(DataSet: TDataSet);
+    function ListarContatos: TObjectList<Contatos>;
+    procedure CarregarContatos(ALista: TObjectList<Contatos>);
+
+    // GRID: retorna se salvou ou não + mensagem
+    function SalvarEdicaoGrid(DataSet: TDataSet; out Mensagem: string): Boolean;
   end;
 
 implementation
+
+{ TContatosController }
 
 constructor TContatosController.Create;
 begin
@@ -37,16 +40,110 @@ begin
   inherited;
 end;
 
-function TContatosController.AdicionarContato(AContato: Contatos): Boolean;
+// ====================================================================
+// ADICIONAR
+// ====================================================================
+function TContatosController.AdicionarContato(AContato: Contatos; out Mensagem: string): Boolean;
+var
+  Lista: TObjectList<Contatos>;
 begin
-  Result := ContatosRepository.Adicionar(AContato);
+  Mensagem := '';
+
+  // VALIDA TELEFONE
+  Lista := ContatosRepository.BuscarPorTelefone(AContato.Telefone);
+  try
+    if Lista.Count > 0 then
+    begin
+      Mensagem := 'Erro: Telefone "' + AContato.Telefone + '" já cadastrado!';
+      Exit(False);
+    end;
+  finally
+    Lista.Free;
+  end;
+
+  // VALIDA EMAIL
+  if Trim(AContato.Email) <> '' then
+  begin
+    Lista := ContatosRepository.BuscarPorEmail(AContato.Email);
+    try
+      if Lista.Count > 0 then
+      begin
+        Mensagem := 'Erro: Email "' + AContato.Email + '" já cadastrado!';
+        Exit(False);
+      end;
+    finally
+      Lista.Free;
+    end;
+  end;
+
+  // SALVA
+  if ContatosRepository.Adicionar(AContato) then
+  begin
+    Mensagem := 'Contato adicionado com sucesso!';
+    Exit(True);
+  end
+  else
+  begin
+    Mensagem := 'Erro ao salvar no banco.';
+    Exit(False);
+  end;
 end;
 
-function TContatosController.AtualizarContato(AContato: Contatos): Boolean;
+// ====================================================================
+// ATUALIZAR
+// ====================================================================
+function TContatosController.AtualizarContato(AContato: Contatos; out Mensagem: string): Boolean;
+var
+  Lista: TObjectList<Contatos>;
+  i: Integer;
 begin
-  Result := ContatosRepository.Atualizar(AContato);
+  Mensagem := '';
+
+  // VALIDA TELEFONE
+  Lista := ContatosRepository.BuscarPorTelefone(AContato.Telefone);
+  try
+    for i := 0 to Lista.Count - 1 do
+      if Lista[i].Id <> AContato.Id then
+      begin
+        Mensagem := 'Erro: Telefone já usado por outro contato!';
+        Exit(False);
+      end;
+  finally
+    Lista.Free;
+  end;
+
+  // VALIDA EMAIL
+  if Trim(AContato.Email) <> '' then
+  begin
+    Lista := ContatosRepository.BuscarPorEmail(AContato.Email);
+    try
+      for i := 0 to Lista.Count - 1 do
+        if Lista[i].Id <> AContato.Id then
+        begin
+          Mensagem := 'Erro: Email já usado por outro contato!';
+          Exit(False);
+        end;
+    finally
+      Lista.Free;
+    end;
+  end;
+
+  // ATUALIZA
+  if ContatosRepository.Atualizar(AContato) then
+  begin
+    Mensagem := 'Contato atualizado com sucesso!';
+    Exit(True);
+  end
+  else
+  begin
+    Mensagem := 'Erro ao atualizar no banco.';
+    Exit(False);
+  end;
 end;
 
+// ====================================================================
+// LISTAR
+// ====================================================================
 function TContatosController.ListarContatos: TObjectList<Contatos>;
 begin
   Result := ContatosRepository.ListarTodos;
@@ -59,25 +156,43 @@ var
 begin
   ALista.Clear;
   ListaNova := ListarContatos;
-
-  for i := 0 to ListaNova.Count - 1 do
-    ALista.Add(ListaNova[i]);
-
-  ListaNova.OwnsObjects := False;
-  ListaNova.Free;
+  try
+    for i := 0 to ListaNova.Count - 1 do
+      ALista.Add(ListaNova[i]);
+  finally
+    ListaNova.OwnsObjects := False;
+    ListaNova.Free;
+  end;
 end;
 
-
-procedure TContatosController.SalvarEdicaoGrid(DataSet: TDataSet);
+// ====================================================================
+// GRID: SALVAR EDIÇÃO
+// ====================================================================
+function TContatosController.SalvarEdicaoGrid(DataSet: TDataSet; out Mensagem: string): Boolean;
+var
+  ContatoTemp: Contatos;
 begin
-  ContatosRepository.AtualizarPorId(
-    DataSet.FieldByName('ID').AsInteger,
-    DataSet.FieldByName('NOME').AsString,
-    DataSet.FieldByName('TELEFONE').AsString,
-    DataSet.FieldByName('EMAIL').AsString,
-    DataSet.FieldByName('EMPRESA').AsString,
-    DataSet.FieldByName('ENDERECO').AsString
-  );
+  ContatoTemp := Contatos.Create;
+  try
+    ContatoTemp.Id := DataSet.FieldByName('ID').AsInteger;
+    ContatoTemp.Nome := DataSet.FieldByName('NOME').AsString;
+    ContatoTemp.Telefone := DataSet.FieldByName('TELEFONE').AsString;
+    ContatoTemp.Email := DataSet.FieldByName('EMAIL').AsString;
+    ContatoTemp.Empresa := DataSet.FieldByName('EMPRESA').AsString;
+    ContatoTemp.Endereco := DataSet.FieldByName('ENDERECO').AsString;
+    ContatoTemp.CEP := DataSet.FieldByName('CEP').AsString;
+    ContatoTemp.Logradouro := DataSet.FieldByName('LOGRADOURO').AsString;
+    ContatoTemp.Numero := DataSet.FieldByName('NUMERO').AsString;
+    ContatoTemp.Complemento := DataSet.FieldByName('COMPLEMENTO').AsString;
+    ContatoTemp.Bairro := DataSet.FieldByName('BAIRRO').AsString;
+    ContatoTemp.Cidade := DataSet.FieldByName('CIDADE').AsString;
+    ContatoTemp.UF := DataSet.FieldByName('UF').AsString;
+    ContatoTemp.Ativo := True;
+
+    Result := AtualizarContato(ContatoTemp, Mensagem);
+  finally
+    ContatoTemp.Free;
+  end;
 end;
 
 end.
