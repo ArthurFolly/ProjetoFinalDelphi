@@ -27,7 +27,7 @@ type
     function ListarGrupos: TObjectList<TGrupos>;
     function BuscarGruposPorNome(ANome: string): TObjectList<TGrupos>;
     function BuscarGruposPorNivel(ANivel: Integer): TObjectList<TGrupos>;
-
+    function RestaurarGrupo(AId: Integer): Boolean;
     // Métodos para grid
     procedure SalvarEdicaoGrid(DataSet: TDataSet);
 
@@ -123,7 +123,6 @@ begin
   PermissoesController.ValidarPermissao('UPDATE', FNivelUsuarioLogado);
 
   nome := DataSet.FieldByName('NOME').AsString;
-  descricao := DataSet.FieldByName('DESCRICAO').AsString;
   idPermissao := DataSet.FieldByName('ID_PERMISSAO').AsInteger;
 
   GruposRepository.AtualizarPorId(
@@ -145,6 +144,22 @@ end;
 function TGruposController.VerificarPermissaoOperacao(AOperacao: string): Boolean;
 begin
   Result := PermissoesController.VerificarPermissao(AOperacao, FNivelUsuarioLogado);
+end;
+
+function TGruposController.RestaurarGrupo(AId: Integer): Boolean;
+begin
+  // REMOVA ESSA LINHA:
+  // PermissoesController.ValidarPermissao('RESTORE', FNivelUsuarioLogado);
+
+  // LIBERA PARA TODOS (OU SÓ ADMIN SE QUISER)
+  if FNivelUsuarioLogado < 3 then
+  begin
+    ShowMessage('Apenas administradores podem restaurar grupos.');
+    Result := False;
+    Exit;
+  end;
+
+  Result := GruposRepository.RestaurarGrupo(AId);
 end;
 
 end.

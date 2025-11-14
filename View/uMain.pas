@@ -114,14 +114,12 @@ type
     Panel14: TPanel;
     Label15: TLabel;
     DBGridGrupos: TDBGrid;
-    Edit7: TEdit;
     Edit8: TEdit;
     Label16: TLabel;
-    Label17: TLabel;
     SpdAdicionarGrupo: TSpeedButton;
     SpdExcluirGrupo: TSpeedButton;
     SpdEditarGrupo: TSpeedButton;
-    SpdListarGrupo: TSpeedButton;
+    SpdRestaurarGrupos: TSpeedButton;
     Bevel9: TBevel;
     Bevel7: TBevel;
     Label18: TLabel;
@@ -134,8 +132,8 @@ type
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
-    Edit9: TEdit;
-    Label20: TLabel;
+    Label17: TLabel;
+    Edit7: TEdit;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -178,6 +176,9 @@ type
     procedure PanelGruposMouseLeave(Sender: TObject);
     procedure PanelGruposMouseEnter(Sender: TObject);
     procedure SpdAdicionarGrupoClick(Sender: TObject);
+    procedure SpdEditarGrupoClick(Sender: TObject);
+    procedure SpdExcluirGrupoClick(Sender: TObject);
+    procedure SpdRestaurarGruposClick(Sender: TObject);
 
 private
   Editando: Boolean;
@@ -569,61 +570,39 @@ end;
 
 procedure TFMain.ConfigurarDBGridGrupos;
 begin
-  // === DATASET ===
   DataSourceGrupos.DataSet := ClientDataSetGrupos;
   DBGridGrupos.DataSource := DataSourceGrupos;
-
   ClientDataSetGrupos.Close;
   ClientDataSetGrupos.FieldDefs.Clear;
   ClientDataSetGrupos.FieldDefs.Add('ID', ftInteger);
   ClientDataSetGrupos.FieldDefs.Add('NOME', ftString, 100);
-  ClientDataSetGrupos.FieldDefs.Add('DESCRICAO', ftString, 300);
+  // REMOVA: DESCRICAO
+  // REMOVA: ID_PERMISSAO (se não usa)
   ClientDataSetGrupos.CreateDataSet;
   ClientDataSetGrupos.Open;
-
-  // === COLUNAS ===
   DBGridGrupos.Columns.Clear;
 
+  // ID
   with DBGridGrupos.Columns.Add do
   begin
     FieldName := 'ID';
-    Title.Caption := 'CÓDIGO';
-    Width := 80;
-    Title.Font.Style := [fsBold];
+    Title.Caption := 'ID';
+    Width := 60;
   end;
 
+  // NOME
   with DBGridGrupos.Columns.Add do
   begin
     FieldName := 'NOME';
     Title.Caption := 'NOME DO GRUPO';
-    Width := 320;
+    Width := 400;
     Title.Font.Style := [fsBold];
   end;
 
-  with DBGridGrupos.Columns.Add do
-  begin
-    FieldName := 'DESCRICAO';
-    Title.Caption := 'DESCRIÇÃO';
-    Width := 500;
-    Title.Font.Style := [fsBold];
-  end;
-
-  // === ESTILO PADRÃO DO SISTEMA ===
   DBGridGrupos.Options := [
-    dgEditing, dgTitles, dgIndicator, dgColumnResize,
-    dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowEditor
+    dgTitles, dgIndicator, dgColumnResize,
+    dgColLines, dgRowLines, dgTabs, dgRowSelect
   ];
-
-  DBGridGrupos.TitleFont.Name := 'Segoe UI';
-  DBGridGrupos.TitleFont.Size := 10;
-  DBGridGrupos.TitleFont.Style := [fsBold];
-  DBGridGrupos.Font.Size := 10;
-
-  // === EVENTOS ===
-  ClientDataSetGrupos.AfterPost := SalvarEdicaoGrupo;
-  ClientDataSetGrupos.AfterDelete := ExcluirGrupo;
-
-  DBGridGrupos.Refresh;
 end;
 procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
 var
@@ -994,72 +973,32 @@ end;
 procedure TFMain.SpdAdicionarGrupoClick(Sender: TObject);
 var
   Grupo: TGrupos;
-  Editando: Boolean;
-  GrupoId: Integer;
 begin
-  // === VALIDAÇÕES COM FOCO NO CAMPO ERRADO ===
-  if Trim(Edit7.Text) = '' then
-  begin
-    ShowMessage('Digite o nome do grupo!');
-    Edit7.SetFocus;
-    Exit;
-  end;
-
+  // VALIDA NOME (Edit8)
   if Trim(Edit8.Text) = '' then
   begin
-    ShowMessage('Digite a descrição do grupo!');
+    ShowMessage('Digite o nome do grupo!');
     Edit8.SetFocus;
     Exit;
   end;
 
-  if ComboBox1.ItemIndex = -1 then
-  begin
-    ShowMessage('Selecione o nível de permissão!');
-    ComboBox1.SetFocus;
-    Exit;
-  end;
 
-  // === VERIFICA SE É EDIÇÃO ===
-  GrupoId := 0;
-  Editando := False;
-  if not ClientDataSetGrupos.IsEmpty then
-  begin
-    GrupoId := ClientDataSetGrupos.FieldByName('ID').AsInteger;
-    Editando := (GrupoId > 0);
-  end;
 
   Grupo := TGrupos.Create;
   try
-    // USA OS SETTERS CORRETOS DO MODEL
-    Grupo.setNome(Trim(Edit7.Text));
-    Grupo.setDescricao(Trim(Edit8.Text));
-    Grupo.setIdPermissao(ComboBox1.ItemIndex + 1); // 0=Usuário, 1=Supervisor, 2=Admin
+    Grupo.setNome(Trim(Edit8.Text));           // NOME
+    Grupo.setIdPermissao(GruposController.NivelUsuarioLogado);
 
-    if Editando then
+    if GruposController.AdicionarGrupo(Grupo) then
     begin
-      Grupo.setId(GrupoId);
-      if GruposController.AtualizarGrupo(Grupo) then
-        ShowMessage('Grupo atualizado com sucesso!')
-      else
-        ShowMessage('Erro ao atualizar grupo!');
+      ShowMessage('Grupo adicionado com sucesso!');
+      LimparFormularioGrupo;
+      CarregarGrupos;
     end
     else
-    begin
-      if GruposController.AdicionarGrupo(Grupo) then
-        ShowMessage('Grupo adicionado com sucesso!')
-      else
-        ShowMessage('Erro ao adicionar grupo!');
-    end;
-
-    LimparFormularioGrupo;
-    CarregarGrupos;
-
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Erro de validação: ' + E.Message);
-      // NÃO DEIXA O EXCEPT "ENGOLIR" O ERRO
-    end;
+      ShowMessage('Erro ao adicionar grupo.');
+  finally
+    Grupo.Free;
   end;
 end;
 procedure TFMain.SpdRemoverClick(Sender: TObject);
@@ -1132,6 +1071,86 @@ begin
     CarregarEmpresas; // Atualiza o grid
   finally
     Query.Free;
+  end;
+end;
+procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
+var
+  IdDigitado: Integer;
+  Grupo: TGrupos;
+  NomeGrupo: string;
+begin
+  // 1. SE O EDIT TEM ALGO → RESTAURA POR ID
+  if Trim(Edit7.Text) <> '' then
+  begin
+    // Valida número
+    if not TryStrToInt(Edit7.Text, IdDigitado) then
+    begin
+      ShowMessage('ID inválido! Digite apenas números.');
+      Edit7.Color := clRed;
+      Edit7.SetFocus;
+      Exit;
+    end;
+
+    // Valida permissão
+    if GruposController.NivelUsuarioLogado < 3 then
+    begin
+      ShowMessage('Apenas administradores podem restaurar grupos.');
+      Exit;
+    end;
+
+    // Tenta restaurar
+    if not GruposController.RestaurarGrupo(IdDigitado) then
+    begin
+      ShowMessage('Erro ao restaurar grupo. Verifique o ID.');
+      Exit;
+    end;
+
+    // Busca o grupo restaurado
+    Grupo := GruposController.BuscarGrupoPorId(IdDigitado);
+    if Grupo = nil then
+    begin
+      ShowMessage('Grupo restaurado, mas não encontrado.');
+      Exit;
+    end;
+
+    // Adiciona no grid
+    try
+      ClientDataSetGrupos.Append;
+      ClientDataSetGrupos.FieldByName('ID').AsInteger := Grupo.getId;
+      ClientDataSetGrupos.FieldByName('NOME').AsString := Grupo.getNome;
+      ClientDataSetGrupos.Post;
+
+      ShowMessage(Format('Grupo "%s" (ID: %d) restaurado com sucesso!', [Grupo.getNome, Grupo.getId]));
+    finally
+      Grupo.Free;
+    end;
+
+    // Limpa o campo
+    Edit7.Clear;
+    Edit7.Color := clWindow;
+    Exit; // ← SAI AQUI, NÃO FAZ O RESTAURAR DO GRID
+  end;
+
+  // 2. SE NÃO TEM ID → RESTAURA O GRUPO SELECIONADO NO GRID (COMPORTAMENTO ORIGINAL)
+  if ClientDataSetGrupos.IsEmpty then
+  begin
+    ShowMessage('Nenhum grupo selecionado para restaurar!');
+    Exit;
+  end;
+
+  IdDigitado := ClientDataSetGrupos.FieldByName('ID').AsInteger;
+  NomeGrupo := ClientDataSetGrupos.FieldByName('NOME').AsString;
+
+  if MessageDlg(Format('Restaurar o grupo "%s" (ID: %d)?', [NomeGrupo, IdDigitado]),
+                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if GruposController.RestaurarGrupo(IdDigitado) then
+    begin
+      ShowMessage(Format('Grupo "%s" restaurado com sucesso!', [NomeGrupo]));
+      CarregarGrupos; // atualiza tudo
+    end
+    else
+      ShowMessage('Erro ao restaurar grupo.');
   end;
 end;
 
@@ -1263,6 +1282,58 @@ begin
     PageControl2.ActivePage := TabSheet2;
   end;
 end;
+procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
+var
+  Grupo: TGrupos;
+begin
+  if not EditandoGrupo then
+  begin
+    if ClientDataSetGrupos.IsEmpty then
+    begin
+      ShowMessage('Selecione um grupo para editar!');
+      Exit;
+    end;
+
+    Edit7.Text := ClientDataSetGrupos.FieldByName('ID').AsString;
+    Edit8.Text := ClientDataSetGrupos.FieldByName('NOME').AsString;
+    GrupoAtualId := ClientDataSetGrupos.FieldByName('ID').AsInteger;
+
+    EditandoGrupo := True;
+    SpdAdicionarGrupo.Enabled := False;
+    SpdEditarGrupo.Caption := 'Salvar';
+    Exit;
+  end;
+
+  // SALVAR
+  if Trim(Edit8.Text) = '' then
+  begin
+    ShowMessage('Nome do grupo obrigatório!');
+    Edit8.SetFocus;
+    Exit;
+  end;
+
+  Grupo := TGrupos.Create;
+  try
+    Grupo.setId(GrupoAtualId);
+    Grupo.setNome(Trim(Edit8.Text));
+    Grupo.setIdPermissao(GruposController.NivelUsuarioLogado);
+
+    if GruposController.AtualizarGrupo(Grupo) then
+    begin
+      ShowMessage('Grupo atualizado!');
+      LimparFormularioGrupo;
+      CarregarGrupos;
+      EditandoGrupo := False;
+      SpdAdicionarGrupo.Enabled := True;
+      SpdEditarGrupo.Caption := 'Editar';
+    end
+    else
+      ShowMessage('Erro ao atualizar.');
+  finally
+    Grupo.Free;
+  end;
+end;
+
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
@@ -1309,6 +1380,33 @@ begin
     end
     else
       ShowMessage('Erro: ' + Msg);
+  end;
+end;
+
+procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
+var
+  IdGrupo: Integer;
+  NomeGrupo: string;
+begin
+  if ClientDataSetGrupos.IsEmpty then
+  begin
+    ShowMessage('Selecione um grupo para excluir!');
+    Exit;
+  end;
+
+  IdGrupo := ClientDataSetGrupos.FieldByName('ID').AsInteger;
+  NomeGrupo := ClientDataSetGrupos.FieldByName('NOME').AsString;
+
+  if MessageDlg(Format('Excluir o grupo "%s"?', [NomeGrupo]),
+                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    if GruposController.ExcluirGrupo(IdGrupo) then
+    begin
+      ShowMessage('Grupo excluído com sucesso!');
+      CarregarGrupos;
+    end
+    else
+      ShowMessage('Erro ao excluir grupo.');
   end;
 end;
 

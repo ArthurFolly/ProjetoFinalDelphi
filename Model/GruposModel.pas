@@ -18,7 +18,7 @@ type
     // Métodos de validação privada
     procedure ValidarId(AId: Integer);
     procedure ValidarNome(const ANome: String);
-    procedure ValidarDescricao(const ADescricao: String);
+    //procedure ValidarDescricao(const ADescricao: String);
     procedure ValidarIdPermissao(AIdPermissao: Integer);
   public
     constructor Create;
@@ -104,7 +104,7 @@ function TGrupos.Validar: Boolean;
 begin
   try
     ValidarNome(FNome);
-    ValidarDescricao(FDescricao);
+    //ValidarDescricao(FDescricao);
     ValidarIdPermissao(FIdPermissao);
     Result := True;
   except
@@ -112,16 +112,6 @@ begin
   end;
 end;
 
-
-
-procedure TGrupos.ValidarDescricao(const ADescricao: String);
-begin
-  if Trim(ADescricao).IsEmpty then
-    raise Exception.Create('Descrição do grupo não pode ser vazia');
-
-  if Length(Trim(ADescricao)) > 200 then
-    raise Exception.Create('Descrição do grupo não pode ter mais de 200 caracteres');
-end;
 
 procedure TGrupos.ValidarId(AId: Integer);
 begin
@@ -151,7 +141,7 @@ end;
 
 procedure TGrupos.setDescricao(aDescricao: String);
 begin
-  ValidarDescricao(aDescricao);
+  //ValidarDescricao(aDescricao);
   FDescricao := Trim(aDescricao);
 end;
 

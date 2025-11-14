@@ -22,6 +22,7 @@ type
     function BuscarPorNivel(ANivel: Integer): TObjectList<TGrupos>;
     function AtualizarPorId(AId: Integer; ANome, ADescricao: string; AIdPermissao: Integer): Boolean;
     function CriarGruposPadrao: Boolean;
+   function RestaurarGrupo(AId: Integer): Boolean;
   end;
 
 implementation
@@ -131,6 +132,19 @@ begin
   Self.query.Close;
 end;
 
+function TGruposRepository.RestaurarGrupo(AId: Integer): Boolean;
+begin
+  Result := False;
+  Self.query.SQL.Text := 'UPDATE public."Grupos" SET ativo = TRUE WHERE id_grupo = :id_grupo';
+  Self.query.ParamByName('id_grupo').AsInteger := AId;
+  try
+    Self.query.ExecSQL;
+    Result := Self.query.RowsAffected > 0;
+  except
+    Result := False;
+  end;
+end;
+
 function TGruposRepository.BuscarPorNome(ANome: string): TObjectList<TGrupos>;
 var
   Grupo: TGrupos;
@@ -145,7 +159,6 @@ begin
     Grupo := TGrupos.Create;
     Grupo.setId(Self.query.FieldByName('id_grupo').AsInteger);
     Grupo.setNome(Self.query.FieldByName('nome').AsString);
-    Grupo.setDescricao(Self.query.FieldByName('descricao').AsString);
     Grupo.setIdPermissao(Self.query.FieldByName('id_permissao').AsInteger);
     Grupo.setDataCriacao(Self.query.FieldByName('data_criacao').AsDateTime);
     Grupo.setAtivo(Self.query.FieldByName('ativo').AsBoolean);
@@ -170,7 +183,6 @@ begin
     Grupo := TGrupos.Create;
     Grupo.setId(Self.query.FieldByName('id_grupo').AsInteger);
     Grupo.setNome(Self.query.FieldByName('nome').AsString);
-    Grupo.setDescricao(Self.query.FieldByName('descricao').AsString);
     Grupo.setIdPermissao(Self.query.FieldByName('id_permissao').AsInteger);
     Grupo.setDataCriacao(Self.query.FieldByName('data_criacao').AsDateTime);
     Grupo.setAtivo(Self.query.FieldByName('ativo').AsBoolean);
@@ -193,7 +205,6 @@ begin
 
   Self.query.ParamByName('id_grupo').AsInteger := AId;
   Self.query.ParamByName('nome').AsString := ANome;
-  Self.query.ParamByName('descricao').AsString := ADescricao;
   Self.query.ParamByName('id_permissao').AsInteger := AIdPermissao;
 
   Self.query.ExecSQL;
@@ -209,7 +220,6 @@ begin
     grupo := TGrupos.Create;
     try
       grupo.setNome('Usuário');
-      grupo.setDescricao('Acesso básico: Criar, Ler, Atualizar registros');
       grupo.setIdPermissao(1);
       grupo.setDataCriacao(Now);
       grupo.setAtivo(True);
@@ -221,7 +231,6 @@ begin
     grupo := TGrupos.Create;
     try
       grupo.setNome('Supervisor');
-      grupo.setDescricao('Acesso intermediário: Todas as operações CRUD');
       grupo.setIdPermissao(2);
       grupo.setDataCriacao(Now);
       grupo.setAtivo(True);
@@ -233,7 +242,6 @@ begin
     grupo := TGrupos.Create;
     try
       grupo.setNome('Administrador');
-      grupo.setDescricao('Acesso total: Todas as operações incluindo gerenciamento de usuários');
       grupo.setIdPermissao(3);
       grupo.setDataCriacao(Now);
       grupo.setAtivo(True);
@@ -244,6 +252,8 @@ begin
   except
     Result := False;
   end;
+
+
 end;
 
 end.
