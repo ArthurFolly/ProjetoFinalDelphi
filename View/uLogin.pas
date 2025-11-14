@@ -29,6 +29,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure BtnMostrarSenhaClick(Sender: TObject);
     procedure CliqueMouseLeave(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
 
   LoginUsuarioController : TLoginUsuarioController;
@@ -46,6 +47,13 @@ implementation
   uses uCadastroUsuariosView,System.Hash;
 
 {$R *.dfm}
+
+procedure TFLogin.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;         // libera o form da memória
+  Application.Terminate;    // encerra de vez o programa
+end;
+
 
 procedure TFLogin.FormCreate(Sender: TObject);
 begin

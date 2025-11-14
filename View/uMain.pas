@@ -36,12 +36,12 @@ type
     ImageGrupos: TImage;
     PanelForm: TPanel;
     CardPanel1: TCardPanel;
-    Card1: TCard;
-    Card2: TCard;
+    crdImpExp: TCard;
+    crdContatos: TCard;
     Card3: TCard;
-    Card5: TCard;
-    Card4: TCard;
-    Card6: TCard;
+    crdEmpresas: TCard;
+    crdGrupos: TCard;
+    crdConfig: TCard;
     PageControl: TPageControl;
     Principal: TTabSheet;
     Cadastro: TTabSheet;
@@ -111,8 +111,6 @@ type
     SpdRestaurarEmpresa: TSpeedButton;
     SpdExcluirEmpresa: TSpeedButton;
     SpdAdicionarEmpresa: TSpeedButton;
-    PageControl3: TPageControl;
-    TabSheet4: TTabSheet;
     PageControl4: TPageControl;
     TabSheet6: TTabSheet;
     Panel13: TPanel;
@@ -127,16 +125,6 @@ type
     SpdRestaurarGrupos: TSpeedButton;
     Bevel9: TBevel;
     Bevel7: TBevel;
-    Label18: TLabel;
-    DBGrid3: TDBGrid;
-    ComboBox1: TComboBox;
-    Label19: TLabel;
-    Bevel8: TBevel;
-    Bevel10: TBevel;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
     Label17: TLabel;
     Edit7: TEdit;
     txtNumero: TEdit;
@@ -147,6 +135,30 @@ type
     txtLocalidade: TEdit;
     txtUF: TEdit;
     SpeedButton5: TSpeedButton;
+    PageControl5: TPageControl;
+    TabSheet5: TTabSheet;
+    TabSheet7: TTabSheet;
+    Panel15: TPanel;
+    Panel16: TPanel;
+    Panel17: TPanel;
+    Panel18: TPanel;
+    PageControl3: TPageControl;
+    TabSheet4: TTabSheet;
+    Panel11: TPanel;
+    Panel12: TPanel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Bevel8: TBevel;
+    Bevel10: TBevel;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    SpeedButton4: TSpeedButton;
+    DBGrid3: TDBGrid;
+    ComboBox1: TComboBox;
+    TabSheet8: TTabSheet;
+    Panel19: TPanel;
+    Panel20: TPanel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -193,6 +205,7 @@ type
     procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure SpdRestaurarGruposClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
 private
   Editando: Boolean;
@@ -275,6 +288,13 @@ implementation
 var
   PainelPressionado: TPanel;
 
+procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;          // libera o FMain da memória
+  Application.Terminate;     // encerra toda a aplicação de forma definitiva
+end;
+
+
 procedure TFMain.FormCreate(Sender: TObject);
 begin
   DataModule1.FDConnection1.Connected := True;
@@ -325,7 +345,7 @@ begin
   EmpresaAtual := nil;
 
 
-  Card5.Visible := False;
+  crdEmpresas.Visible := False;
   PageControl2.Visible := False;
 end;
 
@@ -1897,10 +1917,10 @@ end;
 procedure TFMain.PanelContatosClick(Sender: TObject);
 begin
   AtivarPainel(PanelContatos);
-  CardPanel1.ActiveCard := Card2;
+  CardPanel1.ActiveCard := crdContatos;
   PageControl.Visible := True;
-  Card2.Visible := True;
-  Card2.CardVisible := True;
+  crdContatos.Visible := True;
+  crdContatos.CardVisible := True;
 
   CarregarContatosDB;
 end;
@@ -1918,9 +1938,9 @@ end;
 procedure TFMain.PanelEmpresaClick(Sender: TObject);
 begin
   AtivarPainel(PanelEmpresa);
-  CardPanel1.ActiveCard := Card5;
+  CardPanel1.ActiveCard := crdEmpresas;
   PageControl2.Visible := True;
-  Card5.Visible := True;
+  crdEmpresas.Visible := True;
 
 
   ConfigurarDBGridEmpresas;
@@ -1930,9 +1950,9 @@ end;
 procedure TFMain.PanelImportExportClick(Sender: TObject);
 begin
  AtivarPainel(PanelImportExport);
-  CardPanel1.ActiveCard := Card5;
+  CardPanel1.ActiveCard := crdEmpresas;
   PageControl2.Visible := True;
-  Card5.Visible := True;
+  crdEmpresas.Visible := True;
   CarregarEmpresas;
   PageControl2.ActivePage := TabSheet3;
   //CarregarContatosNoComboBox;
@@ -1941,9 +1961,9 @@ end;
 procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
   AtivarPainel(PanelConfiguracao);
-  CardPanel1.ActiveCard := Card6;
+  CardPanel1.ActiveCard := crdConfig;
   PageControl2.Visible := True;
-  Card5.Visible := True;
+  crdEmpresas.Visible := True;
   CarregarEmpresas;
   PageControl2.ActivePage := TabSheet3;
 end;
@@ -2049,12 +2069,12 @@ end;
 procedure TFMain.PanelGruposClick(Sender: TObject);
 begin
 AtivarPainel(PanelGrupos);
-CardPanel1.ActiveCard := Card4;
+CardPanel1.ActiveCard := crdGrupos;
 
 
   PageControl4.Visible := True;
   TabSheet6.Visible := True;
-  Card6.Visible := True;
+  crdConfig.Visible := True;
 
 
   ConfigurarDBGridGrupos;

@@ -11,6 +11,7 @@
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
@@ -1776,32 +1777,82 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = Card2
+      ActiveCard = crdEmpresas
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
       ExplicitWidth = 880
       ExplicitHeight = 673
-      object Card1: TCard
+      object crdImpExp: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
-        Caption = 'Card1'
+        Caption = 'crdImpExp'
         CardIndex = 0
         TabOrder = 0
-        ExplicitWidth = 880
-        ExplicitHeight = 673
+        object PageControl5: TPageControl
+          Left = 0
+          Top = 0
+          Width = 882
+          Height = 681
+          ActivePage = TabSheet7
+          Align = alClient
+          TabOrder = 0
+          object TabSheet5: TTabSheet
+            Caption = 'TabSheet5'
+            object Panel15: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+              object Panel16: TPanel
+                Left = 16
+                Top = 24
+                Width = 841
+                Height = 609
+                TabOrder = 0
+              end
+            end
+          end
+          object TabSheet7: TTabSheet
+            Caption = 'TabSheet7'
+            ImageIndex = 1
+            object Panel17: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+              object Panel18: TPanel
+                Left = 16
+                Top = 16
+                Width = 841
+                Height = 617
+                TabOrder = 0
+              end
+            end
+          end
+        end
       end
-      object Card2: TCard
+      object crdContatos: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
-        Caption = 'Card2'
+        Caption = 'crdContatos'
         CardIndex = 1
         CardVisible = False
         TabOrder = 1
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object PageControl: TPageControl
           Left = 0
           Top = 0
@@ -1812,8 +1863,10 @@
           TabOrder = 0
           TabWidth = 100
           Visible = False
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object Principal: TTabSheet
-            Caption = 'Contatos'
+            Caption = 'Lista'
             object Panel2: TPanel
               Left = 0
               Top = 0
@@ -3085,6 +3138,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
             end
             object Panel4: TPanel
               Left = 16
@@ -4862,12 +4917,12 @@
           end
         end
       end
-      object Card5: TCard
+      object crdEmpresas: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
-        Caption = 'Card5'
+        Caption = 'crdEmpresas'
         CardIndex = 3
         TabOrder = 3
         object PageControl2: TPageControl
@@ -7191,12 +7246,12 @@
           end
         end
       end
-      object Card4: TCard
+      object crdGrupos: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
-        Caption = 'Card4'
+        Caption = 'crdGrupos'
         CardIndex = 4
         TabOrder = 4
         object PageControl4: TPageControl
@@ -7208,7 +7263,7 @@
           Align = alClient
           TabOrder = 0
           object TabSheet6: TTabSheet
-            Caption = 'TabSheet6'
+            Caption = 'Cadastro'
             object Panel13: TPanel
               Left = 0
               Top = 0
@@ -8889,12 +8944,12 @@
           end
         end
       end
-      object Card6: TCard
+      object crdConfig: TCard
         Left = 0
         Top = 0
         Width = 882
         Height = 681
-        Caption = 'Card6'
+        Caption = 'crdConfig'
         CardIndex = 5
         TabOrder = 5
         object PageControl3: TPageControl
@@ -8902,11 +8957,11 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = TabSheet4
+          ActivePage = TabSheet8
           Align = alClient
           TabOrder = 0
           object TabSheet4: TTabSheet
-            Caption = 'TabSheet4'
+            Caption = 'Relat'#243'rios'
             object Panel11: TPanel
               Left = 0
               Top = 0
@@ -10694,6 +10749,27 @@
                   Height = 23
                   TabOrder = 1
                 end
+              end
+            end
+          end
+          object TabSheet8: TTabSheet
+            Caption = 'TabSheet8'
+            ImageIndex = 1
+            object Panel19: TPanel
+              Left = 0
+              Top = 0
+              Width = 874
+              Height = 651
+              Align = alClient
+              Color = 7015492
+              ParentBackground = False
+              TabOrder = 0
+              object Panel20: TPanel
+                Left = 16
+                Top = 24
+                Width = 841
+                Height = 609
+                TabOrder = 0
               end
             end
           end
