@@ -10,6 +10,8 @@ object FormCadastroUsuario: TFormCadastroUsuario
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   TextHeight = 15
   object PanelFundo: TPanel

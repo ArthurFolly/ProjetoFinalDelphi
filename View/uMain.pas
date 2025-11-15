@@ -14,37 +14,41 @@ uses
   FavoritosController,FavoritosRepository, EmpresaModel,
   EmpresaController,GruposModel,GruposRepository,GruposController,
   System.ImageList, Vcl.ImgList, System.Net.HttpClient,
-  System.Net.URLClient, System.JSON;
+  System.Net.URLClient, System.JSON, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController;
+
+
 
 type
   TFMain = class(TForm)
     Fundo: TImage;
     Panel1: TPanel;
     Logo: TImage;
-    PanelContatos: TPanel;
+    pnlContatos: TPanel;
     ImageContato: TImage;
-    PanelConfiguracao: TPanel;
-    PanelImportExport: TPanel;
-    PanelEmpresa: TPanel;
-    PanelFavoritos: TPanel;
-    PanelGrupos: TPanel;
+    pnlConfiguracao: TPanel;
+    pnlImportExport: TPanel;
+    pnlEmpresa: TPanel;
+    pnlFavoritos: TPanel;
+    pnlGrupos: TPanel;
     ContactHub: TPanel;
     ImageFavoritos: TImage;
     ImageEmpresa: TImage;
     ImageImpExp: TImage;
-    ImageConfig: TImage;
+    ImgConfig: TImage;
     ImageGrupos: TImage;
     PanelForm: TPanel;
     CardPanel1: TCardPanel;
     crdImpExp: TCard;
     crdContatos: TCard;
-    Card3: TCard;
+    crdFavoritos: TCard;
     crdEmpresas: TCard;
     crdGrupos: TCard;
     crdConfig: TCard;
-    PageControl: TPageControl;
-    Principal: TTabSheet;
-    Cadastro: TTabSheet;
+    pgcContatos: TPageControl;
+    tbsContatosList: TTabSheet;
+    tbsContatosCad: TTabSheet;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -63,8 +67,8 @@ type
     Edit3: TEdit;
     Edit4: TEdit;
     SpdAdicionar: TSpeedButton;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
+    pgcFavoritos: TPageControl;
+    tbsFavoritosCad: TTabSheet;
     Panel5: TPanel;
     Panel6: TPanel;
     Label5: TLabel;
@@ -82,8 +86,8 @@ type
     SpdRemoverFavorito: TSpeedButton;
     DBGridFavoritos: TDBGrid;
     ComboBoxContatos: TComboBox;
-    PageControl2: TPageControl;
-    TabSheet2: TTabSheet;
+    pgcEmpresas: TPageControl;
+    tbsEmpresasCad: TTabSheet;
     Panel8: TPanel;
     Panel9: TPanel;
     Label6: TLabel;
@@ -102,7 +106,7 @@ type
     Bevel4: TBevel;
     Bevel5: TBevel;
     Bevel6: TBevel;
-    TabSheet3: TTabSheet;
+    tbsEmpresasList: TTabSheet;
     Panel10: TPanel;
     Label13: TLabel;
     Label14: TLabel;
@@ -135,15 +139,15 @@ type
     txtLocalidade: TEdit;
     txtUF: TEdit;
     SpeedButton5: TSpeedButton;
-    PageControl5: TPageControl;
-    TabSheet5: TTabSheet;
-    TabSheet7: TTabSheet;
+    pgcImpExp: TPageControl;
+    tbsImport: TTabSheet;
+    tbsExport: TTabSheet;
     Panel15: TPanel;
     Panel16: TPanel;
     Panel17: TPanel;
     Panel18: TPanel;
-    PageControl3: TPageControl;
-    TabSheet4: TTabSheet;
+    pgcConfig: TPageControl;
+    tbsRelatorios: TTabSheet;
     Panel11: TPanel;
     Panel12: TPanel;
     Label18: TLabel;
@@ -159,28 +163,47 @@ type
     TabSheet8: TTabSheet;
     Panel19: TPanel;
     Panel20: TPanel;
+    pnlRelatorios: TPanel;
+    imgRelatorios: TImage;
+    crdRelatorios: TCard;
+    pgcRelatorios: TPageControl;
+    tbsRelatorio: TTabSheet;
+    Panel21: TPanel;
+    Panel22: TPanel;
+    OpenDialog1: TOpenDialog;
+    // ----- Importacao VCF
+    FDMemTable1: TFDMemTable;
+    DBGrid4: TDBGrid;
+    Memo1: TMemo;
+    sdbImpNovo: TSpeedButton;
+    spdImpExcluir: TSpeedButton;
+    spdImpSalvarDB: TSpeedButton;
+    spdImpContatos: TSpeedButton;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    SpeedButton6: TSpeedButton;
+    Label20: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure LogoClick(Sender: TObject);
-    procedure PanelContatosClick(Sender: TObject);
-    procedure PanelFavoritosClick(Sender: TObject);
-    procedure PanelEmpresaClick(Sender: TObject);
-    procedure PanelImportExportClick(Sender: TObject);
+    procedure pnlContatosClick(Sender: TObject);
+    procedure pnlFavoritosClick(Sender: TObject);
+    procedure pnlEmpresaClick(Sender: TObject);
+    procedure pnlImportExportClick(Sender: TObject);
     procedure PanelConfiguraçaoClick(Sender: TObject);
-    procedure PanelConfigClick(Sender: TObject);
-    procedure PanelConfiguracaoClick(Sender: TObject);
-    procedure PanelContatosMouseEnter(Sender: TObject);
-    procedure PanelContatosMouseLeave(Sender: TObject);
-    procedure PanelFavoritosMouseEnter(Sender: TObject);
-    procedure PanelFavoritosMouseLeave(Sender: TObject);
-    procedure PanelEmpresaMouseEnter(Sender: TObject);
-    procedure PanelEmpresaMouseLeave(Sender: TObject);
-    procedure PanelImportExportMouseEnter(Sender: TObject);
-    procedure PanelImportExportMouseLeave(Sender: TObject);
-    procedure PanelConfiguracaoMouseEnter(Sender: TObject);
-    procedure PanelConfiguracaoMouseLeave(Sender: TObject);
+    procedure pnlContatosMouseEnter(Sender: TObject);
+    procedure pnlContatosMouseLeave(Sender: TObject);
+    procedure pnlFavoritosMouseEnter(Sender: TObject);
+    procedure pnlFavoritosMouseLeave(Sender: TObject);
+    procedure pnlEmpresaMouseEnter(Sender: TObject);
+    procedure pnlEmpresaMouseLeave(Sender: TObject);
+    procedure pnlImportExportMouseEnter(Sender: TObject);
+    procedure pnlImportExportMouseLeave(Sender: TObject);
+    procedure pnlConfiguracaoMouseEnter(Sender: TObject);
+    procedure pnlConfiguracaoMouseLeave(Sender: TObject);
 //    procedure PanelConfigMouseEnter(Sender: TObject);
 //    procedure PanelConfigMouseLeave(Sender: TObject);
     procedure SpdAdicionarClick(Sender: TObject);
@@ -197,15 +220,23 @@ type
     procedure SpdExcluirEmpresaClick(Sender: TObject);
     procedure SpdRestaurarEmpresaClick(Sender: TObject);
     procedure SpdListarEmpresaClick(Sender: TObject);
-    procedure PanelGruposClick(Sender: TObject);
-    procedure PanelGruposMouseLeave(Sender: TObject);
-    procedure PanelGruposMouseEnter(Sender: TObject);
+    procedure pnlGruposClick(Sender: TObject);
+    procedure pnlGruposMouseLeave(Sender: TObject);
+    procedure pnlGruposMouseEnter(Sender: TObject);
     procedure SpdAdicionarGrupoClick(Sender: TObject);
     procedure SpdEditarGrupoClick(Sender: TObject);
     procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure SpdRestaurarGruposClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure pnlRelatoriosMouseEnter(Sender: TObject);
+    procedure pnlRelatoriosMouseLeave(Sender: TObject);
+    procedure pnlRelatoriosClick(Sender: TObject);
+    procedure spdImpContatosClick(Sender: TObject);
+    procedure sdbImpNovoClick(Sender: TObject);
+    procedure spdImpExcluirClick(Sender: TObject);
+    procedure spdImpSalvarDBClick(Sender: TObject);
+
 
 private
   Editando: Boolean;
@@ -219,7 +250,6 @@ private
 
 
 
-
   // === EMPRESAS ===
   EditandoEmpresa: Boolean;
   EmpresaAtual: TEmpresa;
@@ -228,7 +258,7 @@ private
   DataSourceEmpresas: TDataSource;
   LoadingDatasetEmpresas: Boolean;
 
-// === GRUPOS - VARIÁVEIS ===
+  // === GRUPOS - VARIÁVEIS ===
   ClientDataSetGrupos: TClientDataSet;
   DataSourceGrupos: TDataSource;
   LoadingGrupos: Boolean;
@@ -245,7 +275,6 @@ private
   procedure LimparFormularioGrupo;
   function ValidarFormularioGrupo: Boolean;
   function ValidarPermissaoGrupo(Operacao: string): Boolean;
-
 
   // === CONTATOS ===
   procedure AtivarPainel(Panel: TPanel);
@@ -277,6 +306,9 @@ private
   procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
   procedure DBGrid1DblClick(Sender: TObject);
 
+  // ----- Importacao VCF
+  procedure PrepareMemTable;
+  procedure ConfigurarGrid;
 
   end;
 var
@@ -346,7 +378,18 @@ begin
 
 
   crdEmpresas.Visible := False;
-  PageControl2.Visible := False;
+  pgcEmpresas.Visible := False;
+
+  // ----- Importacao VCF
+  Memo1.Font.Name := 'Segoe UI';
+  OpenDialog1.Filter := 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*';
+  OpenDialog1.DefaultExt := 'vcf';
+  OpenDialog1.FilterIndex := 1;
+  OpenDialog1.InitialDir := 'C:\';
+
+  PrepareMemTable;
+  ConfigurarGrid;
+
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -687,6 +730,7 @@ begin
     dgColLines, dgRowLines, dgTabs, dgRowSelect
   ];
 end;
+
 procedure TFMain.ConfirmarExclusaoEmpresaGrid(DataSet: TDataSet);
 var
   IdEmpresa: Integer;
@@ -737,7 +781,6 @@ begin
       DataSet.Cancel; // desfaz a exclusão do ClientDataSet
   end;
 end;
-
 
 procedure TFMain.CarregarContatosDB;
 begin
@@ -794,6 +837,7 @@ begin
     LoadingDatasetEmpresas := False;
   end;
 end;
+
 procedure TFMain.CarregarFavoritos;
 begin
   // DEIXA O CONTROLLER FAZER TUDO
@@ -875,7 +919,6 @@ begin
     LoadingDataset := False;
   end;
 end;
-
 
 procedure TFMain.AtualizarDBGridEmpresas;
 begin
@@ -969,7 +1012,6 @@ begin
     end;
   end;
 end;
-
 
 procedure TFMain.SalvarEdicaoGrupo(DataSet: TDataSet);
 begin
@@ -1102,6 +1144,7 @@ begin
     Grupo.Free;
   end;
 end;
+
 procedure TFMain.SpdRemoverClick(Sender: TObject);
 begin
   LimparFormulario;
@@ -1135,7 +1178,6 @@ begin
       ShowMessage(Msg);
   end;
 end;
-
 
 procedure TFMain.SpdRestaurarEmpresaClick(Sender: TObject);
 var
@@ -1174,6 +1216,7 @@ begin
     Query.Free;
   end;
 end;
+
 procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
 var
   IdDigitado: Integer;
@@ -1400,7 +1443,6 @@ begin
   end;
 end;
 
-
 procedure TFMain.SpdEditarContatosGridClick(Sender: TObject);
 var
   Contato: Contatos;
@@ -1434,7 +1476,6 @@ begin
     ShowMessage('Selecione um contato no grid!');
 end;
 
-
 procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
 var
   EmpresaTemp: TEmpresa;
@@ -1460,7 +1501,7 @@ begin
       EditandoEmpresa := False;
       SpdAdicionarEmpresa.Enabled := True;
       SpdEditarEmpresa.Caption := 'Editar';
-      PageControl2.ActivePage := TabSheet3;
+      pgcEmpresas.ActivePage := tbsEmpresasList;
       CarregarEmpresas;
     end
     else
@@ -1491,9 +1532,10 @@ begin
     EditandoEmpresa := True;
     SpdAdicionarEmpresa.Enabled := False;
     SpdEditarEmpresa.Caption := 'Salvar';
-    PageControl2.ActivePage := TabSheet2;
+    pgcEmpresas.ActivePage := tbsEmpresasList;
   end;
 end;
+
 procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
 var
   Grupo: TGrupos;
@@ -1639,7 +1681,7 @@ begin
   SpdEditarEmpresa.Caption := 'Editar';
 
   // FORÇA IR PARA A ABA DO GRID
-  PageControl2.ActivePage := TabSheet3;
+  pgcEmpresas.ActivePage := tbsEmpresasList;
 
   // ATUALIZA O GRID AUTOMATICAMENTE
   CarregarEmpresas;
@@ -1873,37 +1915,37 @@ begin
     ContactHub.Font.Size := 20;
     ContactHub.Alignment := taCenter;
 
-    ImageConfig.Width := 32;
-    ImageConfig.Height := 32;
-    ImageConfig.Margins.Top := 10;
-    ImageConfig.Align := alLeft;
+    ImgConfig.Width := 32;
+    ImgConfig.Height := 32;
+    ImgConfig.Margins.Top := 10;
+    ImgConfig.Align := alLeft;
 
-    PanelContatos.Margins.Top := 45;
-    PanelContatos.Height := 70;
-    PanelContatos.Width := 100;
-    PanelContatos.Font.Size := 18;
+    pnlContatos.Margins.Top := 45;
+    pnlContatos.Height := 70;
+    pnlContatos.Width := 100;
+    pnlContatos.Font.Size := 18;
 
-    PanelFavoritos.Margins.Top := 20;
-    PanelFavoritos.Font.Size := 18;
-
-
-    PanelGrupos.Margins.Top := 20;
-    PanelGrupos.Font.Size := 19;
+    pnlFavoritos.Margins.Top := 20;
+    pnlFavoritos.Font.Size := 18;
 
 
-    PanelEmpresa.Margins.Top := 20;
-    PanelEmpresa.Font.Size := 18;
+    pnlGrupos.Margins.Top := 20;
+    pnlGrupos.Font.Size := 19;
 
-    PanelImportExport.Margins.Top := 20;
-    PanelImportExport.Font.Size := 18;
 
-    PanelConfiguracao.Margins.Top := 20;
-    PanelConfiguracao.Font.Size := 18;
+    pnlEmpresa.Margins.Top := 20;
+    pnlEmpresa.Font.Size := 18;
+
+    pnlImportExport.Margins.Top := 20;
+    pnlImportExport.Font.Size := 18;
+
+    pnlConfiguracao.Margins.Top := 20;
+    pnlConfiguracao.Font.Size := 18;
   end
   else
   begin
     Logo.Width := 80;
-    PanelContatos.Margins.Top := 5;
+    pnlContatos.Margins.Top := 5;
   end;
 end;
 
@@ -1914,163 +1956,185 @@ begin
   Logo.Center := True;
 end;
 
-procedure TFMain.PanelContatosClick(Sender: TObject);
+procedure TFMain.pnlContatosClick(Sender: TObject);
 begin
-  AtivarPainel(PanelContatos);
+  AtivarPainel(pnlContatos);
   CardPanel1.ActiveCard := crdContatos;
-  PageControl.Visible := True;
+  pgcContatos.Visible := True;
   crdContatos.Visible := True;
   crdContatos.CardVisible := True;
 
   CarregarContatosDB;
 end;
 
-procedure TFMain.PanelFavoritosClick(Sender: TObject);
+procedure TFMain.pnlFavoritosClick(Sender: TObject);
 begin
-  AtivarPainel(PanelFavoritos);
-  CardPanel1.ActiveCard := Card3;
-  PageControl1.Visible := True;
-  Card3.Visible := True;
+  AtivarPainel(pnlFavoritos);
+  CardPanel1.ActiveCard := crdFavoritos;
+  pgcFavoritos.Visible := True;
+  crdFavoritos.Visible := True;
   CarregarFavoritos;
   CarregarContatosNoComboBox;
 end;
 
-procedure TFMain.PanelEmpresaClick(Sender: TObject);
+procedure TFMain.pnlEmpresaClick(Sender: TObject);
 begin
-  AtivarPainel(PanelEmpresa);
+  AtivarPainel(pnlEmpresa);
   CardPanel1.ActiveCard := crdEmpresas;
-  PageControl2.Visible := True;
+  pgcEmpresas.Visible := True;
   crdEmpresas.Visible := True;
-
-
   ConfigurarDBGridEmpresas;
   CarregarEmpresas;
-  PageControl2.ActivePage := TabSheet3;
+  pgcEmpresas.ActivePage := tbsEmpresasList;
 end;
-procedure TFMain.PanelImportExportClick(Sender: TObject);
+
+procedure TFMain.pnlImportExportClick(Sender: TObject);
 begin
- AtivarPainel(PanelImportExport);
-  CardPanel1.ActiveCard := crdEmpresas;
-  PageControl2.Visible := True;
-  crdEmpresas.Visible := True;
-  CarregarEmpresas;
-  PageControl2.ActivePage := TabSheet3;
-  //CarregarContatosNoComboBox;
+  AtivarPainel(pnlImportExport);
+  CardPanel1.ActiveCard := crdImpExp;
+  crdImpExp.Visible := True;
+  pgcImpexp.Visible := True;
+  pgcImpExp.ActivePage := tbsImport;
 end;
 
 procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
-  AtivarPainel(PanelConfiguracao);
+  AtivarPainel(pnlConfiguracao);
   CardPanel1.ActiveCard := crdConfig;
-  PageControl2.Visible := True;
-  crdEmpresas.Visible := True;
-  CarregarEmpresas;
-  PageControl2.ActivePage := TabSheet3;
+  pgcConfig.Visible := True;
+  crdConfig.Visible := True;
+  pgcConfig.ActivePage := tbsRelatorios;
 end;
 
-procedure TFMain.PanelConfigClick(Sender: TObject);
+procedure TFMain.pnlContatosMouseEnter(Sender: TObject);
 begin
-  AtivarPainel(PanelConfiguracao);
-end;
-
-procedure TFMain.PanelConfiguracaoClick(Sender: TObject);
-begin
-  AtivarPainel(PanelConfiguracao);
-end;
-
-procedure TFMain.PanelContatosMouseEnter(Sender: TObject);
-begin
-  if PainelPressionado <> PanelContatos then
+  if PainelPressionado <> pnlContatos then
   begin
-    PanelContatos.BevelOuter := bvRaised;
-    PanelContatos.Color := $00D6498F;
-    PanelContatos.Cursor := crHandPoint;
+    pnlContatos.BevelOuter := bvRaised;
+    pnlContatos.Color := $00D6498F;
+    pnlContatos.Cursor := crHandPoint;
     ImageContato.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ContatoPreta.png');
   end;
 end;
 
-procedure TFMain.PanelContatosMouseLeave(Sender: TObject);
+procedure TFMain.pnlContatosMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelContatos then
+  if PainelPressionado <> pnlContatos then
   begin
-    PanelContatos.BevelOuter := bvNone;
-    PanelContatos.Color := $00121212;
-    PanelContatos.Cursor := crDefault;
+    pnlContatos.BevelOuter := bvNone;
+    pnlContatos.Color := $00121212;
+    pnlContatos.Cursor := crDefault;
     ImageContato.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ContatoRoxa.png');
   end;
 end;
 
-procedure TFMain.PanelFavoritosMouseEnter(Sender: TObject);
+procedure TFMain.pnlFavoritosMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelFavoritos then
+  if PainelPressionado <> pnlFavoritos then
   begin
-    PanelFavoritos.BevelOuter := bvRaised;
-    PanelFavoritos.Color := $00D6498F;
-    PanelFavoritos.Cursor := crHandPoint;
+    pnlFavoritos.BevelOuter := bvRaised;
+    pnlFavoritos.Color := $00D6498F;
+    pnlFavoritos.Cursor := crHandPoint;
     ImageFavoritos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\FavoritosPreta.png');
   end;
 end;
 
-procedure TFMain.PanelFavoritosMouseLeave(Sender: TObject);
+procedure TFMain.pnlFavoritosMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelFavoritos then
+  if PainelPressionado <> pnlFavoritos then
   begin
-    PanelFavoritos.BevelOuter := bvNone;
-    PanelFavoritos.Color := $00121212;
-    PanelFavoritos.Cursor := crDefault;
+    pnlFavoritos.BevelOuter := bvNone;
+    pnlFavoritos.Color := $00121212;
+    pnlFavoritos.Cursor := crDefault;
     ImageFavoritos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\FavoritosRoxa.png');
   end;
 end;
 
-procedure TFMain.PanelEmpresaMouseEnter(Sender: TObject);
+procedure TFMain.pnlEmpresaMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelEmpresa then
+  if PainelPressionado <> pnlEmpresa then
   begin
-    PanelEmpresa.BevelOuter := bvRaised;
-    PanelEmpresa.Color := $00D6498F;
-    PanelEmpresa.Cursor := crHandPoint;
+    pnlEmpresa.BevelOuter := bvRaised;
+    pnlEmpresa.Color := $00D6498F;
+    pnlEmpresa.Cursor := crHandPoint;
     ImageEmpresa.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoEmpresaPreta.png');
   end;
 end;
 
-procedure TFMain.PanelEmpresaMouseLeave(Sender: TObject);
+procedure TFMain.pnlEmpresaMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelEmpresa then
+  if PainelPressionado <> pnlEmpresa then
   begin
-    PanelEmpresa.BevelOuter := bvNone;
-    PanelEmpresa.Color := $00121212;
-    PanelEmpresa.Cursor := crDefault;
+    pnlEmpresa.BevelOuter := bvNone;
+    pnlEmpresa.Color := $00121212;
+    pnlEmpresa.Cursor := crDefault;
     ImageEmpresa.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoEmpresaRoxa.png');
   end;
 end;
 
-procedure TFMain.PanelImportExportMouseEnter(Sender: TObject);
+// ----- Evento OnMouseEnter - pnlImportExport
+procedure TFMain.pnlImportExportMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelImportExport then
+  if PainelPressionado <> pnlImportExport then
   begin
-    PanelImportExport.BevelOuter := bvRaised;
-    PanelImportExport.Color := $00D6498F;
-    PanelImportExport.Cursor := crHandPoint;
+    pnlImportExport.BevelOuter := bvRaised;
+    pnlImportExport.Color := $00D6498F;
+    pnlImportExport.Cursor := crHandPoint;
     ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ImpPreta.png');
   end;
 end;
 
-procedure TFMain.PanelImportExportMouseLeave(Sender: TObject);
+// ----- Evento OnMouseLeave - pnlImportExport
+procedure TFMain.pnlImportExportMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelImportExport then
+  if PainelPressionado <> pnlImportExport then
   begin
-    PanelImportExport.BevelOuter := bvNone;
-    PanelImportExport.Color := $00121212;
-    PanelImportExport.Cursor := crDefault;
+    pnlImportExport.BevelOuter := bvNone;
+    pnlImportExport.Color := $00121212;
+    pnlImportExport.Cursor := crDefault;
     ImageImpExp.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ImpRoxa.png');
   end;
 end;
 
-procedure TFMain.PanelGruposClick(Sender: TObject);
+// ----- Evento Click - pnlRelatorios
+procedure TFMain.pnlRelatoriosClick(Sender: TObject);
 begin
-AtivarPainel(PanelGrupos);
-CardPanel1.ActiveCard := crdGrupos;
+  AtivarPainel(pnlRelatorios);
+  CardPanel1.ActiveCard := crdRelatorios;
+  crdRelatorios.Visible := True;
+  pgcRelatorios.Visible := True;
+  pgcRelatorios.ActivePage := tbsRelatorios;
+end;
 
+procedure TFMain.pnlRelatoriosMouseEnter(Sender: TObject);
+begin
+  if PainelPressionado <> pnlRelatorios then
+  begin
+    pnlRelatorios.BevelOuter := bvRaised;
+    pnlRelatorios.Color := $00D6498F;
+    pnlRelatorios.Cursor := crHandPoint;
+    imgRelatorios.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\printer3.png');
+  end;
+end;
+
+// ----- Evento OnMouseLeave - pnlRelatorios
+procedure TFMain.pnlRelatoriosMouseLeave(Sender: TObject);
+begin
+ if PainelPressionado <> pnlRelatorios then
+  begin
+    pnlRelatorios.BevelOuter := bvNone;
+    pnlRelatorios.Color := $00121212;
+    pnlRelatorios.Cursor := crDefault;
+    imgRelatorios.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\printer3.png');
+  end;
+
+
+end;
+
+procedure TFMain.pnlGruposClick(Sender: TObject);
+begin
+  AtivarPainel(pnlGrupos);
+  CardPanel1.ActiveCard := crdGrupos;
 
   PageControl4.Visible := True;
   TabSheet6.Visible := True;
@@ -2080,56 +2144,184 @@ CardPanel1.ActiveCard := crdGrupos;
   ConfigurarDBGridGrupos;
   CarregarGrupos;
 
+  end;
 
-
-end;
-
-procedure TFMain.PanelGruposMouseEnter(Sender: TObject);
+procedure TFMain.pnlGruposMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelGrupos then
+  if PainelPressionado <> pnlGrupos then
   begin
-    PanelGrupos.BevelOuter := bvRaised;
-    PanelGrupos.Color := $00D6498F;
-    PanelGrupos.Cursor := crHandPoint;
+    pnlGrupos.BevelOuter := bvRaised;
+    pnlGrupos.Color := $00D6498F;
+    pnlGrupos.Cursor := crHandPoint;
     ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposPreta.png');
   end;
 end;
 
-procedure TFMain.PanelGruposMouseLeave(Sender: TObject);
+procedure TFMain.pnlGruposMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelGrupos then
+  if PainelPressionado <> pnlGrupos then
   begin
-    PanelGrupos.BevelOuter := bvNone;
-    PanelGrupos.Color := $00121212;
-    PanelGrupos.Cursor := crDefault;
+    pnlGrupos.BevelOuter := bvNone;
+    pnlGrupos.Color := $00121212;
+    pnlGrupos.Cursor := crDefault;
     ImageGrupos.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\LogoGruposRoxa.png');
   end;
 end;
 
-procedure TFMain.PanelConfiguracaoMouseEnter(Sender: TObject);
+procedure TFMain.pnlConfiguracaoMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> PanelConfiguracao then
+  if PainelPressionado <> pnlConfiguracao then
   begin
-    PanelConfiguracao.BevelOuter := bvRaised;
-    PanelConfiguracao.Color := $00D6498F;
-    PanelConfiguracao.Cursor := crHandPoint;
-    ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
+    pnlConfiguracao.BevelOuter := bvRaised;
+    pnlConfiguracao.Color := $00D6498F;
+    pnlConfiguracao.Cursor := crHandPoint;
+    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
   end;
 end;
 
-procedure TFMain.PanelConfiguracaoMouseLeave(Sender: TObject);
+procedure TFMain.pnlConfiguracaoMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> PanelConfiguracao then
+  if PainelPressionado <> pnlConfiguracao then
   begin
-    PanelConfiguracao.BevelOuter := bvNone;
-    PanelConfiguracao.Color := $00121212;
-    PanelConfiguracao.Cursor := crDefault;
-    ImageConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
+    pnlConfiguracao.BevelOuter := bvNone;
+    pnlConfiguracao.Color := $00121212;
+    pnlConfiguracao.Cursor := crDefault;
+    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
   end;
 end;
 
 
 
+// ----- Importacao VCF
+procedure TFMain.PrepareMemTable;
+begin
+  FDMemTable1.Active := False;
+  FDMemTable1.FieldDefs.Clear;
+  FDMemTable1.FieldDefs.Add('NOME',     ftString, 200);
+  FDMemTable1.FieldDefs.Add('EMAIL',    ftString, 200);
+  FDMemTable1.FieldDefs.Add('TELEFONE', ftString, 50);
+  FDMemTable1.CreateDataSet;
+end;
+
+procedure TFMain.ConfigurarGrid;
+begin
+  // ligações
+  DataSource1.DataSet := FDMemTable1;
+  DBGrid4.DataSource  := DataSource1;
+
+  // edição habilitada
+  DataSource1.AutoEdit := True;
+  FDMemTable1.ReadOnly := False;
+  DBGrid4.Options := DBGrid1.Options + [dgEditing, dgTitles, dgColLines, dgRowLines, dgIndicator];
+
+  // colunas
+  DBGrid4.Columns.BeginUpdate;
+  try
+    DBGrid4.Columns.Clear;
+
+    with DBGrid4.Columns.Add do
+    begin
+      FieldName := 'NOME';
+      Title.Caption := 'Nome';
+      Width := 200;
+    end;
+
+    with DBGrid4.Columns.Add do
+    begin
+      FieldName := 'EMAIL';
+      Title.Caption := 'E-mail';
+      Width := 250;
+    end;
+
+    with DBGrid4.Columns.Add do
+    begin
+      FieldName := 'TELEFONE';
+      Title.Caption := 'Telefone';
+      Width := 120;
+    end;
+  finally
+    DBGrid4.Columns.EndUpdate;
+  end;
+end;
+
+procedure TFMain.spdImpContatosClick(Sender: TObject);
+var
+  Total: Integer;
+begin
+  if not OpenDialog1.Execute then
+    Exit;
+
+  Memo1.Clear;
+  Total := 0;
+
+  if not FDMemTable1.Active then
+    PrepareMemTable
+  else
+    FDMemTable1.EmptyDataSet;
+
+  FDMemTable1.DisableControls;
+  try
+    ImportarVCardSimples(OpenDialog1.FileName,
+      procedure(const C: TContato)
+      begin
+        Inc(Total);
+        Memo1.Lines.Add('Nome: ' + C.Nome);
+        if C.Email <> '' then Memo1.Lines.Add('Email: ' + C.Email);
+        if C.Telefone <> '' then Memo1.Lines.Add('Telefone: ' + C.Telefone);
+        Memo1.Lines.Add('-----------------------------');
+        FDMemTable1.AppendRecord([C.Nome, C.Email, C.Telefone]);
+      end);
+  finally
+    FDMemTable1.EnableControls;
+  end;
+
+  Memo1.Lines.Add('');
+  Memo1.Lines.Add('Total de contatos importados do arquivo: ' + Total.ToString);
+end;
+
+procedure TFMain.sdbImpNovoClick(Sender: TObject);
+begin
+  FDMemTable1.Append;
+  DBGrid1.SelectedIndex := 0;
+  DBGrid1.SetFocus;
+end;
+
+procedure TFMain.spdImpExcluirClick(Sender: TObject);
+begin
+  if (FDMemTable1.Active) and (not FDMemTable1.IsEmpty) then
+    if MessageDlg('Excluir o contato selecionado?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      FDMemTable1.Delete;
+end;
 
 
+
+procedure TFMain.spdImpSalvarDBClick(Sender: TObject);
+var
+  Controller: TVCardController;
+begin
+  if FDMemTable1.IsEmpty then
+  begin
+    ShowMessage('Nenhum contato para salvar.');
+    Exit;
+  end;
+
+  Controller := TVCardController.Create;
+  try
+    try
+      // Agora é procedure → não retorna nada
+      Controller.SalvarNoBanco(FDMemTable1, DataModule1.FDConnection1);
+
+      // A mensagem já é exibida DENTRO do controller
+      Memo1.Lines.Add('Contatos salvos com sucesso (ver mensagem acima).');
+    except
+      on E: Exception do
+      begin
+        ShowMessage('ERRO ao salvar: ' + E.Message);
+        Memo1.Lines.Add('ERRO: ' + E.Message);
+      end;
+    end;
+  finally
+    Controller.Free;
+  end;
+end;
 end.

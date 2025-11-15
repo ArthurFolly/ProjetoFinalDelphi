@@ -38,6 +38,7 @@ type
     procedure Panel3MouseLeave(Sender: TObject);
     procedure Label7MouseEnter(Sender: TObject);
     procedure Label7MouseLeave(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
   controller: UsuarioController;
    procedure  LimparCampos;
@@ -57,6 +58,13 @@ implementation
 {$R *.dfm}
 
 { TForm1 }
+
+procedure TFormCadastroUsuario.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Action := caFree;         // libera o form da memória
+  Application.Terminate;    // encerra de vez o programa
+end;
 
 procedure TFormCadastroUsuario.FormCreate(Sender: TObject);
 begin

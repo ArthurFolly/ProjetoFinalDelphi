@@ -27,7 +27,9 @@ uses
   GruposModel in 'Model\GruposModel.pas',
   PermissoesModel in 'Model\PermissoesModel.pas',
   PermissoesController in 'Controller\PermissoesController.pas',
-  PermissoesRepository in 'Repository\PermissoesRepository.pas';
+  PermissoesRepository in 'Repository\PermissoesRepository.pas',
+  VCardImportController in 'Controller\VCardImportController.pas',
+  VCardImportRepository in 'Repository\VCardImportRepository.pas';
 
 {$R *.res}
 

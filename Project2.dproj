@@ -164,6 +164,8 @@
         <DCCReference Include="Model\PermissoesModel.pas"/>
         <DCCReference Include="Controller\PermissoesController.pas"/>
         <DCCReference Include="Repository\PermissoesRepository.pas"/>
+        <DCCReference Include="Controller\VCardImportController.pas"/>
+        <DCCReference Include="Repository\VCardImportRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
