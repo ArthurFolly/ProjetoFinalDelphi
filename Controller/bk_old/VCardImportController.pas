@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, System.Generics.Collections, System.NetEncoding,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Stan.Option, FireDAC.DApt,
-  Vcl.Dialogs, Data.DB;  // <<---- Data.DB para TDataSet, dsEdit, dsInsert
+  Vcl.Dialogs, System.Threading;
 
 type
   TContato = record
@@ -262,7 +262,6 @@ begin
         try
           OnContato(C);
         except
-          // ignora erro no callback
         end;
         Dentro := False;
         FillChar(C, SizeOf(C), 0);
@@ -303,6 +302,7 @@ begin
   TemEmail := Trim(Email) <> '';
   TemTel   := Trim(Telefone) <> '';
 
+  // Se não tiver NENHUM dado pra comparar, não considera duplicado
   if not (TemEmail or TemTel) then
     Exit;
 
@@ -312,6 +312,7 @@ begin
     Q.SQL.Clear;
     Q.SQL.Add('SELECT 1 FROM "Contato" WHERE');
 
+    // Monta o WHERE somente com o que tiver preenchido
     if TemEmail then
     begin
       Q.SQL.Add(' email = :EMAIL');
@@ -319,7 +320,10 @@ begin
         Q.SQL.Add(' OR telefone = :TELEFONE');
     end
     else
+    begin
+      // Só telefone
       Q.SQL.Add(' telefone = :TELEFONE');
+    end;
 
     if TemEmail then
       Q.ParamByName('EMAIL').AsString := Email;
@@ -328,60 +332,37 @@ begin
       Q.ParamByName('TELEFONE').AsString := Telefone;
 
     Q.Open;
-    Result := not Q.Eof;
+    Result := not Q.Eof;  // True = já existe algum registro com esses dados
   finally
     Q.Free;
   end;
 end;
 
 
-// ---------------------- Importar e preencher (com tratamento de erro) ----------------------
+// ---------------------- Importar e preencher ----------------------
 procedure TVCardController.ImportarEPreencher(const Arquivo: string; MemTable: TFDMemTable);
-var
-  ErrosImportacao: Integer;
 begin
   if not FileExists(Arquivo) then
-  begin
-    MessageDlg('Arquivo .VCF não encontrado:' + sLineBreak + Arquivo,
-               mtError, [mbOK], 0);
-    Exit;
-  end;
+    raise Exception.Create('Arquivo não encontrado: ' + Arquivo);
 
-  ErrosImportacao := 0;
-
-  ImportarVCardSimples(
-    Arquivo,
-    procedure(const C: TContato)
+  TThread.CreateAnonymousThread(
+    procedure
     begin
-      if Trim(C.Nome) = '' then
-        Exit;
-
-      try
-        MemTable.Append;
-        MemTable.FieldByName('NOME').AsString     := C.Nome.Trim;
-        MemTable.FieldByName('EMAIL').AsString    := C.Email.Trim;
-        MemTable.FieldByName('TELEFONE').AsString := C.Telefone.Trim;
-        MemTable.Post;
-      except
-        on E: Exception do
+      ImportarVCardSimples(Arquivo,
+        procedure(const C: TContato)
         begin
-          // Se estiver inserindo/editando, cancela
-          if MemTable.State in [dsInsert, dsEdit] then
-            MemTable.Cancel;
-
-          Inc(ErrosImportacao);
-          // Se quiser logar, pode usar um memo ou arquivo aqui.
-        end;
-      end;
-    end
-  );
-
-  MessageDlg(
-    Format('Importação concluída.' + sLineBreak +
-           'N. Contatos com erro: %d não foram importados.',
-           [ErrosImportacao]),
-    mtInformation, [mbOK], 0
-  );
+          if Trim(C.Nome) = '' then Exit;
+          TThread.Queue(nil,
+            procedure
+            begin
+              MemTable.Append;
+              MemTable.FieldByName('NOME').AsString := C.Nome.Trim;
+              MemTable.FieldByName('EMAIL').AsString := C.Email.Trim;
+              MemTable.FieldByName('TELEFONE').AsString := C.Telefone.Trim;
+              MemTable.Post;
+            end);
+        end);
+    end).Start;
 end;
 
 // ---------------------- Salvar no banco (SIMPLES) ----------------------
@@ -391,7 +372,6 @@ var
   Transacao: TFDTransaction;
   Salvos, Duplicados: Integer;
   Nome, Email, Telefone: string;
-  Msg: string;
 begin
   if MemTable.IsEmpty then
     raise Exception.Create('Nenhum contato para salvar.');
@@ -436,11 +416,16 @@ begin
 
       Transacao.Commit;
 
-      Msg := Format('SUCESSO: %d contatos salvos!', [Salvos]);
+      // MENSAGEM FINAL
+      var Msg := Format('SUCESSO: %d contatos salvos!', [Salvos]);
       if Duplicados > 0 then
         Msg := Msg + sLineBreak + Format('AVISO: %d duplicados ignorados.', [Duplicados]);
 
-      ShowMessage(Msg);
+      TThread.Queue(nil,
+        procedure
+        begin
+          ShowMessage(Msg);
+        end);
 
     except
       on E: Exception do
@@ -456,4 +441,3 @@ begin
 end;
 
 end.
-

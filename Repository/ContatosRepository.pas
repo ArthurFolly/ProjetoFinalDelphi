@@ -1,4 +1,4 @@
-unit ContatosRepository;
+﻿unit ContatosRepository;
 
 interface
 
@@ -153,44 +153,52 @@ begin
   Self.query.Close;
 end;
 
-// ====================================================================
-// LISTAR TODOS
-// ====================================================================
+
 function TContatosRepository.ListarTodos: TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
+
   Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT * FROM public."Contato" WHERE ativo = TRUE';  // CORRIGIDO
-  Self.query.Open;
-  while not Self.query.Eof do
-  begin
-    Contato := Contatos.Create;
-    Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Contato.Nome := Self.query.FieldByName('nome').AsString;
-    Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-    Contato.Email := Self.query.FieldByName('email').AsString;
-    Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-    Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-    Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Contato.CEP := Self.query.FieldByName('cep').AsString;
-    Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Contato.Numero := Self.query.FieldByName('numero').AsString;
-    Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-    Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-    Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-    Contato.UF := Self.query.FieldByName('uf').AsString;
-    Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
-    Result.Add(Contato);
-    Self.query.Next;
+  Self.query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE ativo = TRUE ' +  // Só TRUE → simples e direto
+    'ORDER BY nome';
+
+  try
+    Self.query.Open;
+
+    while not Self.query.Eof do
+    begin
+      Contato := Contatos.Create;
+
+      Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
+      Contato.Nome := Self.query.FieldByName('nome').AsString;
+      Contato.Telefone := Self.query.FieldByName('telefone').AsString;
+      Contato.Email := Self.query.FieldByName('email').AsString;
+      Contato.Empresa := Self.query.FieldByName('empresa').AsString;
+      Contato.Endereco := Self.query.FieldByName('endereco').AsString;
+      Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
+      Contato.CEP := Self.query.FieldByName('cep').AsString;
+      Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
+      Contato.Numero := Self.query.FieldByName('numero').AsString;
+      Contato.Complemento := Self.query.FieldByName('complemento').AsString;
+      Contato.Bairro := Self.query.FieldByName('bairro').AsString;
+      Contato.Cidade := Self.query.FieldByName('cidade').AsString;
+      Contato.UF := Self.query.FieldByName('uf').AsString;
+
+      Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean; // TRUE → True
+
+      Result.Add(Contato);
+      Self.query.Next;
+    end;
+  finally
+    Self.query.Close;
   end;
-  Self.query.Close;
 end;
 
-// ====================================================================
-// OUTROS M�TODOS (BuscarPorNome, Telefone, Empresa, Email)
-// ====================================================================
+
 
 function TContatosRepository.BuscarPorNome(ANome: string): TObjectList<Contatos>;
 var

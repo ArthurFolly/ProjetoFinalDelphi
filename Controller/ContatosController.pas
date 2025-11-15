@@ -174,7 +174,7 @@ var
 begin
   ContatoTemp := Contatos.Create;
   try
-    ContatoTemp.Id := DataSet.FieldByName('ID').AsInteger;
+    ContatoTemp.Id := DataSet.FieldByName('id_contato').AsInteger;
     ContatoTemp.Nome := DataSet.FieldByName('NOME').AsString;
     ContatoTemp.Telefone := DataSet.FieldByName('TELEFONE').AsString;
     ContatoTemp.Email := DataSet.FieldByName('EMAIL').AsString;

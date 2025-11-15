@@ -1864,7 +1864,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdRelatorios
+      ActiveCard = crdImpExp
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -1878,8 +1878,6 @@
         Caption = 'crdImpExp'
         CardIndex = 0
         TabOrder = 0
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcImpExp: TPageControl
           Left = 0
           Top = 0
@@ -1888,8 +1886,6 @@
           ActivePage = tbsImport
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsImport: TTabSheet
             Caption = 'Importar'
             object Panel15: TPanel
@@ -1901,8 +1897,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel16: TPanel
                 Left = 16
                 Top = 21
@@ -3752,12 +3746,11 @@
                   Layout = blGlyphTop
                   OnClick = spdImpContatosClick
                 end
-                object DBGrid4: TDBGrid
+                object dbgImportCont: TDBGrid
                   Left = 8
                   Top = 112
                   Width = 825
                   Height = 248
-                  DataSource = DataSource1
                   TabOrder = 0
                   TitleFont.Charset = DEFAULT_CHARSET
                   TitleFont.Color = clWindowText
@@ -3765,7 +3758,7 @@
                   TitleFont.Name = 'Segoe UI'
                   TitleFont.Style = []
                 end
-                object Memo1: TMemo
+                object memImportCont: TMemo
                   Left = 8
                   Top = 374
                   Width = 825
@@ -5030,9 +5023,9 @@
                   OnClick = SpdListarClick
                 end
               end
-              object DBGrid2: TDBGrid
-                Left = 26
-                Top = 36
+              object dbgContatos: TDBGrid
+                Left = 34
+                Top = 38
                 Width = 801
                 Height = 441
                 TabOrder = 1
@@ -12740,6 +12733,8 @@
         Caption = 'crdRelatorios'
         CardIndex = 6
         TabOrder = 6
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcRelatorios: TPageControl
           Left = 0
           Top = 0
@@ -12748,6 +12743,8 @@
           ActivePage = tbsRelatorio
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsRelatorio: TTabSheet
             Caption = 'Relat'#243'rio'
             object Panel21: TPanel
@@ -12759,6 +12756,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel22: TPanel
                 Left = 16
                 Top = 16
@@ -12767,7 +12766,7 @@
                 Color = clWhite
                 ParentBackground = False
                 TabOrder = 0
-                object SpeedButton6: TSpeedButton
+                object spdImprimir: TSpeedButton
                   Left = 711
                   Top = 461
                   Width = 110
@@ -13352,32 +13351,12 @@
       end
     end
   end
-  object DataSource1: TDataSource
-    DataSet = FDMemTable1
-    Left = 756
-    Top = 536
-  end
-  object ClientDataSet1: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    Left = 836
-    Top = 536
-  end
-  object SQLConnection1: TSQLConnection
-    Left = 660
-    Top = 536
-  end
-  object SQLQuery1: TSQLQuery
-    Params = <>
-    Left = 916
-    Top = 536
-  end
   object OpenDialog1: TOpenDialog
     Filter = 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*'
-    Left = 468
-    Top = 536
+    Left = 460
+    Top = 343
   end
-  object FDMemTable1: TFDMemTable
+  object mtbContatos: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -13386,6 +13365,55 @@
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     Left = 564
-    Top = 536
+    Top = 234
+  end
+  object fdcContatos: TSQLConnection
+    Left = 676
+    Top = 234
+  end
+  object dsContatos: TDataSource
+    Left = 780
+    Top = 234
+  end
+  object cdsContatos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 884
+    Top = 234
+  end
+  object qryContatos: TSQLQuery
+    Params = <>
+    Left = 996
+    Top = 234
+  end
+  object mtbImportCont: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 564
+    Top = 343
+  end
+  object fdcImportCont: TSQLConnection
+    Left = 676
+    Top = 343
+  end
+  object dsImportCont: TDataSource
+    Left = 780
+    Top = 343
+  end
+  object cdsImportCont: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 884
+    Top = 343
+  end
+  object qryImportCont: TSQLQuery
+    Params = <>
+    Left = 996
+    Top = 343
   end
 end
