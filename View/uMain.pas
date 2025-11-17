@@ -16,7 +16,10 @@ uses
   System.ImageList, Vcl.ImgList, System.Net.HttpClient,
   System.Net.URLClient, System.JSON, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController;
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, frxSmartMemo, frxClass,
+  frCoreClasses, frxDBSet,PermissoesController,PermissoesRepository,PermissoesModel;
 
 type
   TFMain = class(TForm)
@@ -148,15 +151,12 @@ type
     Label19: TLabel;
     Bevel8: TBevel;
     Bevel10: TBevel;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
-    DBGrid3: TDBGrid;
+    SpdAdicionarPerm: TSpeedButton;
+    SpdExcluirPerm: TSpeedButton;
+    SpdEditarPerm: TSpeedButton;
+    SpdListarPerm: TSpeedButton;
+    DBGridPerm: TDBGrid;
     ComboBox1: TComboBox;
-    TabSheet8: TTabSheet;
-    Panel19: TPanel;
-    Panel20: TPanel;
     pnlRelatorios: TPanel;
     imgRelatorios: TImage;
     crdRelatorios: TCard;
@@ -186,6 +186,13 @@ type
     dsImportCont: TDataSource;
     cdsImportCont: TClientDataSet;
     qryImportCont: TSQLQuery;
+    frxDBDados: TfrxDBDataset;
+    frxReportContatosNome: TfrxReport;
+    frxReportContatosTelefone: TfrxReport;
+    frxReportUsuariosNome: TfrxReport;
+    qryRelContatos: TFDQuery;
+    FDConnRel: TFDConnection;
+    Label21: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -238,6 +245,11 @@ type
     procedure sdbImpNovoClick(Sender: TObject);
     procedure spdImpExcluirClick(Sender: TObject);
     procedure spdImpSalvarDBClick(Sender: TObject);
+    procedure spdImprimirClick(Sender: TObject);
+    procedure SpdAdicionarPermClick(Sender: TObject);
+    procedure SpdExcluirPermClick(Sender: TObject);
+    procedure SpdEditarPermClick(Sender: TObject);
+    procedure SpdListarPermClick(Sender: TObject);
 
   private
     Editando: Boolean;
@@ -248,6 +260,15 @@ type
     ClientDataSetFavoritos: TClientDataSet;
     DataSourceFavoritos: TDataSource;
     LoadingDataset: Boolean;
+
+    // === PERMISSÕES ===
+    PermissoesController: TPermissoesController;
+    ClientDataSetPermissoes: TClientDataSet;
+    DataSourcePermissoes: TDataSource;
+    LoadingPermissoes: Boolean;
+    EditandoPermissao: Boolean;
+    PermissaoAtual: TPermissao;
+    NivelUsuarioLogado: Integer; // ← DEFINA NO LOGIN (ex: 3 ou 4)
 
     // === EMPRESAS ===
     EditandoEmpresa: Boolean;
@@ -273,6 +294,12 @@ type
     procedure LimparFormularioGrupo;
     function ValidarFormularioGrupo: Boolean;
     function ValidarPermissaoGrupo(Operacao: string): Boolean;
+
+
+    // === Permissões ===
+    procedure ConfigurarDBgridPerm;
+    procedure CarregarPermissoes;
+
 
     // === CONTATOS ===
     procedure AtivarPainel(Panel: TPanel);
@@ -351,6 +378,7 @@ begin
   ConfigurarDBGridEmpresas;
 
   GruposController := TGruposController.Create(3); // 3 = Admin
+  PermissoesController := TPermissoesController.Create;
 
   ClientDataSetGrupos := TClientDataSet.Create(Self);
   DataSourceGrupos := TDataSource.Create(Self);
@@ -771,6 +799,48 @@ begin
   ];
 end;
 
+
+procedure TFMain.ConfigurarDBGridPerm;
+begin
+  // DataSource
+  DataSourcePermissoes.DataSet := ClientDataSetPermissoes;
+  DBGridPerm.DataSource := DataSourcePermissoes;
+
+  // Cria dataset
+  ClientDataSetPermissoes.Close;
+  ClientDataSetPermissoes.FieldDefs.Clear;
+  ClientDataSetPermissoes.FieldDefs.Add('id_permissao', ftInteger);
+  ClientDataSetPermissoes.FieldDefs.Add('NOME', ftString, 100);
+  ClientDataSetPermissoes.FieldDefs.Add('DESCRICAO', ftString, 300);
+  ClientDataSetPermissoes.CreateDataSet;
+  ClientDataSetPermissoes.Open;
+
+  // Colunas
+  DBGridPerm.Columns.Clear;
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'id_permissao';
+    Title.Caption := 'ID';
+    Width := 50;
+  end;
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'NOME';
+    Title.Caption := 'NOME DA PERMISSÃO';
+    Width := 250;
+    Title.Font.Style := [fsBold];
+  end;
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'DESCRICAO';
+    Title.Caption := 'DESCRIÇÃO';
+    Width := 350;
+  end;
+
+  DBGridPerm.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
+  DBGridPerm.ReadOnly := True;
+end;
+
 {$ENDREGION}
 
 {$REGION 'Carregamento e atualização de dados (Contatos, Empresas, Favoritos, Grupos)'}
@@ -929,6 +999,43 @@ begin
     LoadingDatasetEmpresas := False;
   end;
   DBGrid1.Refresh;
+end;
+
+procedure TFMain.CarregarPermissoes;
+var
+  Lista: TObjectList<TPermissao>;
+  Perm: TPermissao;
+begin
+  if LoadingPermissoes then Exit;
+  LoadingPermissoes := True;
+  ClientDataSetPermissoes.DisableControls;
+  try
+    ClientDataSetPermissoes.Close;
+    ClientDataSetPermissoes.FieldDefs.Clear;
+    ClientDataSetPermissoes.FieldDefs.Add('id_permissão', ftInteger);
+    ClientDataSetPermissoes.FieldDefs.Add('NOME', ftString, 100);
+    ClientDataSetPermissoes.FieldDefs.Add('DESCRICAO', ftString, 300);
+    ClientDataSetPermissoes.CreateDataSet;
+    ClientDataSetPermissoes.Open;
+    ClientDataSetPermissoes.EmptyDataSet;
+
+    Lista := PermissoesController.ListarTodasPermissoes;
+    try
+      for Perm in Lista do
+      begin
+        ClientDataSetPermissoes.Append;
+        ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := Perm.getId;
+        ClientDataSetPermissoes.FieldByName('NOME').AsString := Perm.getNome;
+        ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString := Perm.getDescricao;
+        ClientDataSetPermissoes.Post;
+      end;
+    finally
+      Lista.Free;
+    end;
+  finally
+    ClientDataSetPermissoes.EnableControls;
+    LoadingPermissoes := False;
+  end;
 end;
 
 {$ENDREGION}
@@ -1942,6 +2049,7 @@ begin
   CarregarEmpresas;
 end;
 
+
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
 begin
   if not ClientDataSetEmpresas.IsEmpty then
@@ -1981,6 +2089,7 @@ begin
     Grupo.Free;
   end;
 end;
+
 
 procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
 var
@@ -2034,6 +2143,7 @@ begin
   end;
 end;
 
+
 procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
 var
   IdGrupo: Integer;
@@ -2060,6 +2170,7 @@ begin
       ShowMessage('Erro ao excluir grupo.');
   end;
 end;
+
 
 procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
 var
@@ -2141,6 +2252,137 @@ begin
       ShowMessage('Erro ao restaurar grupo.');
   end;
 end;
+
+{$ENDREGION}
+
+{$REGION 'Eventos de clique - Permissões '}
+procedure TFMain.SpdAdicionarPermClick(Sender: TObject);
+begin
+  ClientDataSetPermissoes.Append;
+  ClientDataSetPermissoes.FieldByName('ID').AsInteger := 0;
+  ClientDataSetPermissoes.FieldByName('NOME').AsString := '';
+  ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString := '';
+  ClientDataSetPermissoes.Post;
+
+  ClientDataSetPermissoes.Edit;
+  DBGridPerm.SetFocus;
+  DBGridPerm.SelectedField := ClientDataSetPermissoes.FieldByName('NOME');
+end;
+
+procedure TFMain.SpdExcluirPermClick(Sender: TObject);
+var
+  Id: Integer;
+  Controller: TPermissoesController;
+begin
+  if ClientDataSetPermissoes.IsEmpty then
+  begin
+    ShowMessage('Nenhuma permissão selecionada.');
+    Exit;
+  end;
+
+  Id := ClientDataSetPermissoes.FieldByName('ID').AsInteger;
+  if Id <= 0 then
+  begin
+    ShowMessage('Não é possível excluir uma permissão não salva.');
+    Exit;
+  end;
+
+  if MessageDlg('Deseja realmente excluir esta permissão?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Controller := TPermissoesController.Create;
+    try
+      if Controller.ExcluirPermissao(Id) then
+      begin
+        ClientDataSetPermissoes.Delete;
+        ShowMessage('Permissão excluída com sucesso!');
+      end
+      else
+        ShowMessage('Erro ao excluir permissão.');
+    finally
+      Controller.Free;
+    end;
+  end;
+end;
+
+procedure TFMain.SpdEditarPermClick(Sender: TObject);
+var
+  Perm: TPermissao;
+  Ctrl: TPermissoesController;
+  Id, NovoId: Integer;
+begin
+  // VALIDA SE ESTÁ EM EDIÇÃO
+  if not (ClientDataSetPermissoes.State in [dsEdit, dsInsert]) then
+  begin
+    ShowMessage('Nenhuma linha em edição. Clique em Adicionar ou selecione uma linha.');
+    Exit;
+  end;
+
+  // VALIDA CAMPOS
+  if Trim(ClientDataSetPermissoes.FieldByName('NOME').AsString) = '' then
+  begin
+    ShowMessage('Nome da permissão é obrigatório!');
+    DBGridPerm.SelectedField := ClientDataSetPermissoes.FieldByName('NOME');
+    Exit;
+  end;
+
+  Id := ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger;
+  Ctrl := TPermissoesController.Create;
+  try
+    if Id = 0 then
+    begin
+      // === NOVO ===
+      Perm := TPermissao.Create;
+      try
+        Perm.setNome(ClientDataSetPermissoes.FieldByName('NOME').AsString);
+        Perm.setDescricao(ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString);
+        Perm.setNivelRequerido(1);
+        Perm.setAtivo(True);
+
+        if Ctrl.AdicionarPermissao(Perm.getNome, Perm.getDescricao, Perm.getNivelRequerido) then
+        begin
+          NovoId := Ctrl.BuscarPermissaoPorOperacao(Perm.getNome).getId;
+          ClientDataSetPermissoes.Edit;
+          ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := NovoId;
+          ClientDataSetPermissoes.Post;
+          ShowMessage('Permissão adicionada!');
+        end
+        else
+          ShowMessage('Erro ao adicionar.');
+      finally
+        Perm.Free;
+      end;
+    end
+    else
+    begin
+      // === EDIÇÃO ===
+      if Ctrl.AtualizarPermissao(
+        Id,
+        ClientDataSetPermissoes.FieldByName('NOME').AsString,
+        ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString,
+        1,
+        True
+      ) then
+      begin
+        ClientDataSetPermissoes.Post;
+        ShowMessage('Permissão atualizada!');
+      end
+      else
+        ShowMessage('Erro ao atualizar.');
+    end;
+  finally
+    Ctrl.Free;
+  end;
+
+
+  SpdEditarPerm.Caption := 'Editar';
+end;
+procedure TFMain.SpdListarPermClick(Sender: TObject);
+begin
+  CarregarPermissoes;
+  SpdEditarPerm.Caption := 'Editar'; // reseta
+  ShowMessage('Permissões recarregadas!');
+end;
+
 
 {$ENDREGION}
 
@@ -2357,6 +2599,32 @@ begin
     if MessageDlg('Excluir o contato selecionado?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
       mtbImportCont.Delete;
 end;
+
+procedure TFMain.spdImprimirClick(Sender: TObject);
+begin
+  // Garante que a conexão está aberta
+  if not FDConnRel.Connected then
+    FDConnRel.Connected := True;
+
+  // Por enquanto só Relatório por Nome
+  if not RadioButton1.Checked then
+  begin
+    ShowMessage('Por enquanto só o relatório "Contatos - Ordenado por Nome" está disponível.');
+    Exit;
+  end;
+
+  qryRelContatos.Close;
+  qryRelContatos.SQL.Text :=
+    'SELECT id_contato, nome, telefone, email ' +
+    'FROM "Contato" ' +          // <<< AQUI é o nome correto da tabela
+    'ORDER BY nome ASC';
+  qryRelContatos.Open;
+
+  frxReportContatosNome.PrepareReport;
+  frxReportContatosNome.ShowReport;
+end;
+
+
 
 procedure TFMain.spdImpSalvarDBClick(Sender: TObject);
 var

@@ -52,11 +52,6 @@ if Trim(email) = '' then  begin
 
 end;
 
-if Trim(CPF) = '' then  begin
-  msgErro:= 'O campo CPF não pode estar vazio';
-  Exit;
-
-end;
 if Trim(numero) = '' then  begin
   msgErro:= 'O Campo numero não pode estar vazio';
   Exit;
@@ -74,7 +69,7 @@ try
   usuario.Id := Id;
   usuario.Nome := nome;
   usuario.Email := email;
-  usuario.CPF := CPF;
+
   usuario.Telefone := numero;
   usuario.senha := senha;
 

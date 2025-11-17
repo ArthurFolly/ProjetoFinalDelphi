@@ -60,7 +60,6 @@ begin
       Usuario := TUsuario.Create;
       Usuario.Email := Self.query.FieldByName('email').AsString;
       Usuario.Nome := Self.query.FieldByName('nome').AsString;
-      Usuario.CPF := Self.query.FieldByName('cpf').AsString;
       Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
       Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
       //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
@@ -118,7 +117,6 @@ begin
        Usuario.Email := Self.query.FieldByName('email').AsString;
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger;
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
-        Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
         //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
@@ -129,7 +127,6 @@ begin
         Usuario.Email := Self.query.FieldByName('email').AsString; // acessa o campo email e retorna com string
         Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
         Usuario.Nome := Self.query.FieldByName('nome').AsString;
-        Usuario.CPF := Self.query.FieldByName('CPF').AsString;
         Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
         Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
         //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
@@ -180,12 +177,12 @@ begin
 
   try
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, cpf, telefone) VALUES (:email, :nome, :senha_hash, :cpf, :telefone)';
+    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, telefone) VALUES (:email, :nome, :senha_hash,:telefone)';
 
     Self.query.ParamByName('email').AsString := usuario.getEmail;
     Self.query.ParamByName('nome').AsString := usuario.getNome;
     Self.query.ParamByName('senha_hash').AsString := senhaHash;
-    Self.query.ParamByName('cpf').AsString := usuario.getCPF;
+
     Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
    //Self.query.ParamByName('tipo_usuario').AsString := usuario.getTipoUsuario;
     Self.query.ExecSQL;

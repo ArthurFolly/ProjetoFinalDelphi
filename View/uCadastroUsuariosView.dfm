@@ -880,10 +880,8 @@ object FormCadastroUsuario: TFormCadastroUsuario
         2E71CD273D290D29E868017BD19A41480FCA6801C28CD21FEB476FC6810134BE
         FD68039A41400B9A3AD1FE149DCD002D1F8D20EB4EEC6900DA5A41D295B82298
         01CD3A980D3CD2017B514DF5A514C070F7A281D28A067FFFD9}
-      ExplicitLeft = 584
-      ExplicitTop = 312
-      ExplicitWidth = 105
-      ExplicitHeight = 105
+      ExplicitLeft = 0
+      ExplicitTop = -15
     end
     object Panel2: TPanel
       Left = 895
@@ -934,22 +932,9 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Font.Style = []
         ParentFont = False
       end
-      object Label5: TLabel
-        Left = 56
-        Top = 346
-        Width = 30
-        Height = 21
-        Caption = 'CPF:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWhite
-        Font.Height = -16
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-      end
       object Label6: TLabel
         Left = 56
-        Top = 415
+        Top = 346
         Width = 46
         Height = 21
         Caption = 'Senha:'
@@ -975,7 +960,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Label7: TLabel
         Left = 80
-        Top = 576
+        Top = 504
         Width = 180
         Height = 21
         Caption = 'Clique para ir para o login'
@@ -1018,20 +1003,9 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Text = '(  )    -    '
         OnKeyPress = EdtNumeroKeyPress
       end
-      object EdtCPF: TMaskEdit
-        Left = 56
-        Top = 371
-        Width = 121
-        Height = 23
-        EditMask = '___.___.___-__;1;_'
-        MaxLength = 14
-        TabOrder = 3
-        Text = '___.___.___-__'
-        OnKeyPress = EdtCPFKeyPress
-      end
       object Panel3: TPanel
         Left = 56
-        Top = 505
+        Top = 441
         Width = 233
         Height = 49
         Caption = 'Cadastrar'
@@ -1043,17 +1017,17 @@ object FormCadastroUsuario: TFormCadastroUsuario
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 3
         OnClick = Panel3Click
         OnMouseEnter = Panel3MouseEnter
         OnMouseLeave = Panel3MouseLeave
       end
       object EdtSenha: TEdit
         Left = 56
-        Top = 440
+        Top = 392
         Width = 121
         Height = 23
-        TabOrder = 5
+        TabOrder = 4
         TextHint = 'Escreva sua senha'
         OnKeyPress = EdtSenhaKeyPress
       end

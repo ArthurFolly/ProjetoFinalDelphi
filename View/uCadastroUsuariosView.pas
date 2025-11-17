@@ -15,11 +15,9 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    Label5: TLabel;
     EdtNome: TEdit;
     EdtEmail: TEdit;
     EdtNumero: TMaskEdit;
-    EdtCPF: TMaskEdit;
     Panel3: TPanel;
     EdtSenha: TEdit;
     Image1: TImage;
@@ -72,18 +70,18 @@ begin
 
 
 
-  EdtCPF.Text := '';
+
   EdtNumero.Text := '';
 
   // Agora aplica a máscara
-  EdtCPF.EditMask := '000\.000\.000\-00;1;_';
+
   EdtNumero.EditMask := '(00) 00000-0000;1;_';
 
   // Define a ordem de tabulação
   EdtNome.TabOrder := 0;
   EdtEmail.TabOrder := 1;
   EdtNumero.TabOrder := 2;
-  EdtCPF.TabOrder := 3;
+
   Panel3.TabOrder := 4;
 
   controller := UsuarioController.Create;
@@ -126,7 +124,7 @@ begin
   EdtNome.Clear;
   EdtEmail.Clear;
   EdtNumero.Text := '';
-  EdtCPF.Text := '';
+
   EdtSenha.Clear;
   EdtNome.SetFocus;
 
@@ -157,7 +155,7 @@ begin
   if Key = #13 then
   begin
     Key := #0;
-    EdtCPF.SetFocus;
+
   end;
 end;
 
@@ -195,7 +193,6 @@ begin
   email := EdtEmail.Text;
   nome := EdtNome.Text;
   numero := EdtNumero.Text;
-  CPF := EdtCPF.Text;
   senha := EdtSenha.Text;
 
 
@@ -253,13 +250,7 @@ begin
   Result := False;
 
 
-  CPFLimpo := StringReplace(EdtCPF.Text, '.', '', [rfReplaceAll]);
-  CPFLimpo := StringReplace(CPFLimpo, '-', '', [rfReplaceAll]);
-  CPFLimpo := StringReplace(CPFLimpo, '_', '', [rfReplaceAll]);
 
-
-  if Length(CPFLimpo) = 11 then
-    Result := True;
 end;
 
 function TFormCadastroUsuario.ValidarCampos: Boolean;
@@ -302,7 +293,7 @@ begin
   if not ValidarCPF then
   begin
     ShowMessage('O campo CPF está vazio ou incompleto.');
-    EdtCPF.SetFocus;
+
     Exit;
   end;
   if Trim(EdtSenha.Text) = ''  then
