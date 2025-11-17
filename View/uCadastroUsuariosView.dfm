@@ -22,12 +22,15 @@ object FormCadastroUsuario: TFormCadastroUsuario
     Color = 5573429
     ParentBackground = False
     TabOrder = 0
+    DesignSize = (
+      1264
+      720)
     object Image1: TImage
-      Left = 1
-      Top = 1
-      Width = 894
-      Height = 718
-      Align = alClient
+      Left = 0
+      Top = 0
+      Width = 1057
+      Height = 689
+      Anchors = []
       Picture.Data = {
         0A544A504547496D6167654A6A0000FFD8FFE000104A46494600010101006000
         600000FFDB0043000302020302020303030304030304050805050404050A0707
@@ -880,8 +883,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
         2E71CD273D290D29E868017BD19A41480FCA6801C28CD21FEB476FC6810134BE
         FD68039A41400B9A3AD1FE149DCD002D1F8D20EB4EEC6900DA5A41D295B82298
         01CD3A980D3CD2017B514DF5A514C070F7A281D28A067FFFD9}
-      ExplicitLeft = 0
-      ExplicitTop = -15
+      Stretch = True
     end
     object Panel2: TPanel
       Left = 895

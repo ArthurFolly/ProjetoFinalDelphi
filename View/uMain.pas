@@ -193,6 +193,8 @@ type
     qryRelContatos: TFDQuery;
     FDConnRel: TFDConnection;
     Label21: TLabel;
+    qryRelUsuarios: TFDQuery;
+    frxDBUsuarios: TfrxDBDataset;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -2602,27 +2604,78 @@ end;
 
 procedure TFMain.spdImprimirClick(Sender: TObject);
 begin
-  // Garante que a conexão está aberta
+  // 1. Garante que a conexão está aberta
   if not FDConnRel.Connected then
     FDConnRel.Connected := True;
 
-  // Por enquanto só Relatório por Nome
-  if not RadioButton1.Checked then
+  // ---------- Relatório de Contatos - Ordenado por Nome ----------
+  if RadioButton1.Checked then
   begin
-    ShowMessage('Por enquanto só o relatório "Contatos - Ordenado por Nome" está disponível.');
+    qryRelContatos.Close;
+    qryRelContatos.SQL.Text :=
+      'SELECT id_contato, nome, telefone, email ' +
+      'FROM "Contato" ' +
+      'ORDER BY nome ASC';
+    qryRelContatos.Open;
+
+    // Dataset usado pelo FastReport deste relatório
+    frxDBDados.DataSet := qryRelContatos;
+
+    frxReportContatosNome.PrepareReport;
+    frxReportContatosNome.ShowReport;
     Exit;
   end;
 
-  qryRelContatos.Close;
-  qryRelContatos.SQL.Text :=
-    'SELECT id_contato, nome, telefone, email ' +
-    'FROM "Contato" ' +          // <<< AQUI é o nome correto da tabela
-    'ORDER BY nome ASC';
-  qryRelContatos.Open;
+  // ---------- Relatório de Contatos - Ordenado por Número Telefônico ----------
+  if RadioButton2.Checked then
+  begin
+    qryRelContatos.Close;
+    qryRelContatos.SQL.Text :=
+      'SELECT id_contato, nome, telefone, email ' +
+      'FROM "Contato" ' +
+      'ORDER BY telefone ASC';
+    qryRelContatos.Open;
 
-  frxReportContatosNome.PrepareReport;
-  frxReportContatosNome.ShowReport;
+    // Continua usando o mesmo frxDBDados (contatos)
+    frxDBDados.DataSet := qryRelContatos;
+
+    frxReportContatosTelefone.PrepareReport;
+    frxReportContatosTelefone.ShowReport;
+    Exit;
+  end;
+
+// ---------- Relatório de Usuários - Ordenado por Nome ----------
+if RadioButton3.Checked then
+begin
+  if not FDConnRel.Connected then
+    FDConnRel.Connected := True;
+
+  qryRelUsuarios.Close;
+  qryRelUsuarios.SQL.Text :=
+    'SELECT  id_usuario, '  +
+    '        nome, '        +
+    '        email, '       +
+    '        criado_em, '   +
+    '        atualizado_em, '+
+    '        ativo, '       +
+    '        telefone '     +
+    'FROM "Usuario" '       +
+    'ORDER BY nome ASC';
+  qryRelUsuarios.Open;
+
+  frxReportUsuariosNome.PrepareReport;
+  frxReportUsuariosNome.ShowReport;
+  Exit;
 end;
+
+
+  // Nenhum marcado
+  ShowMessage('Selecione um relatório para imprimir!');
+end;
+
+
+
+
 
 
 
