@@ -1864,7 +1864,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdRelatorios
+      ActiveCard = crdConfig
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -6004,6 +6004,8 @@
         CardIndex = 2
         CardVisible = False
         TabOrder = 2
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcFavoritos: TPageControl
           Left = 0
           Top = 0
@@ -6012,6 +6014,8 @@
           ActivePage = tbsFavoritosCad
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsFavoritosCad: TTabSheet
             Caption = 'Cadastrar'
             object Panel5: TPanel
@@ -6023,6 +6027,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel6: TPanel
                 Left = 24
                 Top = 13
@@ -10907,11 +10913,11 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsRelatorios
+          ActivePage = tbsPermissoes
           Align = alClient
           TabOrder = 0
-          object tbsRelatorios: TTabSheet
-            Caption = 'Relat'#243'rios'
+          object tbsPermissoes: TTabSheet
+            Caption = 'Configura'#231#245'es'
             object Panel11: TPanel
               Left = 0
               Top = 0
@@ -12718,10 +12724,10 @@
                   Height = 23
                   TabOrder = 1
                 end
-                object TComboBox
-                  Left = 27
-                  Top = 214
-                  Width = 177
+                object ComboBox2: TComboBox
+                  Left = 31
+                  Top = 226
+                  Width = 173
                   Height = 23
                   TabOrder = 2
                 end
@@ -12738,8 +12744,6 @@
         Caption = 'crdRelatorios'
         CardIndex = 6
         TabOrder = 6
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcRelatorios: TPageControl
           Left = 0
           Top = 0
@@ -12748,8 +12752,6 @@
           ActivePage = tbsRelatorio
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsRelatorio: TTabSheet
             Caption = 'Relat'#243'rio'
             object Panel21: TPanel
@@ -12761,8 +12763,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel22: TPanel
                 Left = 16
                 Top = 22
@@ -13434,25 +13434,6 @@
     DataSetOptions = []
     Left = 636
     Top = 522
-    FieldDefs = <
-      item
-        FieldName = 'id_contato'
-      end
-      item
-        FieldName = 'nome'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'telefone'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'email'
-        FieldType = fftString
-        Size = 255
-      end>
   end
   object frxReportContatosNome: TfrxReport
     Version = '2026.1.1'
@@ -28295,36 +28276,5 @@
     DataSetOptions = []
     Left = 636
     Top = 576
-    FieldDefs = <
-      item
-        FieldName = 'id_usuario'
-      end
-      item
-        FieldName = 'nome'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'email'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'criado_em'
-        FieldType = fftDateTime
-      end
-      item
-        FieldName = 'atualizado_em'
-        FieldType = fftDateTime
-      end
-      item
-        FieldName = 'ativo'
-        FieldType = fftBoolean
-      end
-      item
-        FieldName = 'telefone'
-        FieldType = fftString
-        Size = 20
-      end>
   end
 end

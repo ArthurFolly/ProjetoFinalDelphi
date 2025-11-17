@@ -144,7 +144,7 @@ type
     Panel17: TPanel;
     Panel18: TPanel;
     pgcConfig: TPageControl;
-    tbsRelatorios: TTabSheet;
+    tbsPermissoes: TTabSheet;
     Panel11: TPanel;
     Panel12: TPanel;
     Label18: TLabel;
@@ -195,6 +195,7 @@ type
     Label21: TLabel;
     qryRelUsuarios: TFDQuery;
     frxDBUsuarios: TfrxDBDataset;
+    ComboBox2: TComboBox;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -253,6 +254,8 @@ type
     procedure SpdEditarPermClick(Sender: TObject);
     procedure SpdListarPermClick(Sender: TObject);
 
+
+
   private
     Editando: Boolean;
     ContatoAtual: Contatos;
@@ -301,6 +304,8 @@ type
     // === Permissões ===
     procedure ConfigurarDBgridPerm;
     procedure CarregarPermissoes;
+    procedure CarregarUsuariosNoComboBox1;
+    procedure CarregarPermissoesNoComboBox2;
 
 
     // === CONTATOS ===
@@ -402,6 +407,8 @@ begin
   crdEmpresas.Visible := False;
   pgcEmpresas.Visible := False;
 
+  CarregarUsuariosNoComboBox1;
+  CarregarPermissoesNoComboBox2;
   // ----- Importacao VCF
   memImportCont.Font.Name := 'Segoe UI';
   OpenDialog1.Filter := 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*';
@@ -484,6 +491,12 @@ end;
 {$ENDREGION}
 
 {$REGION 'Configuração de grids e datasets (Contatos, Empresas, Favoritos, Grupos)'}
+
+
+
+
+
+
 
 procedure TFMain.ConfigurarDBGrid;
 begin
@@ -1040,6 +1053,72 @@ begin
   end;
 end;
 
+
+
+procedure TFMain.CarregarUsuariosNoComboBox1;
+var
+  Query: TFDQuery;
+begin
+  ComboBox1.Clear;
+  ComboBox1.Items.Add('← Selecione um usuário →');
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DataModule1.FDConnection1;
+    Query.SQL.Text :=
+      'SELECT id_usuario, nome, email FROM "Usuario" WHERE ativo = TRUE ORDER BY nome';
+    Query.Open();
+
+    while not Query.Eof do
+    begin
+      if Query.FieldByName('email').AsString <> '' then
+        ComboBox1.Items.AddObject(
+          Query.FieldByName('nome').AsString + ' <' + Query.FieldByName('email').AsString + '>',
+          TObject(Query.FieldByName('id_usuario').AsInteger)
+        )
+      else
+        ComboBox1.Items.AddObject(
+          Query.FieldByName('nome').AsString,
+          TObject(Query.FieldByName('id_usuario').AsInteger)
+        );
+      Query.Next;
+    end;
+  finally
+    Query.Free;
+  end;
+
+  ComboBox1.ItemIndex := 0;
+end;
+
+procedure TFMain.CarregarPermissoesNoComboBox2;
+var
+  Query: TFDQuery;
+begin
+  ComboBox2.Clear;
+  ComboBox2.Items.Add('← Selecione o nível →');
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DataModule1.FDConnection1;
+    Query.SQL.Text :=
+      'SELECT DISTINCT nivel_requerido ' +
+      'FROM "Permissoes" ' +
+      'WHERE ativo = TRUE ' +
+      'ORDER BY nivel_requerido';
+
+    Query.Open();
+
+    while not Query.Eof do
+    begin
+      ComboBox2.Items.Add(Query.FieldByName('nivel_requerido').AsString);
+      Query.Next;
+    end;
+  finally
+    Query.Free;
+  end;
+
+  ComboBox2.ItemIndex := 0;
+end;
 {$ENDREGION}
 
 {$REGION 'Persistência / salvar e excluir (Contatos, Empresas, Grupos, Favoritos)'}
@@ -1469,19 +1548,21 @@ procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
   AtivarPainel(pnlConfiguracao);
   CardPanel1.ActiveCard := crdConfig;
-  pgcConfig.Visible := True;
   crdConfig.Visible := True;
-  pgcConfig.ActivePage := tbsRelatorios;
+  pgcConfig.Visible := True;
+  pgcConfig.ActivePage := tbsPermissoes;
+  CarregarUsuariosNoComboBox1;
+  CarregarPermissoesNoComboBox2;
 end;
 
-// ----- Evento Click - pnlRelatorios
+
 procedure TFMain.pnlRelatoriosClick(Sender: TObject);
 begin
   AtivarPainel(pnlRelatorios);
   CardPanel1.ActiveCard := crdRelatorios;
   crdRelatorios.Visible := True;
   pgcRelatorios.Visible := True;
-  pgcRelatorios.ActivePage := tbsRelatorios;
+  pgcRelatorios.ActivePage := tbsRelatorio;
 end;
 
 procedure TFMain.pnlGruposClick(Sender: TObject);
