@@ -377,6 +377,7 @@
       OnClick = PanelConfiguraçaoClick
       OnMouseEnter = pnlConfiguracaoMouseEnter
       OnMouseLeave = pnlConfiguracaoMouseLeave
+      ExplicitLeft = 4
       object ImgConfig: TImage
         Left = 0
         Top = 0
@@ -1865,7 +1866,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdConfig
+      ActiveCard = crdContatos
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -3840,7 +3841,7 @@
                   Top = 16
                   Width = 97
                   Height = 89
-                  Caption = 'x'
+                  Caption = 'Editar'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
                     18000000000000300000D7010000D70100000000000000000000FFFFFFFFFFFF

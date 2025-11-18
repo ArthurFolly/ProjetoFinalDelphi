@@ -407,6 +407,15 @@ begin
   crdEmpresas.Visible := False;
   pgcEmpresas.Visible := False;
 
+
+  ClientDataSetPermissoes := TClientDataSet.Create(Self);
+  DataSourcePermissoes := TDataSource.Create(Self);
+  DataSourcePermissoes.DataSet := ClientDataSetPermissoes;
+  DBGridPerm.DataSource := DataSourcePermissoes;
+
+  ConfigurarDBGridPerm;
+  CarregarPermissoes;
+
   CarregarUsuariosNoComboBox1;
   CarregarPermissoesNoComboBox2;
   // ----- Importacao VCF
@@ -1028,7 +1037,7 @@ begin
   try
     ClientDataSetPermissoes.Close;
     ClientDataSetPermissoes.FieldDefs.Clear;
-    ClientDataSetPermissoes.FieldDefs.Add('id_permissão', ftInteger);
+    ClientDataSetPermissoes.FieldDefs.Add('id_permissao', ftInteger);
     ClientDataSetPermissoes.FieldDefs.Add('NOME', ftString, 100);
     ClientDataSetPermissoes.FieldDefs.Add('DESCRICAO', ftString, 300);
     ClientDataSetPermissoes.CreateDataSet;
@@ -1555,6 +1564,7 @@ begin
   CarregarUsuariosNoComboBox1;
   CarregarPermissoesNoComboBox2;
   ConfigurarDBgridPerm;
+  CarregarPermissoes;
 end;
 
 
@@ -2344,7 +2354,7 @@ end;
 procedure TFMain.SpdAdicionarPermClick(Sender: TObject);
 begin
   ClientDataSetPermissoes.Append;
-  ClientDataSetPermissoes.FieldByName('ID').AsInteger := 0;
+  ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := 0;
   ClientDataSetPermissoes.FieldByName('NOME').AsString := '';
   ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString := '';
   ClientDataSetPermissoes.Post;
@@ -2365,7 +2375,8 @@ begin
     Exit;
   end;
 
-  Id := ClientDataSetPermissoes.FieldByName('ID').AsInteger;
+  Id := ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger;  // ← CORRIGIDO
+
   if Id <= 0 then
   begin
     ShowMessage('Não é possível excluir uma permissão não salva.');
