@@ -1318,6 +1318,7 @@
       OnClick = pnlRelatoriosClick
       OnMouseEnter = pnlRelatoriosMouseEnter
       OnMouseLeave = pnlRelatoriosMouseLeave
+      ExplicitLeft = 0
       object imgRelatorios: TImage
         Left = 0
         Top = 0

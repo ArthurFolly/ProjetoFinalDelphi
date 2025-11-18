@@ -272,8 +272,8 @@ type
     DataSourcePermissoes: TDataSource;
     LoadingPermissoes: Boolean;
     EditandoPermissao: Boolean;
-    PermissaoAtual: TPermissao;
-    NivelUsuarioLogado: Integer; // ← DEFINA NO LOGIN (ex: 3 ou 4)
+    PermissaoAtual: Integer;
+
 
     // === EMPRESAS ===
     EditandoEmpresa: Boolean;
@@ -851,6 +851,7 @@ begin
     Title.Caption := 'DESCRIÇÃO';
     Width := 350;
   end;
+
 
   DBGridPerm.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
   DBGridPerm.ReadOnly := True;
@@ -1553,6 +1554,7 @@ begin
   pgcConfig.ActivePage := tbsPermissoes;
   CarregarUsuariosNoComboBox1;
   CarregarPermissoesNoComboBox2;
+  ConfigurarDBgridPerm;
 end;
 
 
@@ -2462,8 +2464,9 @@ end;
 procedure TFMain.SpdListarPermClick(Sender: TObject);
 begin
   CarregarPermissoes;
-  SpdEditarPerm.Caption := 'Editar'; // reseta
-  ShowMessage('Permissões recarregadas!');
+  EditandoPermissao := False;
+  PermissaoAtual := 0;
+  ConfigurarDBgridPerm;
 end;
 
 
