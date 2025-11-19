@@ -52,10 +52,7 @@ O Sistema **ContactHub** é uma solução completa para gerenciamento de contato
 - **Exportação em Diversos Formatos**: PDF, Excel, HTML
 
 ### 📝 Logs do Sistema
-- **Registro Completo**: Todas as operações são registradas
-- **Logs de Contatos**: Operações de inclusão, alteração, exclusão
-- **Logs de Usuários**: Ações dos usuários no sistema
-- **Auditoria e Rastreabilidade**: Histórico completo de ações
+**Em Progresso**: 
 
 ## 🏗️ Arquitetura
 
