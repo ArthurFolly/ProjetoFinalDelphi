@@ -46,7 +46,7 @@ type
     crdFavoritos: TCard;
     crdEmpresas: TCard;
     crdGrupos: TCard;
-    crdConfig: TCard;
+    crdUsuarios: TCard;
     pgcContatos: TPageControl;
     tbsContatosList: TTabSheet;
     tbsContatosCad: TTabSheet;
@@ -68,21 +68,12 @@ type
     Edit3: TEdit;
     Edit4: TEdit;
     SpdAdicionar: TSpeedButton;
-    pgcFavoritos: TPageControl;
-    tbsFavoritosCad: TTabSheet;
-    Panel5: TPanel;
-    Panel6: TPanel;
-    Label5: TLabel;
     Bevel3: TBevel;
     Panel7: TPanel;
     SpdEditarContatosGrid: TSpeedButton;
     SpdExcluir: TSpeedButton;
     SpdListar: TSpeedButton;
     dbgContatos: TDBGrid;
-    SpdAdicionarFavorito: TSpeedButton;
-    SpdRemoverFavorito: TSpeedButton;
-    DBGridFavoritos: TDBGrid;
-    ComboBoxContatos: TComboBox;
     pgcEmpresas: TPageControl;
     tbsEmpresasCad: TTabSheet;
     Panel8: TPanel;
@@ -143,20 +134,16 @@ type
     Panel16: TPanel;
     Panel17: TPanel;
     Panel18: TPanel;
-    pgcConfig: TPageControl;
-    tbsPermissoes: TTabSheet;
+    pgcUsuarios: TPageControl;
+    tbsUsuarios: TTabSheet;
     Panel11: TPanel;
     Panel12: TPanel;
     Label18: TLabel;
-    Label19: TLabel;
     Bevel8: TBevel;
     Bevel10: TBevel;
-    SpdAdicionarPerm: TSpeedButton;
+    spdUsuarioAdicionar: TSpeedButton;
     SpdExcluirPerm: TSpeedButton;
     SpdEditarPerm: TSpeedButton;
-    SpdListarPerm: TSpeedButton;
-    DBGridPerm: TDBGrid;
-    ComboBox1: TComboBox;
     pnlRelatorios: TPanel;
     imgRelatorios: TImage;
     crdRelatorios: TCard;
@@ -192,10 +179,41 @@ type
     frxReportUsuariosNome: TfrxReport;
     qryRelContatos: TFDQuery;
     FDConnRel: TFDConnection;
-    Label21: TLabel;
     qryRelUsuarios: TFDQuery;
     frxDBUsuarios: TfrxDBDataset;
-    ComboBox2: TComboBox;
+    edtIdUsuario: TEdit;
+    pgcFavoritos: TPageControl;
+    tbsFavoritosCad: TTabSheet;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Label5: TLabel;
+    SpdAdicionarFavorito: TSpeedButton;
+    SpdRemoverFavorito: TSpeedButton;
+    ComboBoxContatos: TComboBox;
+    DBGridFavoritos: TDBGrid;
+    tbsUsuariosList: TTabSheet;
+    DBGridPerm: TDBGrid;
+    Label19: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    edtNomeUsuario: TEdit;
+    edtUsuarioEmail: TEdit;
+    edtCriadoEm: TEdit;
+    edtAtualizadoEm: TEdit;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    rdbUsuarioN1: TRadioButton;
+    rdbUsuarioN2: TRadioButton;
+    rdbUsuarioN3: TRadioButton;
+    rdbUsuarioAtivo: TRadioButton;
+    rdbUsuarioInativo: TRadioButton;
+    qryUsuarioCRUD: TFDQuery;
+    edtUsuarioSenha: TEdit;
+    Label25: TLabel;
+    edtUsuarioTelefone: TEdit;
+    Label26: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -249,11 +267,7 @@ type
     procedure spdImpExcluirClick(Sender: TObject);
     procedure spdImpSalvarDBClick(Sender: TObject);
     procedure spdImprimirClick(Sender: TObject);
-    procedure SpdAdicionarPermClick(Sender: TObject);
-    procedure SpdExcluirPermClick(Sender: TObject);
-    procedure SpdEditarPermClick(Sender: TObject);
-    procedure SpdListarPermClick(Sender: TObject);
-
+    procedure spdUsuarioAdicionarClick(Sender: TObject);
 
 
   private
@@ -304,8 +318,6 @@ type
     // === Permissões ===
     procedure ConfigurarDBgridPerm;
     procedure CarregarPermissoes;
-    procedure CarregarUsuariosNoComboBox1;
-    procedure CarregarPermissoesNoComboBox2;
 
 
     // === CONTATOS ===
@@ -416,8 +428,7 @@ begin
   ConfigurarDBGridPerm;
   CarregarPermissoes;
 
-  CarregarUsuariosNoComboBox1;
-  CarregarPermissoesNoComboBox2;
+
   // ----- Importacao VCF
   memImportCont.Font.Name := 'Segoe UI';
   OpenDialog1.Filter := 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*';
@@ -1026,8 +1037,7 @@ begin
   DBGrid1.Refresh;
 end;
 
-procedure TFMain.CarregarPermissoes;
-var
+procedure TFMain.CarregarPermissoes;var
   Lista: TObjectList<TPermissao>;
   Perm: TPermissao;
 begin
@@ -1064,71 +1074,6 @@ begin
 end;
 
 
-
-procedure TFMain.CarregarUsuariosNoComboBox1;
-var
-  Query: TFDQuery;
-begin
-  ComboBox1.Clear;
-  ComboBox1.Items.Add('← Selecione um usuário →');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DataModule1.FDConnection1;
-    Query.SQL.Text :=
-      'SELECT id_usuario, nome, email FROM "Usuario" WHERE ativo = TRUE ORDER BY nome';
-    Query.Open();
-
-    while not Query.Eof do
-    begin
-      if Query.FieldByName('email').AsString <> '' then
-        ComboBox1.Items.AddObject(
-          Query.FieldByName('nome').AsString + ' <' + Query.FieldByName('email').AsString + '>',
-          TObject(Query.FieldByName('id_usuario').AsInteger)
-        )
-      else
-        ComboBox1.Items.AddObject(
-          Query.FieldByName('nome').AsString,
-          TObject(Query.FieldByName('id_usuario').AsInteger)
-        );
-      Query.Next;
-    end;
-  finally
-    Query.Free;
-  end;
-
-  ComboBox1.ItemIndex := 0;
-end;
-
-procedure TFMain.CarregarPermissoesNoComboBox2;
-var
-  Query: TFDQuery;
-begin
-  ComboBox2.Clear;
-  ComboBox2.Items.Add('← Selecione o nível →');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DataModule1.FDConnection1;
-    Query.SQL.Text :=
-      'SELECT DISTINCT nivel_requerido ' +
-      'FROM "Permissoes" ' +
-      'WHERE ativo = TRUE ' +
-      'ORDER BY nivel_requerido';
-
-    Query.Open();
-
-    while not Query.Eof do
-    begin
-      ComboBox2.Items.Add(Query.FieldByName('nivel_requerido').AsString);
-      Query.Next;
-    end;
-  finally
-    Query.Free;
-  end;
-
-  ComboBox2.ItemIndex := 0;
-end;
 {$ENDREGION}
 
 {$REGION 'Persistência / salvar e excluir (Contatos, Empresas, Grupos, Favoritos)'}
@@ -1304,6 +1249,120 @@ end;
 
 {$ENDREGION}
 
+
+// ----- CRUD - Usuarios
+{$REGION 'CRUD - Usuarios'}
+procedure TFMain.spdUsuarioAdicionarClick(Sender: TObject);
+var
+  Nivel: Integer;
+  Ativo: Boolean;
+begin
+  // ============================================================
+  // 1) Validação básica
+  // ============================================================
+
+  if Trim(edtNomeUsuario.Text) = '' then
+  begin
+    ShowMessage('Informe o nome do usuário.');
+    Exit;
+  end;
+
+  if Trim(edtUsuarioEmail.Text) = '' then
+  begin
+    ShowMessage('Informe o e-mail.');
+    Exit;
+  end;
+
+  if Trim(edtUsuarioSenha.Text) = '' then
+  begin
+    ShowMessage('Informe a senha.');
+    Exit;
+  end;
+
+  // ============================================================
+  // 2) Identifica o nivel do usuário pelos RadioButtons
+  // ============================================================
+
+  if rdbUsuarioN1.Checked then
+    Nivel := 1
+  else if rdbUsuarioN2.Checked then
+    Nivel := 2
+  else if rdbUsuarioN3.Checked then
+    Nivel := 3
+  else
+  begin
+    ShowMessage('Selecione o nível do usuário.');
+    Exit;
+  end;
+
+  // ============================================================
+  // 3) Identifica se o usuário está ativo ou inativo
+  // ============================================================
+
+  if rdbUsuarioAtivo.Checked then
+    Ativo := True
+  else
+    Ativo := False;
+
+  // ============================================================
+  // 4) Monta o comando SQL de INSERT
+  // ============================================================
+
+  qryUsuarioCRUD.Close;
+  qryUsuarioCRUD.SQL.Clear;
+  qryUsuarioCRUD.SQL.Add('INSERT INTO "Usuario"');
+  qryUsuarioCRUD.SQL.Add('(nome, email, senha_hash, telefone, ativo, nivel_usuario, criado_em, atualizado_em)');
+  qryUsuarioCRUD.SQL.Add('VALUES (:nome, :email, :senha_hash, :telefone, :ativo, :nivel_usuario, CURRENT_DATE, CURRENT_DATE)');
+
+  // ============================================================
+  // 5) Preenche os parâmetros
+  // ============================================================
+
+  qryUsuarioCRUD.ParamByName('nome').AsString         := edtNomeUsuario.Text;
+  qryUsuarioCRUD.ParamByName('email').AsString        := edtUsuarioEmail.Text;
+  qryUsuarioCRUD.ParamByName('senha_hash').AsString   := edtUsuarioSenha.Text;  // já deve vir criptografado
+  qryUsuarioCRUD.ParamByName('telefone').AsString     := edtUsuarioTelefone.Text;
+  qryUsuarioCRUD.ParamByName('ativo').AsBoolean       := Ativo;
+  qryUsuarioCRUD.ParamByName('nivel_usuario').AsInteger := Nivel;
+
+  // ============================================================
+  // 6) Executa o comando no banco
+  // ============================================================
+
+  try
+    qryUsuarioCRUD.ExecSQL;
+    ShowMessage('Usuário adicionado com sucesso!');
+  except
+    on E: Exception do
+      ShowMessage('Erro ao adicionar usuário: ' + E.Message);
+  end;
+
+  // ============================================================
+  // 7) Atualiza o grid de usuários e limpa campos
+  // ============================================================
+
+  qryRelUsuarios.Close;
+  qryRelUsuarios.Open;
+
+  edtIdUsuario.Text        := '';
+  edtNomeUsuario.Text      := '';
+  edtUsuarioEmail.Text     := '';
+  edtUsuarioSenha.Text     := '';
+  edtUsuarioTelefone.Text  := '';
+
+  rdbUsuarioN1.Checked     := False;
+  rdbUsuarioN2.Checked     := False;
+  rdbUsuarioN3.Checked     := False;
+  rdbUsuarioAtivo.Checked  := False;
+  rdbUsuarioInativo.Checked := False;
+
+end;
+
+
+
+{$ENDREGION}
+
+// ---- Funcoes Auxiliares
 {$REGION 'Validação e helpers de formulário'}
 
 function TFMain.ValidarFormulario: Boolean;
@@ -1478,6 +1537,7 @@ end;
 
 {$ENDREGION}
 
+// ---- Botoes painel Lateral
 {$REGION 'Controle visual de painéis e navegação de cards'}
 
 procedure TFMain.AtivarPainel(Panel: TPanel);
@@ -1557,12 +1617,10 @@ end;
 procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
   AtivarPainel(pnlConfiguracao);
-  CardPanel1.ActiveCard := crdConfig;
-  crdConfig.Visible := True;
-  pgcConfig.Visible := True;
-  pgcConfig.ActivePage := tbsPermissoes;
-  CarregarUsuariosNoComboBox1;
-  CarregarPermissoesNoComboBox2;
+  CardPanel1.ActiveCard := crdUsuarios;
+  crdUsuarios.Visible := True;
+  pgcUsuarios.Visible := True;
+  pgcUsuarios.ActivePage := tbsUsuarios;
   ConfigurarDBgridPerm;
   CarregarPermissoes;
 end;
@@ -1584,7 +1642,7 @@ begin
 
   PageControl4.Visible := True;
   TabSheet6.Visible := True;
-  crdConfig.Visible := True;
+  crdUsuarios.Visible := True;
 
   ConfigurarDBGridGrupos;
   CarregarGrupos;
@@ -1592,6 +1650,7 @@ end;
 
 {$ENDREGION}
 
+// ---- Animacao menu Lateral
 {$REGION 'Mouse Enter/Leave dos painéis do menu lateral'}
 
 procedure TFMain.pnlContatosMouseEnter(Sender: TObject);
@@ -1753,6 +1812,7 @@ end;
 
 {$ENDREGION}
 
+// ----- Botoes Contato
 {$REGION 'Eventos de clique - Contatos'}
 
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
@@ -1920,8 +1980,11 @@ begin
   SpdEditarContatosGridClick(Sender);
 end;
 
+
+
 {$ENDREGION}
 
+// ----- Botoes Favoritos
 {$REGION 'Eventos de clique - Favoritos'}
 
 procedure TFMain.SpdAdicionarFavoritoClick(Sender: TObject);
@@ -1975,6 +2038,7 @@ end;
 
 {$ENDREGION}
 
+// ----- Botoes Empresas
 {$REGION 'Eventos de clique - Empresas'}
 
 procedure TFMain.SpdAdicionarEmpresaClick(Sender: TObject);
@@ -2153,6 +2217,7 @@ end;
 
 {$ENDREGION}
 
+// ----- Botoes Grupos
 {$REGION 'Eventos de clique - Grupos'}
 
 procedure TFMain.SpdAdicionarGrupoClick(Sender: TObject);
@@ -2350,139 +2415,7 @@ end;
 
 {$ENDREGION}
 
-{$REGION 'Eventos de clique - Permissões '}
-procedure TFMain.SpdAdicionarPermClick(Sender: TObject);
-begin
-  ClientDataSetPermissoes.Append;
-  ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := 0;
-  ClientDataSetPermissoes.FieldByName('NOME').AsString := '';
-  ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString := '';
-  ClientDataSetPermissoes.Post;
-
-  ClientDataSetPermissoes.Edit;
-  DBGridPerm.SetFocus;
-  DBGridPerm.SelectedField := ClientDataSetPermissoes.FieldByName('NOME');
-end;
-
-procedure TFMain.SpdExcluirPermClick(Sender: TObject);
-var
-  Id: Integer;
-  Controller: TPermissoesController;
-begin
-  if ClientDataSetPermissoes.IsEmpty then
-  begin
-    ShowMessage('Nenhuma permissão selecionada.');
-    Exit;
-  end;
-
-  Id := ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger;  // ← CORRIGIDO
-
-  if Id <= 0 then
-  begin
-    ShowMessage('Não é possível excluir uma permissão não salva.');
-    Exit;
-  end;
-
-  if MessageDlg('Deseja realmente excluir esta permissão?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    Controller := TPermissoesController.Create;
-    try
-      if Controller.ExcluirPermissao(Id) then
-      begin
-        ClientDataSetPermissoes.Delete;
-        ShowMessage('Permissão excluída com sucesso!');
-      end
-      else
-        ShowMessage('Erro ao excluir permissão.');
-    finally
-      Controller.Free;
-    end;
-  end;
-end;
-
-procedure TFMain.SpdEditarPermClick(Sender: TObject);
-var
-  Perm: TPermissao;
-  Ctrl: TPermissoesController;
-  Id, NovoId: Integer;
-begin
-  // VALIDA SE ESTÁ EM EDIÇÃO
-  if not (ClientDataSetPermissoes.State in [dsEdit, dsInsert]) then
-  begin
-    ShowMessage('Nenhuma linha em edição. Clique em Adicionar ou selecione uma linha.');
-    Exit;
-  end;
-
-  // VALIDA CAMPOS
-  if Trim(ClientDataSetPermissoes.FieldByName('NOME').AsString) = '' then
-  begin
-    ShowMessage('Nome da permissão é obrigatório!');
-    DBGridPerm.SelectedField := ClientDataSetPermissoes.FieldByName('NOME');
-    Exit;
-  end;
-
-  Id := ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger;
-  Ctrl := TPermissoesController.Create;
-  try
-    if Id = 0 then
-    begin
-      // === NOVO ===
-      Perm := TPermissao.Create;
-      try
-        Perm.setNome(ClientDataSetPermissoes.FieldByName('NOME').AsString);
-        Perm.setDescricao(ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString);
-        Perm.setNivelRequerido(1);
-        Perm.setAtivo(True);
-
-        if Ctrl.AdicionarPermissao(Perm.getNome, Perm.getDescricao, Perm.getNivelRequerido) then
-        begin
-          NovoId := Ctrl.BuscarPermissaoPorOperacao(Perm.getNome).getId;
-          ClientDataSetPermissoes.Edit;
-          ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := NovoId;
-          ClientDataSetPermissoes.Post;
-          ShowMessage('Permissão adicionada!');
-        end
-        else
-          ShowMessage('Erro ao adicionar.');
-      finally
-        Perm.Free;
-      end;
-    end
-    else
-    begin
-      // === EDIÇÃO ===
-      if Ctrl.AtualizarPermissao(
-        Id,
-        ClientDataSetPermissoes.FieldByName('NOME').AsString,
-        ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString,
-        1,
-        True
-      ) then
-      begin
-        ClientDataSetPermissoes.Post;
-        ShowMessage('Permissão atualizada!');
-      end
-      else
-        ShowMessage('Erro ao atualizar.');
-    end;
-  finally
-    Ctrl.Free;
-  end;
-
-
-  SpdEditarPerm.Caption := 'Editar';
-end;
-procedure TFMain.SpdListarPermClick(Sender: TObject);
-begin
-  CarregarPermissoes;
-  EditandoPermissao := False;
-  PermissaoAtual := 0;
-  ConfigurarDBgridPerm;
-end;
-
-
-{$ENDREGION}
-
+// ----- API de Busca de CEP
 {$REGION 'Busca de CEP (SpeedButton5)'}
 
 procedure TFMain.SpeedButton5Click(Sender: TObject);
@@ -2594,6 +2527,7 @@ end;
 
 {$ENDREGION}
 
+// ----- Importacao de Contatos vCard
 {$REGION 'Importação de contatos .VCF (MemTable e Grid4)'}
 
 // ----- Importacao VCF
