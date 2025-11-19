@@ -52,10 +52,7 @@ O Sistema **ContactHub** é uma solução completa para gerenciamento de contato
 - **Exportação em Diversos Formatos**: PDF, Excel, HTML
 
 ### 📝 Logs do Sistema
-- **Registro Completo**: Todas as operações são registradas
-- **Logs de Contatos**: Operações de inclusão, alteração, exclusão
-- **Logs de Usuários**: Ações dos usuários no sistema
-- **Auditoria e Rastreabilidade**: Histórico completo de ações
+**Em Progresso**: 
 
 ## 🏗️ Arquitetura
 
@@ -133,7 +130,7 @@ O sistema utiliza PostgreSQL com as seguintes tabelas principais:
 ## 🚀 Instalação
 
 ### Pré-requisitos
-- Delphi 20.1 ou superior
+- Delphi 10 ou superior
 - PostgreSQL 12 ou superior
 - FastReport para geração de relatórios
 
@@ -202,46 +199,21 @@ O sistema utiliza PostgreSQL com as seguintes tabelas principais:
 
 O sistema oferece três tipos principais de relatórios:
 
-**Relatório por Empresas:**
-- Lista todas as empresas cadastradas
-- Informações detalhadas sobre cada uma
-- Status e contatos
-- Validação de CNPJ
+- Relatório de Contatos - Ordenado por Nome
+- Relatório de Contatos - Ordenado por Numero Telefônico
+- Relatório de Usuários - Ordenado por Nome
 
-**Relatório por Contatos:**
-- Catálogo completo de contatos
-- Detalhes e informações pessoais
-- Controle de favoritos
-- Filtros por diversos critérios
-
-**Relatório de Usuários:**
-- Lista de usuários do sistema
-- Níveis de permissão
-- Status das contas
-- Histórico de atividades
 
 ## 📝 Logs do Sistema
 
-O sistema mantém logs detalhados de todas as operações:
-
-- **contato_log.txt**: Operações relacionadas a contatos
-- **empresa_log.txt**: Operações relacionadas a empresas
-- **usuario_log.txt**: Operações relacionadas a usuários
-- **sistema_log.txt**: Operações gerais do sistema
-
-Os logs registram:
-- Data e hora da operação
-- Usuário que realizou a ação
-- Tipo de operação (inclusão, alteração, exclusão)
-- Detalhes da operação
+** Em progresso** 
 
 ## 🔐 Segurança
 
 O sistema implementa:
 
-- **Controle de Acesso**: Por usuário e senha com MD5 hashing
-- **Diferentes Níveis de Permissão**: Sistema RBAC completo
-- **Registro de Auditoria**: Logs completos de todas as operações
+- **Controle de Acesso**: Por usuário e senha com  hashing
+- **Diferentes Níveis de Permissão**: 
 - **Validação de Dados**: Em todas as operações de entrada
 - **SQL Injection Protection**: Queries parametrizadas
 
