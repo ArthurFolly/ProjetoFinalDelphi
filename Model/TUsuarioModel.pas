@@ -2,92 +2,125 @@ unit TUsuarioModel;
 
 interface
 
-Type TUsuario = Class
-  Id : Integer;
-  Nome : String;
-  Email : String;
-  Telefone : String;
-  CPF : String;
-  Senha : String;
-  TipoUsuario : String;
+type
+  TUsuario = class
+  public
+    Id           : Integer;
+    Nome         : string;
+    Email        : string;
+    Telefone     : string;
+    CPF          : string;
+    Senha        : string;
+    TipoUsuario  : string;
+    NivelUsuario : Integer;
+    Ativo        : Boolean;
+    CriadoEm     : TDateTime;
+    AtualizadoEm : TDateTime;
 
-function getNome :String;
-procedure setNome (aNome:String);
-function getEmail :String;
-procedure setEmail (aEmail:String);
-function getTelefone :String;
-procedure setTelefone (aTelefone:String);
-function getCPF :String;
-procedure setCPF (aCPF:String);
-function getSenha :String;
-procedure setSenha (aSenha:String);
-//function getTipoUsuario :String;
-//procedure setTipoUsuario (aTipoUsuario:String);
+    constructor Create;
 
-End;
+    // GETTERS
+    function getId: Integer;
+    function getNome: string;
+    function getEmail: string;
+    function getTelefone: string;
+    function getNivelUsuario: Integer;
+    function getAtivo: Boolean;
+    function getCriadoEm: TDateTime;
+    function getAtualizadoEm: TDateTime;
+    function getSenha : String;
+
+    // SETTERS
+    procedure setNome(const Value: string);
+    procedure setEmail(const Value: string);
+    procedure setTelefone(const Value: string);
+    procedure setNivelUsuario(Value: Integer);
+    procedure setAtivo(Value: Boolean);
+    procedure setSenha(const Value: string);   // AQUI ESTAVA FALTANDO!
+  end;
 
 implementation
 
-{ TUsuario }
-
-function TUsuario.getCPF: String;
+constructor TUsuario.Create;
 begin
-  result := Self.CPF;
+
 end;
 
-function TUsuario.getEmail: String;
+// GETTERS
+function TUsuario.getId: Integer;
 begin
-  result := Self.Email;
+  Result := Id;
 end;
 
-function TUsuario.getNome: String;
+function TUsuario.getNome: string;
 begin
-  result := Self.Nome;
+  Result := Nome;
 end;
 
 function TUsuario.getSenha: String;
 begin
-  result := self.Senha;
+  Result := Senha;
 end;
 
-function TUsuario.getTelefone: String;
+function TUsuario.getEmail: string;
 begin
-  result := Self.Telefone;
+  Result := Email;
 end;
 
-procedure TUsuario.setCPF(aCPF: String);
+function TUsuario.getTelefone: string;
 begin
-  aCPF := Self.CPF
+  Result := Telefone;
 end;
 
-procedure TUsuario.setEmail(aEmail: String);
+function TUsuario.getNivelUsuario: Integer;
 begin
-  aEmail := Self.Email
+  Result := NivelUsuario;
 end;
 
-procedure TUsuario.setNome(aNome: String);
+function TUsuario.getAtivo: Boolean;
 begin
-  aNome := Self.Nome
+  Result := Ativo;
 end;
 
-procedure TUsuario.setSenha(aSenha: String);
+function TUsuario.getCriadoEm: TDateTime;
 begin
-  aSenha := Self.Senha
+  Result := CriadoEm;
 end;
 
-procedure TUsuario.setTelefone(aTelefone: String);
+function TUsuario.getAtualizadoEm: TDateTime;
 begin
-  aTelefone := Self.Telefone
+  Result := AtualizadoEm;
 end;
 
-//function TUsuario.getTipoUsuario: String;
-//begin
-//  Result := Self.TipoUsuario;
-//end;
-//
-//procedure TUsuario.setTipoUsuario(aTipoUsuario: String);
-//begin
-//  Self.TipoUsuario := aTipoUsuario;
-//end;
+// SETTERS
+procedure TUsuario.setNome(const Value: string);
+begin
+  Nome := Value;
+end;
+
+procedure TUsuario.setEmail(const Value: string);
+begin
+  Email := Value;
+end;
+
+procedure TUsuario.setTelefone(const Value: string);
+begin
+  Telefone := Value;
+end;
+
+procedure TUsuario.setNivelUsuario(Value: Integer);
+begin
+  NivelUsuario := Value;
+end;
+
+procedure TUsuario.setAtivo(Value: Boolean);
+begin
+  Ativo := Value;
+end;
+
+procedure TUsuario.setSenha(const Value: string);   // ESSA É A NOVA!
+begin
+  Senha := Value;
+end;
 
 end.

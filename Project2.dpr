@@ -29,7 +29,8 @@ uses
   PermissoesController in 'Controller\PermissoesController.pas',
   PermissoesRepository in 'Repository\PermissoesRepository.pas',
   VCardImportController in 'Controller\VCardImportController.pas',
-  VCardImportRepository in 'Repository\VCardImportRepository.pas';
+  VCardImportRepository in 'Repository\VCardImportRepository.pas',
+  UsuarioController in 'Controller\UsuarioController.pas';
 
 {$R *.res}
 

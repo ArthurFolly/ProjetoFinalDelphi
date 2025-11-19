@@ -38,13 +38,13 @@ type
     procedure Label7MouseLeave(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-  controller: UsuarioController;
+  controller: TUsuarioController;
    procedure  LimparCampos;
   public
 
     function ValidarCampos: Boolean;
     function ValidarNumero: Boolean;
-    function ValidarCPF: Boolean;
+
 
   end;
 
@@ -84,7 +84,7 @@ begin
 
   Panel3.TabOrder := 4;
 
-  controller := UsuarioController.Create;
+  controller := TUsuarioController.Create;
   FLogin := TFLogin.Create(Application);
 end;
 
@@ -243,15 +243,6 @@ begin
     Result := True;
 end;
 
-function TFormCadastroUsuario.ValidarCPF: Boolean;
-var
-  CPFLimpo: string;
-begin
-  Result := False;
-
-
-
-end;
 
 function TFormCadastroUsuario.ValidarCampos: Boolean;
 begin
@@ -289,13 +280,6 @@ begin
     Exit;
   end;
 
-
-  if not ValidarCPF then
-  begin
-    ShowMessage('O campo CPF está vazio ou incompleto.');
-
-    Exit;
-  end;
   if Trim(EdtSenha.Text) = ''  then
   begin
     ShowMessage(' O campo senha  não pode estar vazio');

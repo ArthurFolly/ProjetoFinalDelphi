@@ -962,7 +962,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Label7: TLabel
         Left = 80
-        Top = 504
+        Top = 480
         Width = 180
         Height = 21
         Caption = 'Clique para ir para o login'
@@ -1007,7 +1007,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Panel3: TPanel
         Left = 56
-        Top = 441
+        Top = 409
         Width = 233
         Height = 49
         Caption = 'Cadastrar'
@@ -1026,7 +1026,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object EdtSenha: TEdit
         Left = 56
-        Top = 392
+        Top = 373
         Width = 121
         Height = 23
         TabOrder = 4

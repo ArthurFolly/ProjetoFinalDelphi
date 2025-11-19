@@ -4,7 +4,7 @@ interface
 
 uses TUsuarioRepository,TUsuarioModel,SysUtils;
 
-type UsuarioController = Class
+type TUsuarioController = Class
 
 private
 
@@ -32,7 +32,7 @@ implementation
 
 
 
-function UsuarioController.CadastrarUsuario(id: Integer; senha, email, CPF,
+function TUsuarioController.CadastrarUsuario(id: Integer; senha, email, CPF,
   nome, numero: String; var msgErro: String): Boolean;
   var
   usuario :TUsuario;
@@ -88,7 +88,7 @@ end;
 
 
 
-constructor UsuarioController.Create;
+constructor TUsuarioController.Create;
 begin
 inherited Create;
 
@@ -96,7 +96,7 @@ Self.repository := UsuarioRepository.Create;
 
 end;
 
-destructor UsuarioController.Destroy;
+destructor TUsuarioController.Destroy;
 begin
 
 self.repository.Free;

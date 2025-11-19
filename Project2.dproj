@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">Project2</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -166,6 +166,7 @@
         <DCCReference Include="Repository\PermissoesRepository.pas"/>
         <DCCReference Include="Controller\VCardImportController.pas"/>
         <DCCReference Include="Repository\VCardImportRepository.pas"/>
+        <DCCReference Include="Controller\UsuarioController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

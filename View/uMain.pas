@@ -19,7 +19,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, frxSmartMemo, frxClass,
-  frCoreClasses, frxDBSet,PermissoesController,PermissoesRepository,PermissoesModel;
+  frCoreClasses, frxDBSet,PermissoesController,PermissoesRepository,PermissoesModel,TUsuarioModel,UsuarioController;
 
 type
   TFMain = class(TForm)
@@ -142,8 +142,8 @@ type
     Bevel8: TBevel;
     Bevel10: TBevel;
     spdUsuarioAdicionar: TSpeedButton;
-    SpdExcluirPerm: TSpeedButton;
-    SpdEditarPerm: TSpeedButton;
+    spdExcluirUsuario: TSpeedButton;
+    spdEditarUsuario: TSpeedButton;
     pnlRelatorios: TPanel;
     imgRelatorios: TImage;
     crdRelatorios: TCard;
@@ -268,6 +268,8 @@ type
     procedure spdImpSalvarDBClick(Sender: TObject);
     procedure spdImprimirClick(Sender: TObject);
     procedure spdUsuarioAdicionarClick(Sender: TObject);
+    procedure spdExcluirUsuarioClick(Sender: TObject);
+    procedure spdEditarUsuarioClick(Sender: TObject);
 
 
   private
@@ -288,6 +290,12 @@ type
     EditandoPermissao: Boolean;
     PermissaoAtual: Integer;
 
+
+    // === USUÁRIOS - VARIÁVEIS OBRIGATÓRIAS ===
+    UsuariosController: TUsuarioController;
+    LoadingUsuarios: Boolean;
+    EditandoUsuario: Boolean;
+    UsuarioAtual: TUsuario;
 
     // === EMPRESAS ===
     EditandoEmpresa: Boolean;
@@ -313,6 +321,16 @@ type
     procedure LimparFormularioGrupo;
     function ValidarFormularioGrupo: Boolean;
     function ValidarPermissaoGrupo(Operacao: string): Boolean;
+
+
+
+
+  // Métodos privados do CRUD de usuários
+    procedure ConfigurarDBGridUsuarios;
+    procedure CarregarUsuariosNoGrid;
+    procedure LimparCamposUsuario;
+    procedure PreencherCamposUsuario(AUsuario: TUsuario);
+    function UsuarioSelecionado: TUsuario;
 
 
     // === Permissões ===
@@ -877,6 +895,11 @@ begin
   DBGridPerm.ReadOnly := True;
 end;
 
+procedure TFMain.ConfigurarDBGridUsuarios;
+begin
+
+end;
+
 {$ENDREGION}
 
 {$REGION 'Carregamento e atualização de dados (Contatos, Empresas, Favoritos, Grupos)'}
@@ -986,6 +1009,11 @@ begin
   DBGridGrupos.Refresh;
 end;
 
+procedure TFMain.CarregarPermissoes;
+begin
+
+end;
+
 procedure TFMain.AtualizarDBGrid;
 begin
   if not cdsContatos.Active then
@@ -1037,42 +1065,45 @@ begin
   DBGrid1.Refresh;
 end;
 
-procedure TFMain.CarregarPermissoes;var
-  Lista: TObjectList<TPermissao>;
-  Perm: TPermissao;
+procedure TFMain.CarregarUsuariosNoGrid;
+var
+  Lista: TObjectList<TUsuario>;
+  User: TUsuario;
 begin
-  if LoadingPermissoes then Exit;
-  LoadingPermissoes := True;
-  ClientDataSetPermissoes.DisableControls;
-  try
-    ClientDataSetPermissoes.Close;
-    ClientDataSetPermissoes.FieldDefs.Clear;
-    ClientDataSetPermissoes.FieldDefs.Add('id_permissao', ftInteger);
-    ClientDataSetPermissoes.FieldDefs.Add('NOME', ftString, 100);
-    ClientDataSetPermissoes.FieldDefs.Add('DESCRICAO', ftString, 300);
-    ClientDataSetPermissoes.CreateDataSet;
-    ClientDataSetPermissoes.Open;
-    ClientDataSetPermissoes.EmptyDataSet;
+  if LoadingUsuarios then Exit;
+  LoadingUsuarios := True;
 
-    Lista := PermissoesController.ListarTodasPermissoes;
-    try
-      for Perm in Lista do
-      begin
-        ClientDataSetPermissoes.Append;
-        ClientDataSetPermissoes.FieldByName('id_permissao').AsInteger := Perm.getId;
-        ClientDataSetPermissoes.FieldByName('NOME').AsString := Perm.getNome;
-        ClientDataSetPermissoes.FieldByName('DESCRICAO').AsString := Perm.getDescricao;
-        ClientDataSetPermissoes.Post;
-      end;
-    finally
-      Lista.Free;
+  // Limpa e recria o ClientDataSet (simplificado)
+  ClientDataSetPermissoes.Close;
+  ClientDataSetPermissoes.FieldDefs.Clear;
+  ClientDataSetPermissoes.FieldDefs.Add('id_usuario', ftInteger);
+  ClientDataSetPermissoes.FieldDefs.Add('nome', ftString, 100);
+  ClientDataSetPermissoes.FieldDefs.Add('email', ftString, 100);
+  ClientDataSetPermissoes.FieldDefs.Add('telefone', ftString, 30);
+  ClientDataSetPermissoes.FieldDefs.Add('nivel_usuario', ftInteger);
+  ClientDataSetPermissoes.FieldDefs.Add('ativo', ftBoolean);
+  ClientDataSetPermissoes.CreateDataSet;
+  ClientDataSetPermissoes.Open;
+  ClientDataSetPermissoes.EmptyDataSet;
+
+  Lista := UsuariosController.ListarTodos;
+  try
+    for User in Lista do
+    begin
+      ClientDataSetPermissoes.Append;
+      ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger := User.getId;
+      ClientDataSetPermissoes.FieldByName('nome').AsString := User.getNome;
+      ClientDataSetPermissoes.FieldByName('email').AsString := User.getEmail;
+      ClientDataSetPermissoes.FieldByName('telefone').AsString := User.getTelefone;
+      ClientDataSetPermissoes.FieldByName('nivel_usuario').AsInteger := User.getNivelUsuario;
+      ClientDataSetPermissoes.FieldByName('ativo').AsBoolean := User.getAtivo;
+      ClientDataSetPermissoes.Post;
     end;
   finally
-    ClientDataSetPermissoes.EnableControls;
-    LoadingPermissoes := False;
+    Lista.Free;
+    LoadingUsuarios := False;
   end;
 end;
-
 
 {$ENDREGION}
 
@@ -1257,105 +1288,108 @@ var
   Nivel: Integer;
   Ativo: Boolean;
 begin
-  // ============================================================
-  // 1) Validação básica
-  // ============================================================
-
+  // ===== 1) VALIDAÇÃO DOS CAMPOS =====
   if Trim(edtNomeUsuario.Text) = '' then
   begin
     ShowMessage('Informe o nome do usuário.');
+    edtNomeUsuario.SetFocus;
     Exit;
   end;
 
   if Trim(edtUsuarioEmail.Text) = '' then
   begin
     ShowMessage('Informe o e-mail.');
+    edtUsuarioEmail.SetFocus;
     Exit;
   end;
 
   if Trim(edtUsuarioSenha.Text) = '' then
   begin
     ShowMessage('Informe a senha.');
+    edtUsuarioSenha.SetFocus;
     Exit;
   end;
 
-  // ============================================================
-  // 2) Identifica o nivel do usuário pelos RadioButtons
-  // ============================================================
-
-  if rdbUsuarioN1.Checked then
-    Nivel := 1
-  else if rdbUsuarioN2.Checked then
-    Nivel := 2
-  else if rdbUsuarioN3.Checked then
-    Nivel := 3
+  // ===== 2) NÍVEL DO USUÁRIO =====
+  if rdbUsuarioN1.Checked then Nivel := 1
+  else if rdbUsuarioN2.Checked then Nivel := 2
+  else if rdbUsuarioN3.Checked then Nivel := 3
   else
   begin
     ShowMessage('Selecione o nível do usuário.');
     Exit;
   end;
 
-  // ============================================================
-  // 3) Identifica se o usuário está ativo ou inativo
-  // ============================================================
+  // ===== 3) ATIVO / INATIVO =====
+  Ativo := rdbUsuarioAtivo.Checked;
 
-  if rdbUsuarioAtivo.Checked then
-    Ativo := True
+  // ===== 4) MODO EDIÇÃO OU NOVO? =====
+  if EditandoUsuario then
+  begin
+    // === EDITAR USUÁRIO ===
+    UsuarioAtual.setNome(Trim(edtNomeUsuario.Text));
+    UsuarioAtual.setEmail(Trim(edtUsuarioEmail.Text));
+    if edtUsuarioSenha.Text <> '' then // só altera senha se digitou algo
+      UsuarioAtual.setSenha(edtUsuarioSenha.Text);
+    UsuarioAtual.setTelefone(Trim(edtUsuarioTelefone.Text));
+    UsuarioAtual.setAtivo(Ativo);
+    UsuarioAtual.setNivelUsuario(Nivel);
+
+    try
+      if UsuariosController.AtualizarUsuario(UsuarioAtual) then
+      begin
+        ShowMessage('Usuário atualizado com sucesso!');
+        LimparCamposUsuario;
+        CarregarUsuariosNoGrid; // atualiza o grid
+        EditandoUsuario := False;
+        spdUsuarioAdicionar.Caption := 'Adicionar';
+      end;
+    except
+      on E: Exception do
+        ShowMessage('Erro ao atualizar: ' + E.Message);
+    end;
+  end
   else
-    Ativo := False;
-
-  // ============================================================
-  // 4) Monta o comando SQL de INSERT
-  // ============================================================
-
-  qryUsuarioCRUD.Close;
-  qryUsuarioCRUD.SQL.Clear;
-  qryUsuarioCRUD.SQL.Add('INSERT INTO "Usuario"');
-  qryUsuarioCRUD.SQL.Add('(nome, email, senha_hash, telefone, ativo, nivel_usuario, criado_em, atualizado_em)');
-  qryUsuarioCRUD.SQL.Add('VALUES (:nome, :email, :senha_hash, :telefone, :ativo, :nivel_usuario, CURRENT_DATE, CURRENT_DATE)');
-
-  // ============================================================
-  // 5) Preenche os parâmetros
-  // ============================================================
-
-  qryUsuarioCRUD.ParamByName('nome').AsString         := edtNomeUsuario.Text;
-  qryUsuarioCRUD.ParamByName('email').AsString        := edtUsuarioEmail.Text;
-  qryUsuarioCRUD.ParamByName('senha_hash').AsString   := edtUsuarioSenha.Text;  // já deve vir criptografado
-  qryUsuarioCRUD.ParamByName('telefone').AsString     := edtUsuarioTelefone.Text;
-  qryUsuarioCRUD.ParamByName('ativo').AsBoolean       := Ativo;
-  qryUsuarioCRUD.ParamByName('nivel_usuario').AsInteger := Nivel;
-
-  // ============================================================
-  // 6) Executa o comando no banco
-  // ============================================================
-
-  try
-    qryUsuarioCRUD.ExecSQL;
-    ShowMessage('Usuário adicionado com sucesso!');
-  except
-    on E: Exception do
-      ShowMessage('Erro ao adicionar usuário: ' + E.Message);
+  begin
+    // === ADICIONAR NOVO USUÁRIO ===
+    try
+      if UsuariosController.AdicionarUsuario(
+           Trim(edtNomeUsuario.Text),
+           Trim(edtUsuarioEmail.Text),
+           edtUsuarioSenha.Text,
+           Trim(edtUsuarioTelefone.Text),
+           Ativo,
+           Nivel) then
+      begin
+        ShowMessage('Usuário adicionado com sucesso!');
+        LimparCamposUsuario;
+        CarregarUsuariosNoGrid;
+      end;
+    except
+      on E: Exception do
+        ShowMessage('Erro ao adicionar: ' + E.Message);
+    end;
   end;
+end;
+procedure TFMain.LimparCamposUsuario;
+begin
+  edtIdUsuario.Clear;
+  edtNomeUsuario.Clear;
+  edtUsuarioEmail.Clear;
+  edtUsuarioSenha.Clear;
+  edtUsuarioTelefone.Clear;
+  edtCriadoEm.Clear;
+  edtAtualizadoEm.Clear;
 
-  // ============================================================
-  // 7) Atualiza o grid de usuários e limpa campos
-  // ============================================================
-
-  qryRelUsuarios.Close;
-  qryRelUsuarios.Open;
-
-  edtIdUsuario.Text        := '';
-  edtNomeUsuario.Text      := '';
-  edtUsuarioEmail.Text     := '';
-  edtUsuarioSenha.Text     := '';
-  edtUsuarioTelefone.Text  := '';
-
-  rdbUsuarioN1.Checked     := False;
-  rdbUsuarioN2.Checked     := False;
-  rdbUsuarioN3.Checked     := False;
-  rdbUsuarioAtivo.Checked  := False;
+  rdbUsuarioN1.Checked := False;
+  rdbUsuarioN2.Checked := False;
+  rdbUsuarioN3.Checked := False;
+  rdbUsuarioAtivo.Checked := True;
   rdbUsuarioInativo.Checked := False;
 
+  EditandoUsuario := False;
+  FreeAndNil(UsuarioAtual);
+  spdUsuarioAdicionar.Caption := 'Adicionar';
 end;
 
 
@@ -1463,6 +1497,11 @@ begin
 
     end;
   end;
+end;
+
+procedure TFMain.PreencherCamposUsuario(AUsuario: TUsuario);
+begin
+
 end;
 
 procedure TFMain.PreencherFormulario(Contato: Contatos);
@@ -2304,6 +2343,51 @@ begin
 end;
 
 
+procedure TFMain.spdEditarUsuarioClick(Sender: TObject);
+var
+  IdUsuario: Integer;
+begin
+  if ClientDataSetPermissoes.IsEmpty then
+  begin
+    ShowMessage('Selecione um usuário para editar.');
+    Exit;
+  end;
+
+  IdUsuario := ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger;
+
+  FreeAndNil(UsuarioAtual);
+  UsuarioAtual := UsuariosController.BuscarPorId(IdUsuario);
+
+  if not Assigned(UsuarioAtual) then
+  begin
+    ShowMessage('Erro ao carregar usuário.');
+    Exit;
+  end;
+
+  // Preenche os campos
+  edtIdUsuario.Text := IntToStr(UsuarioAtual.Id);
+  edtNomeUsuario.Text := UsuarioAtual.Nome;
+  edtUsuarioEmail.Text := UsuarioAtual.Email;
+  edtUsuarioTelefone.Text := UsuarioAtual.Telefone;
+  edtCriadoEm.Text := DateTimeToStr(UsuarioAtual.CriadoEm);
+  edtAtualizadoEm.Text := DateTimeToStr(UsuarioAtual.AtualizadoEm);
+
+  case UsuarioAtual.NivelUsuario of
+    1: rdbUsuarioN1.Checked := True;
+    2: rdbUsuarioN2.Checked := True;
+    3: rdbUsuarioN3.Checked := True;
+  end;
+
+  if UsuarioAtual.Ativo then
+    rdbUsuarioAtivo.Checked := True
+  else
+    rdbUsuarioInativo.Checked := True;
+
+  edtUsuarioSenha.Clear;
+  EditandoUsuario := True;
+  spdUsuarioAdicionar.Caption := 'Salvar Alterações';
+end;
+
 procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
 var
   IdGrupo: Integer;
@@ -2331,6 +2415,52 @@ begin
   end;
 end;
 
+
+procedure TFMain.spdExcluirUsuarioClick(Sender: TObject);
+var
+  UsuarioSelecionado: TUsuario;
+  IdUsuario: Integer;
+  NomeUsuario: string;
+begin
+  // 1) Verifica se tem algo selecionado no grid
+  if ClientDataSetPermissoes.IsEmpty then
+  begin
+    ShowMessage('Selecione um usuário na lista para excluir.');
+    Exit;
+  end;
+
+  IdUsuario := ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger;
+  NomeUsuario := ClientDataSetPermissoes.FieldByName('nome').AsString;
+
+  // 2) Confirmação com o nome do cara (fica mais profissional)
+  if MessageDlg(
+       Format('Tem certeza que deseja EXCLUIR o usuário "%s"?%sEsta ação não pode ser desfeita.',
+              [NomeUsuario, sLineBreak]),
+       mtWarning, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  // 3) Busca o objeto completo (pra passar pro controller)
+  UsuarioSelecionado := UsuariosController.BuscarPorId(IdUsuario);
+  if UsuarioSelecionado = nil then
+  begin
+    ShowMessage('Usuário não encontrado no banco de dados.');
+    Exit;
+  end;
+
+  try
+    // 4) Exclusão lógica (recomendado) ou física — eu faço lógica (campo ativo = false)
+    if UsuariosController.ExcluirUsuario(UsuarioSelecionado.Id) then
+    begin
+      ShowMessage(Format('Usuário "%s" excluído com sucesso!', [NomeUsuario]));
+      CarregarUsuariosNoGrid; // atualiza o grid
+      LimparCamposUsuario;    // limpa os edits da direita
+    end
+    else
+      ShowMessage('Erro ao excluir usuário. Verifique se ele possui registros vinculados.');
+  finally
+    FreeAndNil(UsuarioSelecionado);
+  end;
+end;
 
 procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
 var
@@ -2523,6 +2653,11 @@ begin
   finally
     http.Free; // liberar cliente HTTP
   end;
+end;
+
+function TFMain.UsuarioSelecionado: TUsuario;
+begin
+
 end;
 
 {$ENDREGION}

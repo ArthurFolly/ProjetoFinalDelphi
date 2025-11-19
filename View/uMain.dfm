@@ -10902,9 +10902,10 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsUsuariosList
+          ActivePage = tbsUsuarios
           Align = alClient
           TabOrder = 0
+          ExplicitLeft = 3
           object tbsUsuarios: TTabSheet
             Caption = 'Cadastro'
             object Panel11: TPanel
@@ -11352,7 +11353,7 @@
                   Layout = blGlyphTop
                   OnClick = spdUsuarioAdicionarClick
                 end
-                object SpdExcluirPerm: TSpeedButton
+                object spdExcluirUsuario: TSpeedButton
                   Left = 280
                   Top = 448
                   Width = 105
@@ -11746,8 +11747,9 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = spdExcluirUsuarioClick
                 end
-                object SpdEditarPerm: TSpeedButton
+                object spdEditarUsuario: TSpeedButton
                   Left = 496
                   Top = 448
                   Width = 97
@@ -12141,6 +12143,7 @@
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
                   Layout = blGlyphTop
+                  OnClick = spdEditarUsuarioClick
                 end
                 object Label19: TLabel
                   Left = 24

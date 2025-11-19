@@ -1,8 +1,9 @@
-unit PermissoesController;
+﻿unit PermissoesController;
 
 interface
 
-uses System.SysUtils, PermissoesRepository, PermissoesModel, System.Generics.Collections;
+uses
+  System.SysUtils, PermissoesRepository, PermissoesModel, System.Generics.Collections;
 
 type
   TPermissoesController = class
@@ -18,16 +19,18 @@ type
     function ExcluirPermissao(AId: Integer): Boolean;
     function BuscarPermissaoPorId(AId: Integer): TPermissao;
     function ListarTodasPermissoes: TObjectList<TPermissao>;
-    function BuscarPermissoesPorNome(const ANome: string): TObjectList<TPermissao>;
+
+    // Buscas adicionais (agora compatíveis com o Repository real)
+    function BuscarPermissaoPorNome(const ANome: string): TPermissao;  // ← retorna 1
+    function BuscarPermissoesPorNomeLike(const ANome: string): TObjectList<TPermissao>; // ← busca parcial
     function BuscarPermissoesPorNivel(ANivel: Integer): TObjectList<TPermissao>;
 
-    // Métodos de validação
+    // Validação de permissão
     function VerificarPermissao(const AOperacao: string; ANivelUsuario: Integer): Boolean;
     procedure ValidarPermissao(const AOperacao: string; ANivelUsuario: Integer);
-    function BuscarPermissaoPorOperacao(const AOperacao: string): TPermissao;
 
-    // Métodos utilitários
-    function CriarPermissoesPadrao: Boolean;
+    // Utilitários
+    procedure CriarPermissoesPadrao;
     function ValidarDadosPermissao(const ANome, ADescricao: string; ANivelRequerido: Integer): Boolean;
   end;
 
@@ -44,61 +47,56 @@ end;
 destructor TPermissoesController.Destroy;
 begin
   FRepository.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 function TPermissoesController.AdicionarPermissao(const ANome, ADescricao: string; ANivelRequerido: Integer): Boolean;
 var
-  permissao: TPermissao;
+  Permissao: TPermissao;
 begin
-  Result := False;
-
   if not ValidarDadosPermissao(ANome, ADescricao, ANivelRequerido) then
-    raise Exception.Create('Dados da permissão inválidos');
+    Exit(False);
 
-  permissao := TPermissao.Create;
+  Permissao := TPermissao.Create;
   try
-    permissao.setNome(ANome);
-    permissao.setDescricao(ADescricao);
-    permissao.setNivelRequerido(ANivelRequerido);
-    permissao.setAtivo(True);
+    Permissao.setNome(ANome);
+    Permissao.setDescricao(ADescricao);
+    Permissao.setNivelRequerido(ANivelRequerido);
+    Permissao.setAtivo(True);
 
-    Result := FRepository.Adicionar(permissao);
+    Result := FRepository.Adicionar(Permissao);
   finally
-    permissao.Free;
+    Permissao.Free;
   end;
 end;
 
-function TPermissoesController.AtualizarPermissao(AId: Integer; const ANome, ADescricao: string; ANivelRequerido: Integer; AAtivo: Boolean): Boolean;
+function TPermissoesController.AtualizarPermissao(AId: Integer; const ANome, ADescricao: string;
+     ANivelRequerido: Integer; AAtivo: Boolean): Boolean;
 var
-  permissao: TPermissao;
+  Permissao: TPermissao;
 begin
-  Result := False;
-
   if not ValidarDadosPermissao(ANome, ADescricao, ANivelRequerido) then
-    raise Exception.Create('Dados da permissão inválidos');
+    Exit(False);
 
   if AId <= 0 then
     raise Exception.Create('ID da permissão inválido');
 
-  permissao := TPermissao.Create;
+  Permissao := TPermissao.Create;
   try
-    permissao.setId(AId);
-    permissao.setNome(ANome);
-    permissao.setDescricao(ADescricao);
-    permissao.setNivelRequerido(ANivelRequerido);
-    permissao.setAtivo(AAtivo);
+    Permissao.setId(AId);
+    Permissao.setNome(ANome);
+    Permissao.setDescricao(ADescricao);
+    Permissao.setNivelRequerido(ANivelRequerido);
+    Permissao.setAtivo(AAtivo);
 
-    Result := FRepository.Atualizar(permissao);
+    Result := FRepository.Atualizar(Permissao);
   finally
-    permissao.Free;
+    Permissao.Free;
   end;
 end;
 
 function TPermissoesController.ExcluirPermissao(AId: Integer): Boolean;
 begin
-  Result := False;
-
   if AId <= 0 then
     raise Exception.Create('ID da permissão inválido');
 
@@ -107,12 +105,11 @@ end;
 
 function TPermissoesController.BuscarPermissaoPorId(AId: Integer): TPermissao;
 begin
-  Result := nil;
-
   if AId <= 0 then
     raise Exception.Create('ID da permissão inválido');
 
   Result := FRepository.BuscarPorId(AId);
+  // Result pode ser nil se não encontrar
 end;
 
 function TPermissoesController.ListarTodasPermissoes: TObjectList<TPermissao>;
@@ -120,35 +117,66 @@ begin
   Result := FRepository.ListarTodas;
 end;
 
-function TPermissoesController.BuscarPermissoesPorNome(const ANome: string): TObjectList<TPermissao>;
+function TPermissoesController.BuscarPermissaoPorNome(const ANome: string): TPermissao;
 begin
-  Result := nil;
-
   if Trim(ANome).IsEmpty then
-    raise Exception.Create('Nome para pesquisa não pode ser vazio');
+    raise Exception.Create('Nome da permissão não pode ser vazio');
 
-  Result := FRepository.BuscarPorNome(ANome);
+  Result := FRepository.BuscarPorNome(ANome); // ← usa o método exato do Repository
+end;
+
+function TPermissoesController.BuscarPermissoesPorNomeLike(const ANome: string): TObjectList<TPermissao>;
+var
+  ListaTodas, Resultado: TObjectList<TPermissao>;
+  Perm: TPermissao;
+begin
+  Resultado := TObjectList<TPermissao>.Create(False);
+  if Trim(ANome).IsEmpty then
+    Exit(Resultado);
+
+  ListaTodas := FRepository.ListarTodas;
+  try
+    for Perm in ListaTodas do
+    begin
+      if Pos(UpperCase(ANome), UpperCase(Perm.getNome)) > 0 then
+        Resultado.Add(Perm);
+    end;
+  finally
+    ListaTodas.Free; // não libera os objetos internos (False no Create)
+  end;
+
+  Result := Resultado;
 end;
 
 function TPermissoesController.BuscarPermissoesPorNivel(ANivel: Integer): TObjectList<TPermissao>;
+var
+  ListaTodas: TObjectList<TPermissao>;
+  Perm: TPermissao;
 begin
-  Result := nil;
+  Result := TObjectList<TPermissao>.Create(False);
 
   if (ANivel < 1) or (ANivel > 3) then
-    raise Exception.Create('Nível deve ser entre 1 e 3');
+    Exit(Result);
 
-  Result := FRepository.BuscarPorNivel(ANivel);
+  ListaTodas := FRepository.ListarTodas;
+  try
+    for Perm in ListaTodas do
+    begin
+      if Perm.getNivelRequerido = ANivel then
+        Result.Add(Perm);
+    end;
+  finally
+    ListaTodas.Free;
+  end;
 end;
 
 function TPermissoesController.VerificarPermissao(const AOperacao: string; ANivelUsuario: Integer): Boolean;
 begin
-  Result := False;
-
   if Trim(AOperacao).IsEmpty then
-    raise Exception.Create('Operação não pode ser vazia');
+    raise Exception.Create('Operação não informada');
 
   if (ANivelUsuario < 1) or (ANivelUsuario > 3) then
-    raise Exception.Create('Nível do usuário deve ser entre 1 e 3');
+    raise Exception.Create('Nível do usuário inválido');
 
   Result := FRepository.VerificarPermissao(AOperacao, ANivelUsuario);
 end;
@@ -156,45 +184,30 @@ end;
 procedure TPermissoesController.ValidarPermissao(const AOperacao: string; ANivelUsuario: Integer);
 begin
   if not VerificarPermissao(AOperacao, ANivelUsuario) then
-    raise Exception.CreateFmt('Sem permissão para a operação: %s', [AOperacao]);
+    raise Exception.CreateFmt('Acesso negado: você não tem permissão para "%s"', [AOperacao]);
 end;
 
-function TPermissoesController.BuscarPermissaoPorOperacao(const AOperacao: string): TPermissao;
+procedure TPermissoesController.CriarPermissoesPadrao;
 begin
-  Result := nil;
-
-  if Trim(AOperacao).IsEmpty then
-    raise Exception.Create('Operação não pode ser vazia');
-
-  Result := FRepository.BuscarPermissaoPorOperacao(AOperacao);
-end;
-
-function TPermissoesController.CriarPermissoesPadrao: Boolean;
-begin
-  Result := FRepository.CriarPermissoesPadrao;
+  FRepository.CriarPermissoesPadrao;
 end;
 
 function TPermissoesController.ValidarDadosPermissao(const ANome, ADescricao: string; ANivelRequerido: Integer): Boolean;
 begin
-  Result := False;
-
-  // Validação do nome
   if Trim(ANome).IsEmpty then
-    raise Exception.Create('Nome da permissão não pode ser vazio');
+    raise Exception.Create('O nome da permissão é obrigatório');
 
   if Length(Trim(ANome)) > 50 then
-    raise Exception.Create('Nome da permissão não pode ter mais de 50 caracteres');
+    raise Exception.Create('O nome da permissão não pode ter mais de 50 caracteres');
 
-  // Validação da descrição
   if Trim(ADescricao).IsEmpty then
-    raise Exception.Create('Descrição da permissão não pode ser vazia');
+    raise Exception.Create('A descrição da permissão é obrigatória');
 
   if Length(Trim(ADescricao)) > 200 then
-    raise Exception.Create('Descrição da permissão não pode ter mais de 200 caracteres');
+    raise Exception.Create('A descrição não pode ter mais de 200 caracteres');
 
-  // Validação do nível requerido
   if (ANivelRequerido < 1) or (ANivelRequerido > 3) then
-    raise Exception.Create('Nível requerido deve ser entre 1 e 3');
+    raise Exception.Create('O nível requerido deve ser 1, 2 ou 3');
 
   Result := True;
 end;
