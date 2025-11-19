@@ -33,7 +33,6 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 673
     object pnlImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -1394,8 +1393,6 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 880
-    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1868,8 +1865,6 @@
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
-      ExplicitWidth = 880
-      ExplicitHeight = 673
       object crdImpExp: TCard
         Left = 0
         Top = 0
@@ -10902,18 +10897,14 @@
         Caption = 'crdUsuarios'
         CardIndex = 5
         TabOrder = 5
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcUsuarios: TPageControl
           Left = 0
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsUsuarios
+          ActivePage = tbsUsuariosList
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsUsuarios: TTabSheet
             Caption = 'Cadastro'
             object Panel11: TPanel
@@ -10925,8 +10916,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel12: TPanel
                 Left = 24
                 Top = 21
@@ -12208,7 +12197,6 @@
                   Width = 121
                   Height = 23
                   TabOrder = 0
-                  Text = 'edtIdUsuario'
                 end
                 object edtNomeUsuario: TEdit
                   Left = 184
@@ -12216,7 +12204,6 @@
                   Width = 321
                   Height = 23
                   TabOrder = 1
-                  Text = 'edtNomeUsuario'
                 end
                 object edtUsuarioEmail: TEdit
                   Left = 24
@@ -12224,7 +12211,6 @@
                   Width = 481
                   Height = 23
                   TabOrder = 2
-                  Text = 'edtUsuarioEmail'
                 end
                 object edtCriadoEm: TEdit
                   Left = 567
@@ -12232,7 +12218,6 @@
                   Width = 234
                   Height = 23
                   TabOrder = 3
-                  Text = 'edtCriadoEm'
                 end
                 object edtAtualizadoEm: TEdit
                   Left = 567
@@ -12240,7 +12225,6 @@
                   Width = 226
                   Height = 23
                   TabOrder = 4
-                  Text = 'edtAtualizadoEm'
                 end
                 object GroupBox1: TGroupBox
                   Left = 24
@@ -12304,7 +12288,6 @@
                   Width = 257
                   Height = 23
                   TabOrder = 7
-                  Text = 'edtUsuarioSenha'
                 end
                 object edtUsuarioTelefone: TEdit
                   Left = 248
@@ -12312,7 +12295,6 @@
                   Width = 257
                   Height = 23
                   TabOrder = 8
-                  Text = 'edtUsuarioTelefone'
                 end
               end
             end
@@ -12321,8 +12303,8 @@
             Caption = 'tbsUsuariosList'
             ImageIndex = 1
             object DBGridPerm: TDBGrid
-              Left = 3
-              Top = 16
+              Left = 27
+              Top = 39
               Width = 833
               Height = 321
               TabOrder = 0
@@ -13035,7 +13017,7 @@
     Top = 570
   end
   object frxReportContatosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -17930,7 +17912,7 @@
     end
   end
   object frxReportContatosTelefone: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -22820,7 +22802,7 @@
     end
   end
   object frxReportUsuariosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
