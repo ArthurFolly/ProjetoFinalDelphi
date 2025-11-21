@@ -398,7 +398,7 @@ begin
   ConfigurarDBGridFavoritos;
   CarregarFavoritos;
 
-  // ===== USUÁRIOS =====
+
   UsuariosController := TUsuarioController.Create(DataModule1.FDConnection1);
 
   ClientDataSetUsuarios := TClientDataSet.Create(Self);
@@ -406,8 +406,8 @@ begin
   DataSourceUsuarios.DataSet := ClientDataSetUsuarios;
   DBGridPerm.DataSource := DataSourceUsuarios;
 
-  ConfigurarDBGridUsuarios;  // define campos e colunas
-  CarregarUsuariosNoGrid;    // traz os dados do banco
+  ConfigurarDBGridUsuarios;
+  CarregarUsuariosNoGrid;
 
   EmpresasController := TEmpresaController.Create;
   ClientDataSetEmpresas := TClientDataSet.Create(Self);
@@ -416,8 +416,8 @@ begin
   ConfigurarDBGridEmpresas;
   CarregarEmpresasNoComboBox;
 
-  // --- GRUPOS ---
-  GruposController := TGruposController.Create(3); // 3 = Admin (seu padrão)
+
+  GruposController := TGruposController.Create(3);
 
   ClientDataSetGrupos := TClientDataSet.Create(Self);
   DataSourceGrupos := TDataSource.Create(Self);
@@ -438,6 +438,11 @@ begin
 
   crdEmpresas.Visible := False;
   pgcEmpresas.Visible := False;
+
+
+  crdUsuarios.Visible := false;
+  pgcUsuarios.Visible := False;
+
 
   // ----- Importacao VCF
   memImportCont.Font.Name := 'Segoe UI';

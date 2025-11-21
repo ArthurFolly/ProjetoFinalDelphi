@@ -33,7 +33,6 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 673
     object pnlImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -1456,8 +1455,6 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 880
-    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1930,8 +1927,6 @@
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
-      ExplicitWidth = 880
-      ExplicitHeight = 673
       object crdImpExp: TCard
         Left = 0
         Top = 0
@@ -5164,7 +5159,7 @@
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 839
+                Width = 248
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -5177,7 +5172,6 @@
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
-                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -6087,7 +6081,7 @@
                 object Label5: TLabel
                   Left = 1
                   Top = 1
-                  Width = 823
+                  Width = 95
                   Height = 32
                   Align = alTop
                   Caption = 'Favoritos'
@@ -6100,7 +6094,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 95
                 end
                 object SpdAdicionarFavorito: TSpeedButton
                   Left = 52
@@ -6966,7 +6959,7 @@
                 object Label6: TLabel
                   Left = 1
                   Top = 1
-                  Width = 791
+                  Width = 227
                   Height = 32
                   Align = alTop
                   Caption = 'Cadastro De Empresa'
@@ -6979,7 +6972,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 227
                 end
                 object Label7: TLabel
                   Left = 32
@@ -8029,7 +8021,7 @@
                 object Label14: TLabel
                   Left = 1
                   Top = 1
-                  Width = 799
+                  Width = 188
                   Height = 32
                   Align = alTop
                   Caption = 'Lista de Empresas'
@@ -8042,7 +8034,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 188
                 end
                 object SpdEditarEmpresa: TSpeedButton
                   Left = 368
@@ -9288,7 +9279,7 @@
                 object Label15: TLabel
                   Left = 1
                   Top = 1
-                  Width = 839
+                  Width = 86
                   Height = 37
                   Align = alTop
                   Caption = 'Grupos'
@@ -9301,7 +9292,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 86
                 end
                 object SpdAdicionarGrupo: TSpeedButton
                   Left = 48
@@ -10987,8 +10977,6 @@
         Caption = 'crdUsuarios'
         CardIndex = 5
         TabOrder = 5
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcUsuarios: TPageControl
           Left = 0
           Top = 0
@@ -10997,8 +10985,6 @@
           ActivePage = tbsUsuarios
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsUsuarios: TTabSheet
             Caption = 'Cadastro'
             object Panel11: TPanel
@@ -11010,8 +10996,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel12: TPanel
                 Left = 24
                 Top = 21
@@ -13116,7 +13100,7 @@
     Top = 450
   end
   object frxReportContatosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -18011,7 +17995,7 @@
     end
   end
   object frxReportContatosTelefone: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -22901,7 +22885,7 @@
     end
   end
   object frxReportUsuariosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
