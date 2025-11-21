@@ -997,12 +997,12 @@ object FormCadastroUsuario: TFormCadastroUsuario
       object EdtNumero: TMaskEdit
         Left = 56
         Top = 313
-        Width = 121
+        Width = 117
         Height = 23
-        EditMask = '!\(99\)0000-0000;1;_'
-        MaxLength = 13
+        EditMask = '!\(99\)00000-0000;1;_'
+        MaxLength = 14
         TabOrder = 2
-        Text = '(  )    -    '
+        Text = '(  )     -    '
         OnKeyPress = EdtNumeroKeyPress
       end
       object Panel3: TPanel

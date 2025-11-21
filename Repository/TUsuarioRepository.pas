@@ -166,31 +166,33 @@ begin
   Result := THashMD5.GetHashString(senha);
 
 end;
-
 function UsuarioRepository.Salvar(usuario: TUsuario): Boolean;
-
-var senhaHash: String;
-
+var
+  senhaHash: String;
 begin
   Result := False;
+
+
   senhaHash := GerarHashSenha(usuario.getSenha);
 
   try
     Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'INSERT INTO "Usuario" (email, nome, senha_hash, telefone) VALUES (:email, :nome, :senha_hash,:telefone)';
+    Self.query.SQL.Text :=
+      'INSERT INTO "Usuario" (email, nome, senha_hash, telefone, nivel_usuario) ' +
+      'VALUES (:email, :nome, :senha_hash, :telefone, :nivel_usuario)';
 
-    Self.query.ParamByName('email').AsString := usuario.getEmail;
-    Self.query.ParamByName('nome').AsString := usuario.getNome;
+    Self.query.ParamByName('email').AsString      := usuario.getEmail;
+    Self.query.ParamByName('nome').AsString       := usuario.getNome;
     Self.query.ParamByName('senha_hash').AsString := senhaHash;
+    Self.query.ParamByName('telefone').AsString   := usuario.getTelefone;
+    Self.query.ParamByName('nivel_usuario').AsInteger := 1;
 
-    Self.query.ParamByName('telefone').AsString := usuario.getTelefone;
-   //Self.query.ParamByName('tipo_usuario').AsString := usuario.getTipoUsuario;
     Self.query.ExecSQL;
     Result := True;
+
   except
     Result := False;
   end;
-
 end;
 
 
@@ -217,3 +219,5 @@ begin
 end;
 
 end.
+
+

@@ -195,9 +195,6 @@ begin
   numero := EdtNumero.Text;
   senha := EdtSenha.Text;
 
-
-
-
   if controller.CadastrarUsuario(id, senha, email, CPF, nome, numero, msgErro) then
   begin
     ShowMessage('Usuário cadastrado com sucesso!');
@@ -207,12 +204,8 @@ begin
   begin
     ShowMessage('Erro ao cadastrar usuário: ' + msgErro);
   end;
-
-
-
-
-
 end;
+
 procedure TFormCadastroUsuario.Panel3MouseEnter(Sender: TObject);
 begin
 Panel3.Color := $00DB5B9B;

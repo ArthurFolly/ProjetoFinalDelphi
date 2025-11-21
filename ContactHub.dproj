@@ -155,18 +155,13 @@
         <DCCReference Include="Repository\EmpresaRepository.pas"/>
         <DCCReference Include="Model\EmpresaModel.pas"/>
         <DCCReference Include="Controller\EmpresaController.pas"/>
-        <DCCReference Include="Repository\MensagensRepository.pas"/>
-        <DCCReference Include="Controller\MensagensController.pas"/>
-        <DCCReference Include="Model\MensagensModel.pas"/>
         <DCCReference Include="Repository\GruposRepository.pas"/>
         <DCCReference Include="Controller\GruposController.pas"/>
         <DCCReference Include="Model\GruposModel.pas"/>
-        <DCCReference Include="Model\PermissoesModel.pas"/>
-        <DCCReference Include="Controller\PermissoesController.pas"/>
-        <DCCReference Include="Repository\PermissoesRepository.pas"/>
         <DCCReference Include="Controller\VCardImportController.pas"/>
         <DCCReference Include="Repository\VCardImportRepository.pas"/>
         <DCCReference Include="Controller\UsuarioController.pas"/>
+        <DCCReference Include="Core\uSessao.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

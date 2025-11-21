@@ -19,18 +19,13 @@ uses
   EmpresaRepository in 'Repository\EmpresaRepository.pas',
   EmpresaModel in 'Model\EmpresaModel.pas',
   EmpresaController in 'Controller\EmpresaController.pas',
-  MensagensRepository in 'Repository\MensagensRepository.pas',
-  MensagensController in 'Controller\MensagensController.pas',
-  MensagensModel in 'Model\MensagensModel.pas',
   GruposRepository in 'Repository\GruposRepository.pas',
   GruposController in 'Controller\GruposController.pas',
   GruposModel in 'Model\GruposModel.pas',
-  PermissoesModel in 'Model\PermissoesModel.pas',
-  PermissoesController in 'Controller\PermissoesController.pas',
-  PermissoesRepository in 'Repository\PermissoesRepository.pas',
   VCardImportController in 'Controller\VCardImportController.pas',
   VCardImportRepository in 'Repository\VCardImportRepository.pas',
-  UsuarioController in 'Controller\UsuarioController.pas';
+  UsuarioController in 'Controller\UsuarioController.pas',
+  uSessao in 'Core\uSessao.pas';
 
 {$R *.res}
 

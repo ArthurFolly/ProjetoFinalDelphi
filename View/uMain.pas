@@ -19,7 +19,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, frxSmartMemo, frxClass,
-  frCoreClasses, frxDBSet,PermissoesController,PermissoesRepository,PermissoesModel,TUsuarioModel,UsuarioController;
+  frCoreClasses, frxDBSet, TUsuarioModel,UsuarioController;
 
 type
   TFMain = class(TForm)
@@ -28,7 +28,7 @@ type
     Logo: TImage;
     pnlContatos: TPanel;
     ImageContato: TImage;
-    pnlConfiguracao: TPanel;
+    pnlUsuarios: TPanel;
     pnlImportExport: TPanel;
     pnlEmpresa: TPanel;
     pnlFavoritos: TPanel;
@@ -65,8 +65,6 @@ type
     txtLogradouro: TEdit;
     Label4: TLabel;
     Empresa: TLabel;
-    Edit3: TEdit;
-    Edit4: TEdit;
     SpdAdicionar: TSpeedButton;
     Bevel3: TBevel;
     Panel7: TPanel;
@@ -109,16 +107,12 @@ type
     Panel14: TPanel;
     Label15: TLabel;
     DBGridGrupos: TDBGrid;
-    Edit8: TEdit;
-    Label16: TLabel;
     SpdAdicionarGrupo: TSpeedButton;
     SpdExcluirGrupo: TSpeedButton;
     SpdEditarGrupo: TSpeedButton;
     SpdRestaurarGrupos: TSpeedButton;
     Bevel9: TBevel;
     Bevel7: TBevel;
-    Label17: TLabel;
-    Edit7: TEdit;
     txtNumero: TEdit;
     txtComplemento: TEdit;
     txtBairro: TEdit;
@@ -191,8 +185,6 @@ type
     SpdRemoverFavorito: TSpeedButton;
     ComboBoxContatos: TComboBox;
     DBGridFavoritos: TDBGrid;
-    tbsUsuariosList: TTabSheet;
-    DBGridPerm: TDBGrid;
     Label19: TLabel;
     Label21: TLabel;
     Label22: TLabel;
@@ -212,8 +204,18 @@ type
     qryUsuarioCRUD: TFDQuery;
     edtUsuarioSenha: TEdit;
     Label25: TLabel;
-    edtUsuarioTelefone: TEdit;
     Label26: TLabel;
+    ComboBox: TComboBox;
+    Cadastrar: TGroupBox;
+    Edit7: TEdit;
+    Label17: TLabel;
+    Edit8: TEdit;
+    Label16: TLabel;
+    GroupBox3: TGroupBox;
+    rdbGrupoAtivo: TRadioButton;
+    rdbGrupoInativo: TRadioButton;
+    DBGridPerm: TDBGrid;
+    edmUsuarioTelefone: TMaskEdit;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -232,10 +234,8 @@ type
     procedure pnlEmpresaMouseLeave(Sender: TObject);
     procedure pnlImportExportMouseEnter(Sender: TObject);
     procedure pnlImportExportMouseLeave(Sender: TObject);
-    procedure pnlConfiguracaoMouseEnter(Sender: TObject);
-    procedure pnlConfiguracaoMouseLeave(Sender: TObject);
-//    procedure PanelConfigMouseEnter(Sender: TObject);
-//    procedure PanelConfigMouseLeave(Sender: TObject);
+    procedure pnlUsuariosMouseEnter(Sender: TObject);
+    procedure pnlUsuariosMouseLeave(Sender: TObject);
     procedure SpdAdicionarClick(Sender: TObject);
     procedure SpdRemoverClick(Sender: TObject);
     procedure SpdEditarClick(Sender: TObject);
@@ -255,7 +255,6 @@ type
     procedure pnlGruposMouseEnter(Sender: TObject);
     procedure SpdAdicionarGrupoClick(Sender: TObject);
     procedure SpdEditarGrupoClick(Sender: TObject);
-    procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure SpdRestaurarGruposClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -268,9 +267,10 @@ type
     procedure spdImpSalvarDBClick(Sender: TObject);
     procedure spdImprimirClick(Sender: TObject);
     procedure spdUsuarioAdicionarClick(Sender: TObject);
+    procedure ComboBoxChange(Sender: TObject);
+    procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure spdExcluirUsuarioClick(Sender: TObject);
     procedure spdEditarUsuarioClick(Sender: TObject);
-
 
   private
     Editando: Boolean;
@@ -282,20 +282,13 @@ type
     DataSourceFavoritos: TDataSource;
     LoadingDataset: Boolean;
 
-    // === PERMISSÕES ===
-    PermissoesController: TPermissoesController;
-    ClientDataSetPermissoes: TClientDataSet;
-    DataSourcePermissoes: TDataSource;
-    LoadingPermissoes: Boolean;
-    EditandoPermissao: Boolean;
-    PermissaoAtual: Integer;
-
-
     // === USUÁRIOS - VARIÁVEIS OBRIGATÓRIAS ===
     UsuariosController: TUsuarioController;
     LoadingUsuarios: Boolean;
     EditandoUsuario: Boolean;
     UsuarioAtual: TUsuario;
+    DataSourceUsuarios: TDataSource;
+    ClientDataSetUsuarios: TClientDataSet;
 
     // === EMPRESAS ===
     EditandoEmpresa: Boolean;
@@ -304,6 +297,7 @@ type
     ClientDataSetEmpresas: TClientDataSet;
     DataSourceEmpresas: TDataSource;
     LoadingDatasetEmpresas: Boolean;
+    EmpresaSelecionadaId: Integer;
 
     // === GRUPOS - VARIÁVEIS ===
     ClientDataSetGrupos: TClientDataSet;
@@ -316,27 +310,17 @@ type
     // === GRUPOS - MÉTODOS ===
     procedure ConfigurarDBGridGrupos;
     procedure CarregarGrupos;
-    procedure SalvarEdicaoGrupo(DataSet: TDataSet);
-    procedure ExcluirGrupo(DataSet: TDataSet);
     procedure LimparFormularioGrupo;
-    function ValidarFormularioGrupo: Boolean;
-    function ValidarPermissaoGrupo(Operacao: string): Boolean;
+    function  ValidarFormularioGrupo: Boolean;
 
-
-
-
-  // Métodos privados do CRUD de usuários
+    // Métodos privados do CRUD de usuários
     procedure ConfigurarDBGridUsuarios;
     procedure CarregarUsuariosNoGrid;
     procedure LimparCamposUsuario;
     procedure PreencherCamposUsuario(AUsuario: TUsuario);
     function UsuarioSelecionado: TUsuario;
 
-
-    // === Permissões ===
-    procedure ConfigurarDBgridPerm;
-    procedure CarregarPermissoes;
-
+    procedure CarregarEmpresasNoComboBox;
 
     // === CONTATOS ===
     procedure AtivarPainel(Panel: TPanel);
@@ -396,6 +380,12 @@ procedure TFMain.FormCreate(Sender: TObject);
 begin
   DataModule1.FDConnection1.Connected := True;
 
+  // --- Desarma o qryUsuarioCRUD para não dar erro de comando vazio ---
+  qryUsuarioCRUD.Close;
+  qryUsuarioCRUD.SQL.Clear;
+  qryUsuarioCRUD.SQL.Text := 'SELECT 1';  // comando simples só pra evitar erro
+  // deixamos Active = False; ele só será usado se você configurar depois
+
   ContatosLista := TObjectList<Contatos>.Create(True);
   ContatosController := TContatosController.Create;
   ConfigurarDBGrid;
@@ -408,14 +398,26 @@ begin
   ConfigurarDBGridFavoritos;
   CarregarFavoritos;
 
+  // ===== USUÁRIOS =====
+  UsuariosController := TUsuarioController.Create(DataModule1.FDConnection1);
+
+  ClientDataSetUsuarios := TClientDataSet.Create(Self);
+  DataSourceUsuarios    := TDataSource.Create(Self);
+  DataSourceUsuarios.DataSet := ClientDataSetUsuarios;
+  DBGridPerm.DataSource := DataSourceUsuarios;
+
+  ConfigurarDBGridUsuarios;  // define campos e colunas
+  CarregarUsuariosNoGrid;    // traz os dados do banco
+
   EmpresasController := TEmpresaController.Create;
   ClientDataSetEmpresas := TClientDataSet.Create(Self);
   DataSourceEmpresas := TDataSource.Create(Self);
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
+  CarregarEmpresasNoComboBox;
 
-  GruposController := TGruposController.Create(3); // 3 = Admin
-  PermissoesController := TPermissoesController.Create;
+  // --- GRUPOS ---
+  GruposController := TGruposController.Create(3); // 3 = Admin (seu padrão)
 
   ClientDataSetGrupos := TClientDataSet.Create(Self);
   DataSourceGrupos := TDataSource.Create(Self);
@@ -437,16 +439,6 @@ begin
   crdEmpresas.Visible := False;
   pgcEmpresas.Visible := False;
 
-
-  ClientDataSetPermissoes := TClientDataSet.Create(Self);
-  DataSourcePermissoes := TDataSource.Create(Self);
-  DataSourcePermissoes.DataSet := ClientDataSetPermissoes;
-  DBGridPerm.DataSource := DataSourcePermissoes;
-
-  ConfigurarDBGridPerm;
-  CarregarPermissoes;
-
-
   // ----- Importacao VCF
   memImportCont.Font.Name := 'Segoe UI';
   OpenDialog1.Filter := 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*';
@@ -460,6 +452,11 @@ end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(UsuarioAtual);
+  FreeAndNil(UsuariosController);
+  FreeAndNil(ClientDataSetUsuarios);
+  FreeAndNil(DataSourceUsuarios);
+
   ContatosLista.Free;
   ContatosController.Free;
 
@@ -509,8 +506,8 @@ begin
     pnlImportExport.Margins.Top := 20;
     pnlImportExport.Font.Size := 18;
 
-    pnlConfiguracao.Margins.Top := 20;
-    pnlConfiguracao.Font.Size := 18;
+    pnlUsuarios.Margins.Top := 20;
+    pnlUsuarios.Font.Size := 18;
   end
   else
   begin
@@ -530,16 +527,20 @@ end;
 
 {$REGION 'Configuração de grids e datasets (Contatos, Empresas, Favoritos, Grupos)'}
 
+procedure TFMain.ComboBoxChange(Sender: TObject);
+begin
+  if ComboBox.ItemIndex = -1 then
+    Exit;
 
-
-
-
-
+  EmpresaSelecionadaId :=
+    Integer(ComboBox.Items.Objects[ComboBox.ItemIndex]);
+end;
 
 procedure TFMain.ConfigurarDBGrid;
 begin
-  // 1. Sempre limpar e recriar
   cdsContatos.Close;
+  cdsContatos.FieldDefs.Clear;
+
   cdsContatos.FieldDefs.Add('id_contato', ftInteger);
   cdsContatos.FieldDefs.Add('nome', ftString, 100);
   cdsContatos.FieldDefs.Add('telefone', ftString, 20);
@@ -557,11 +558,9 @@ begin
   cdsContatos.FieldDefs.Add('uf', ftString, 2);
   cdsContatos.CreateDataSet;
 
-  // 2. DataSource
   dsContatos.DataSet := cdsContatos;
   dbgContatos.DataSource := dsContatos;
 
-  // 3. Sempre recriar colunas
   dbgContatos.Columns.Clear;
   with dbgContatos.Columns.Add do
   begin
@@ -659,23 +658,19 @@ begin
   dbgContatos.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgEditing];
   dbgContatos.ReadOnly := False;
 
-  // 5. Eventos
   cdsContatos.AfterPost := SalvarEdicaoGridView;
   cdsContatos.AfterDelete := ConfirmarExclusaoGrid;
 
-  // 6. Abre
   if not cdsContatos.Active then
     cdsContatos.Open;
 end;
 
 procedure TFMain.ConfigurarDBGridEmpresas;
 begin
-  // === DATASET ===
   DataSourceEmpresas.DataSet := ClientDataSetEmpresas;
   DBGrid1.DataSource := DataSourceEmpresas;
 
   ClientDataSetEmpresas.Close;
-//  ClientDataSetEmpresas.Open;
   ClientDataSetEmpresas.FieldDefs.Clear;
 
   ClientDataSetEmpresas.FieldDefs.Add('ID', ftInteger);
@@ -689,7 +684,6 @@ begin
   ClientDataSetEmpresas.CreateDataSet;
   ClientDataSetEmpresas.Open;
 
-  // === COLUNAS ===
   DBGrid1.Columns.Clear;
 
   with DBGrid1.Columns.Add do
@@ -744,11 +738,7 @@ begin
   DBGrid1.ReadOnly := False;
   DBGrid1.Options := [dgEditing, dgColumnResize, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect];
 
-  // ✅ MANTENHA APENAS ESTA LINHA:
   ClientDataSetEmpresas.AfterPost := SalvarEdicaoEmpresaGrid;
-
-  // ❌ REMOVA ESTA LINHA (se existir):
-  // ClientDataSetEmpresas.BeforeDelete := ConfirmarExclusaoEmpresaGrid;
 
   DBGrid1.Options := DBGrid1.Options + [dgEditing, dgAlwaysShowEditor];
   DBGrid1.Visible := True;
@@ -761,9 +751,8 @@ begin
   ClientDataSetFavoritos.Close;
   ClientDataSetFavoritos.FieldDefs.Clear;
 
-  // CAMPOS OBRIGATÓRIOS
   ClientDataSetFavoritos.FieldDefs.Add('ID_FAVORITO', ftInteger);
-  ClientDataSetFavoritos.FieldDefs.Add('ID', ftInteger);           // ESSA LINHA!
+  ClientDataSetFavoritos.FieldDefs.Add('ID', ftInteger);
   ClientDataSetFavoritos.FieldDefs.Add('NOME', ftString, 100);
   ClientDataSetFavoritos.FieldDefs.Add('TELEFONE', ftString, 20);
   ClientDataSetFavoritos.FieldDefs.Add('EMAIL', ftString, 100);
@@ -787,7 +776,7 @@ begin
     FieldName := 'ID';
     Title.Caption := 'ID Contato';
     Width := 70;
-    Visible := False; // opcional
+    Visible := False;
   end;
 
   with DBGridFavoritos.Columns.Add do
@@ -812,92 +801,120 @@ begin
   end;
 
   DBGridFavoritos.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
-  DBGridFavoritos.ReadOnly := True; // favoritos não editáveis
+  DBGridFavoritos.ReadOnly := True;
 end;
 
 procedure TFMain.ConfigurarDBGridGrupos;
 begin
   DataSourceGrupos.DataSet := ClientDataSetGrupos;
   DBGridGrupos.DataSource := DataSourceGrupos;
+
   ClientDataSetGrupos.Close;
   ClientDataSetGrupos.FieldDefs.Clear;
-  ClientDataSetGrupos.FieldDefs.Add('ID', ftInteger);
-  ClientDataSetGrupos.FieldDefs.Add('NOME', ftString, 100);
-  // REMOVA: DESCRICAO
-  // REMOVA: ID_PERMISSAO (se não usa)
+  ClientDataSetGrupos.FieldDefs.Add('id_grupo', ftInteger);
+  ClientDataSetGrupos.FieldDefs.Add('nome', ftString, 100);
+  ClientDataSetGrupos.FieldDefs.Add('ativo', ftBoolean);
   ClientDataSetGrupos.CreateDataSet;
   ClientDataSetGrupos.Open;
+
   DBGridGrupos.Columns.Clear;
 
-  // ID
   with DBGridGrupos.Columns.Add do
   begin
-    FieldName := 'ID';
+    FieldName := 'id_grupo';
     Title.Caption := 'ID';
     Width := 60;
   end;
 
-  // NOME
   with DBGridGrupos.Columns.Add do
   begin
-    FieldName := 'NOME';
+    FieldName := 'nome';
     Title.Caption := 'NOME DO GRUPO';
-    Width := 400;
-    Title.Font.Style := [fsBold];
+    Width := 300;
+  end;
+
+  with DBGridGrupos.Columns.Add do
+  begin
+    FieldName := 'ativo';
+    Title.Caption := 'Ativo';
+    Width := 60;
   end;
 
   DBGridGrupos.Options := [
     dgTitles, dgIndicator, dgColumnResize,
     dgColLines, dgRowLines, dgTabs, dgRowSelect
   ];
-end;
-
-
-procedure TFMain.ConfigurarDBGridPerm;
-begin
-  // DataSource
-  DataSourcePermissoes.DataSet := ClientDataSetPermissoes;
-  DBGridPerm.DataSource := DataSourcePermissoes;
-
-  // Cria dataset
-  ClientDataSetPermissoes.Close;
-  ClientDataSetPermissoes.FieldDefs.Clear;
-  ClientDataSetPermissoes.FieldDefs.Add('id_permissao', ftInteger);
-  ClientDataSetPermissoes.FieldDefs.Add('NOME', ftString, 100);
-  ClientDataSetPermissoes.FieldDefs.Add('DESCRICAO', ftString, 300);
-  ClientDataSetPermissoes.CreateDataSet;
-  ClientDataSetPermissoes.Open;
-
-  // Colunas
-  DBGridPerm.Columns.Clear;
-  with DBGridPerm.Columns.Add do
-  begin
-    FieldName := 'id_permissao';
-    Title.Caption := 'ID';
-    Width := 50;
-  end;
-  with DBGridPerm.Columns.Add do
-  begin
-    FieldName := 'NOME';
-    Title.Caption := 'NOME DA PERMISSÃO';
-    Width := 250;
-    Title.Font.Style := [fsBold];
-  end;
-  with DBGridPerm.Columns.Add do
-  begin
-    FieldName := 'DESCRICAO';
-    Title.Caption := 'DESCRIÇÃO';
-    Width := 350;
-  end;
-
-
-  DBGridPerm.Options := [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect];
-  DBGridPerm.ReadOnly := True;
+  DBGridGrupos.ReadOnly := True;
 end;
 
 procedure TFMain.ConfigurarDBGridUsuarios;
 begin
+  ClientDataSetUsuarios.Close;
+  ClientDataSetUsuarios.FieldDefs.Clear;
 
+  ClientDataSetUsuarios.FieldDefs.Add('id_usuario',    ftInteger);
+  ClientDataSetUsuarios.FieldDefs.Add('nome',          ftString, 100);
+  ClientDataSetUsuarios.FieldDefs.Add('email',         ftString, 150);
+  ClientDataSetUsuarios.FieldDefs.Add('telefone',      ftString, 20);
+  ClientDataSetUsuarios.FieldDefs.Add('nivel_usuario', ftInteger);
+  ClientDataSetUsuarios.FieldDefs.Add('ativo',         ftBoolean);
+  ClientDataSetUsuarios.FieldDefs.Add('criado_em',     ftDateTime);
+  ClientDataSetUsuarios.FieldDefs.Add('atualizado_em', ftDateTime);
+
+  ClientDataSetUsuarios.CreateDataSet;
+  ClientDataSetUsuarios.Open;
+
+  DataSourceUsuarios.DataSet := ClientDataSetUsuarios;
+  DBGridPerm.DataSource      := DataSourceUsuarios;
+
+  DBGridPerm.Columns.Clear;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'id_usuario';
+    Title.Caption := 'ID';
+    Width := 50;
+  end;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'nome';
+    Title.Caption := 'Nome';
+    Width := 180;
+  end;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'email';
+    Title.Caption := 'E-mail';
+    Width := 180;
+  end;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'telefone';
+    Title.Caption := 'Telefone';
+    Width := 100;
+  end;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'nivel_usuario';
+    Title.Caption := 'Nível';
+    Width := 60;
+  end;
+
+  with DBGridPerm.Columns.Add do
+  begin
+    FieldName := 'ativo';
+    Title.Caption := 'Ativo';
+    Width := 50;
+  end;
+
+  DBGridPerm.Options :=
+    [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines,
+     dgTabs, dgRowSelect];
+  DBGridPerm.ReadOnly := True;
 end;
 
 {$ENDREGION}
@@ -908,7 +925,7 @@ procedure TFMain.CarregarContatosDB;
 begin
   ContatosLista.Clear;
   ContatosController.CarregarContatos(ContatosLista);
-  AtualizarDBGrid;  // <-- recria colunas + dados
+  AtualizarDBGrid;
 end;
 
 procedure TFMain.CarregarContatosNoComboBox;
@@ -922,7 +939,6 @@ begin
   try
     for Contato in Lista do
     begin
-      // PULA SE JÁ É FAVORITO
       if ClientDataSetFavoritos.Locate('ID', Contato.Id, []) then
         Continue;
 
@@ -943,15 +959,12 @@ begin
   try
     ClientDataSetEmpresas.DisableControls;
     try
-      // NÃO FECHE! SÓ LIMPE SE ESTIVER ABERTO
       if ClientDataSetEmpresas.Active then
         ClientDataSetEmpresas.EmptyDataSet
       else
-        ClientDataSetEmpresas.Open;  // Já foi aberto em ConfigurarDBGridEmpresas
+        ClientDataSetEmpresas.Open;
 
-      // CARREGA DADOS
       EmpresasController.CarregarEmpresas(ClientDataSetEmpresas);
-
     finally
       ClientDataSetEmpresas.EnableControls;
     end;
@@ -962,67 +975,51 @@ end;
 
 procedure TFMain.CarregarFavoritos;
 begin
-  // DEIXA O CONTROLLER FAZER TUDO
   FavoritosController.CarregarFavoritos(ClientDataSetFavoritos);
-  DBGridFavoritos.Refresh;  // só atualiza o visual
+  DBGridFavoritos.Refresh;
 end;
 
 procedure TFMain.CarregarGrupos;
 var
   Lista: TObjectList<TGrupos>;
-  Grupo: TGrupos;
+  G: TGrupos;
 begin
-  if LoadingGrupos then Exit;
+  if LoadingGrupos then
+    Exit;
+
   LoadingGrupos := True;
   ClientDataSetGrupos.DisableControls;
   try
-    ClientDataSetGrupos.Close;
-    ClientDataSetGrupos.FieldDefs.Clear;
-    ClientDataSetGrupos.FieldDefs.Add('ID', ftInteger);
-    ClientDataSetGrupos.FieldDefs.Add('NOME', ftString, 100);
-    ClientDataSetGrupos.FieldDefs.Add('DESCRICAO', ftString, 300);
-    ClientDataSetGrupos.FieldDefs.Add('ID_PERMISSAO', ftInteger);
-    ClientDataSetGrupos.CreateDataSet;
-    ClientDataSetGrupos.Open;
     ClientDataSetGrupos.EmptyDataSet;
 
-    // USA O MÉTODO QUE JÁ EXISTE NO SEU CONTROLLER: ListarGrupos!
     Lista := GruposController.ListarGrupos;
     try
-      for Grupo in Lista do
+      for G in Lista do
       begin
         ClientDataSetGrupos.Append;
-        ClientDataSetGrupos.FieldByName('ID').AsInteger := Grupo.getId;
-        ClientDataSetGrupos.FieldByName('NOME').AsString := Grupo.getNome;
-        ClientDataSetGrupos.FieldByName('DESCRICAO').AsString := Grupo.getDescricao;
-        ClientDataSetGrupos.FieldByName('ID_PERMISSAO').AsInteger := Grupo.getIdPermissao;
+        ClientDataSetGrupos.FieldByName('id_grupo').AsInteger := G.getId;
+        ClientDataSetGrupos.FieldByName('nome').AsString      := G.getNome;
+        ClientDataSetGrupos.FieldByName('ativo').AsBoolean    := G.getAtivo;
         ClientDataSetGrupos.Post;
       end;
     finally
-      Lista.Free; // libera a lista
+      Lista.Free;
     end;
-
   finally
     ClientDataSetGrupos.EnableControls;
     LoadingGrupos := False;
   end;
-  DBGridGrupos.Refresh;
-end;
-
-procedure TFMain.CarregarPermissoes;
-begin
-
 end;
 
 procedure TFMain.AtualizarDBGrid;
 begin
   if not cdsContatos.Active then
-    cdsContatos.Open; // Garante que esteja aberto
+    cdsContatos.Open;
 
   LoadingDataset := True;
   cdsContatos.DisableControls;
   try
-    cdsContatos.EmptyDataSet; // OK agora, porque já está aberto
+    cdsContatos.EmptyDataSet;
 
     for var Contato in ContatosLista do
     begin
@@ -1065,42 +1062,71 @@ begin
   DBGrid1.Refresh;
 end;
 
-procedure TFMain.CarregarUsuariosNoGrid;
+procedure TFMain.CarregarEmpresasNoComboBox;
 var
-  Lista: TObjectList<TUsuario>;
-  User: TUsuario;
+  Lista: TObjectList<TEmpresa>;
+  Emp: TEmpresa;
 begin
-  if LoadingUsuarios then Exit;
-  LoadingUsuarios := True;
+  ComboBox.Clear;
 
-  // Limpa e recria o ClientDataSet (simplificado)
-  ClientDataSetPermissoes.Close;
-  ClientDataSetPermissoes.FieldDefs.Clear;
-  ClientDataSetPermissoes.FieldDefs.Add('id_usuario', ftInteger);
-  ClientDataSetPermissoes.FieldDefs.Add('nome', ftString, 100);
-  ClientDataSetPermissoes.FieldDefs.Add('email', ftString, 100);
-  ClientDataSetPermissoes.FieldDefs.Add('telefone', ftString, 30);
-  ClientDataSetPermissoes.FieldDefs.Add('nivel_usuario', ftInteger);
-  ClientDataSetPermissoes.FieldDefs.Add('ativo', ftBoolean);
-  ClientDataSetPermissoes.CreateDataSet;
-  ClientDataSetPermissoes.Open;
-  ClientDataSetPermissoes.EmptyDataSet;
-
-  Lista := UsuariosController.ListarTodos;
+  Lista := EmpresasController.ListarEmpresas;
   try
-    for User in Lista do
+    for Emp in Lista do
     begin
-      ClientDataSetPermissoes.Append;
-      ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger := User.getId;
-      ClientDataSetPermissoes.FieldByName('nome').AsString := User.getNome;
-      ClientDataSetPermissoes.FieldByName('email').AsString := User.getEmail;
-      ClientDataSetPermissoes.FieldByName('telefone').AsString := User.getTelefone;
-      ClientDataSetPermissoes.FieldByName('nivel_usuario').AsInteger := User.getNivelUsuario;
-      ClientDataSetPermissoes.FieldByName('ativo').AsBoolean := User.getAtivo;
-      ClientDataSetPermissoes.Post;
+      ComboBox.Items.AddObject(
+        Emp.getNome,
+        TObject(Emp.getCodigo)
+      );
     end;
   finally
     Lista.Free;
+  end;
+end;
+
+procedure TFMain.CarregarUsuariosNoGrid;
+var
+  Q: TFDQuery;
+begin
+  if UsuariosController = nil then
+    Exit;
+
+  LoadingUsuarios := True;
+  ClientDataSetUsuarios.DisableControls;
+  try
+    ClientDataSetUsuarios.EmptyDataSet;
+
+    Q := UsuariosController.ListarUsuarios;
+    try
+      while not Q.Eof do
+      begin
+        ClientDataSetUsuarios.Append;
+        ClientDataSetUsuarios.FieldByName('id_usuario').AsInteger    := Q.FieldByName('id_usuario').AsInteger;
+        ClientDataSetUsuarios.FieldByName('nome').AsString           := Q.FieldByName('nome').AsString;
+        ClientDataSetUsuarios.FieldByName('email').AsString          := Q.FieldByName('email').AsString;
+        ClientDataSetUsuarios.FieldByName('telefone').AsString       := Q.FieldByName('telefone').AsString;
+        ClientDataSetUsuarios.FieldByName('nivel_usuario').AsInteger := Q.FieldByName('nivel_usuario').AsInteger;
+        ClientDataSetUsuarios.FieldByName('ativo').AsBoolean         := Q.FieldByName('ativo').AsBoolean;
+
+        if Q.FieldByName('criado_em').IsNull then
+          ClientDataSetUsuarios.FieldByName('criado_em').Clear
+        else
+          ClientDataSetUsuarios.FieldByName('criado_em').AsDateTime :=
+            Q.FieldByName('criado_em').AsDateTime;
+
+        if Q.FieldByName('atualizado_em').IsNull then
+          ClientDataSetUsuarios.FieldByName('atualizado_em').Clear
+        else
+          ClientDataSetUsuarios.FieldByName('atualizado_em').AsDateTime :=
+            Q.FieldByName('atualizado_em').AsDateTime;
+
+        ClientDataSetUsuarios.Post;
+        Q.Next;
+      end;
+    finally
+      Q.Free;
+    end;
+  finally
+    ClientDataSetUsuarios.EnableControls;
     LoadingUsuarios := False;
   end;
 end;
@@ -1125,7 +1151,7 @@ begin
       DataSet.Cancel;
     end
     else
-      CarregarEmpresas;  // RECARREGA O GRID
+      CarregarEmpresas;
   end
   else
     DataSet.Cancel;
@@ -1133,7 +1159,6 @@ end;
 
 procedure TFMain.ConfirmarExclusaoFavorito(DataSet: TDataSet);
 begin
-
 end;
 
 procedure TFMain.ConfirmarExclusaoGrid(DataSet: TDataSet);
@@ -1150,7 +1175,6 @@ begin
 
   if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
-    // Busca o contato na lista completa
     Lista := ContatosController.ListarContatos;
     try
       Contato := nil;
@@ -1211,7 +1235,6 @@ begin
       Application.MessageBox(PChar('Erro: ' + Mensagem), 'Erro', MB_OK + MB_ICONERROR);
       DataSet.Cancel;
     end;
-    // SEM NENHUMA MENSAGEM DE SUCESSO → EVITA LOOP
   except
     on E: Exception do
     begin
@@ -1223,7 +1246,6 @@ end;
 
 procedure TFMain.SalvarEdicaoFavorito(DataSet: TDataSet);
 begin
-
 end;
 
 procedure TFMain.SalvarEdicaoGridView(DataSet: TDataSet);
@@ -1250,11 +1272,7 @@ begin
     Contato.Cidade := DataSet.FieldByName('CIDADE').AsString;
     Contato.UF := DataSet.FieldByName('UF').AsString;
 
-    if ContatosController.AtualizarContato(Contato, Mensagem) then
-    begin
-      // ShowMessage('Atualizado com sucesso!');
-    end
-    else
+    if not ContatosController.AtualizarContato(Contato, Mensagem) then
     begin
       ShowMessage('Erro: ' + Mensagem);
       DataSet.Cancel;
@@ -1268,27 +1286,19 @@ begin
   end;
 end;
 
-procedure TFMain.SalvarEdicaoGrupo(DataSet: TDataSet);
-begin
-
-end;
-
-procedure TFMain.ExcluirGrupo(DataSet: TDataSet);
-begin
-
-end;
-
 {$ENDREGION}
 
-
-// ----- CRUD - Usuarios
 {$REGION 'CRUD - Usuarios'}
+
 procedure TFMain.spdUsuarioAdicionarClick(Sender: TObject);
 var
   Nivel: Integer;
   Ativo: Boolean;
+  Permissoes: TList<Integer>;
+  IdChamada: Integer;
+  DataHoraAtual: string;
 begin
-  // ===== 1) VALIDAÇÃO DOS CAMPOS =====
+  // ======= VALIDAÇÕES =======
   if Trim(edtNomeUsuario.Text) = '' then
   begin
     ShowMessage('Informe o nome do usuário.');
@@ -1303,100 +1313,198 @@ begin
     Exit;
   end;
 
-  if Trim(edtUsuarioSenha.Text) = '' then
+  // Senha obrigatória APENAS para novo usuário
+  if (not EditandoUsuario) and (Trim(edtUsuarioSenha.Text) = '') then
   begin
     ShowMessage('Informe a senha.');
     edtUsuarioSenha.SetFocus;
     Exit;
   end;
 
-  // ===== 2) NÍVEL DO USUÁRIO =====
-  if rdbUsuarioN1.Checked then Nivel := 1
-  else if rdbUsuarioN2.Checked then Nivel := 2
-  else if rdbUsuarioN3.Checked then Nivel := 3
+  // Nível
+  if rdbUsuarioN1.Checked then
+    Nivel := 1
+  else if rdbUsuarioN2.Checked then
+    Nivel := 2
+  else if rdbUsuarioN3.Checked then
+    Nivel := 3
   else
   begin
     ShowMessage('Selecione o nível do usuário.');
     Exit;
   end;
 
-  // ===== 3) ATIVO / INATIVO =====
+  // Status
   Ativo := rdbUsuarioAtivo.Checked;
 
-  // ===== 4) MODO EDIÇÃO OU NOVO? =====
-  if EditandoUsuario then
-  begin
-    // === EDITAR USUÁRIO ===
-    UsuarioAtual.setNome(Trim(edtNomeUsuario.Text));
-    UsuarioAtual.setEmail(Trim(edtUsuarioEmail.Text));
-    if edtUsuarioSenha.Text <> '' then // só altera senha se digitou algo
-      UsuarioAtual.setSenha(edtUsuarioSenha.Text);
-    UsuarioAtual.setTelefone(Trim(edtUsuarioTelefone.Text));
-    UsuarioAtual.setAtivo(Ativo);
-    UsuarioAtual.setNivelUsuario(Nivel);
+  // ======= DATA/HORA VISUAL =======
+  DataHoraAtual := FormatDateTime('dd/mm/yyyy HH:nn', Now);
 
-    try
-      if UsuariosController.AtualizarUsuario(UsuarioAtual) then
-      begin
-        ShowMessage('Usuário atualizado com sucesso!');
-        LimparCamposUsuario;
-        CarregarUsuariosNoGrid; // atualiza o grid
-        EditandoUsuario := False;
-        spdUsuarioAdicionar.Caption := 'Adicionar';
-      end;
-    except
-      on E: Exception do
-        ShowMessage('Erro ao atualizar: ' + E.Message);
-    end;
+  if not EditandoUsuario then
+  begin
+    // Novo usuário: criado_em e atualizado_em iguais
+    edtCriadoEm.Text     := DataHoraAtual;
+    edtAtualizadoEm.Text := DataHoraAtual;
   end
   else
   begin
-    // === ADICIONAR NOVO USUÁRIO ===
-    try
-      if UsuariosController.AdicionarUsuario(
-           Trim(edtNomeUsuario.Text),
-           Trim(edtUsuarioEmail.Text),
-           edtUsuarioSenha.Text,
-           Trim(edtUsuarioTelefone.Text),
-           Ativo,
-           Nivel) then
-      begin
-        ShowMessage('Usuário adicionado com sucesso!');
-        LimparCamposUsuario;
-        CarregarUsuariosNoGrid;
-      end;
-    except
-      on E: Exception do
-        ShowMessage('Erro ao adicionar: ' + E.Message);
-    end;
+    // Edição: só atualizamos o "atualizado_em" visual
+    edtAtualizadoEm.Text := DataHoraAtual;
+  end;
+
+  // ======= DEFINE SE É INSERT (0) OU UPDATE (ID) =======
+  if EditandoUsuario then
+    IdChamada := StrToIntDef(edtIdUsuario.Text, 0)
+  else
+    IdChamada := 0;
+
+  // (por enquanto não usamos permissões)
+  Permissoes := TList<Integer>.Create;
+  try
+    if UsuariosController.SalvarUsuario(
+         IdChamada,
+         Trim(edtNomeUsuario.Text),
+         Trim(edtUsuarioEmail.Text),
+         Trim(edtUsuarioSenha.Text),
+         Trim(edmUsuarioTelefone.Text),
+         Nivel,
+         Ativo,
+         Permissoes
+       ) then
+    begin
+      ShowMessage('Usuário salvo com sucesso!');
+      LimparCamposUsuario;
+      CarregarUsuariosNoGrid;
+    end
+    else
+      ShowMessage('Erro ao salvar usuário.');
+  finally
+    Permissoes.Free;
   end;
 end;
+
+
+
 procedure TFMain.LimparCamposUsuario;
 begin
   edtIdUsuario.Clear;
   edtNomeUsuario.Clear;
   edtUsuarioEmail.Clear;
   edtUsuarioSenha.Clear;
-  edtUsuarioTelefone.Clear;
+  edmUsuarioTelefone.Clear;
+
   edtCriadoEm.Clear;
   edtAtualizadoEm.Clear;
 
   rdbUsuarioN1.Checked := False;
   rdbUsuarioN2.Checked := False;
   rdbUsuarioN3.Checked := False;
-  rdbUsuarioAtivo.Checked := True;
+
+  rdbUsuarioAtivo.Checked   := True;
   rdbUsuarioInativo.Checked := False;
 
   EditandoUsuario := False;
-  FreeAndNil(UsuarioAtual);
-  spdUsuarioAdicionar.Caption := 'Adicionar';
+
+  spdEditarUsuario.Caption := 'Editar';
+  spdUsuarioAdicionar.Enabled := True;
 end;
 
 
 
+procedure TFMain.spdEditarUsuarioClick(Sender: TObject);
+var
+  Nivel: Integer;
+begin
+  // ===== PRIMEIRO CLIQUE: ENTRAR EM MODO EDIÇÃO =====
+  if not EditandoUsuario then
+  begin
+    if (not ClientDataSetUsuarios.Active) or ClientDataSetUsuarios.IsEmpty then
+    begin
+      ShowMessage('Nenhum usuário selecionado para editar.');
+      Exit;
+    end;
+
+    // Carrega dados nos campos
+    edtIdUsuario.Text       := ClientDataSetUsuarios.FieldByName('id_usuario').AsString;
+    edtNomeUsuario.Text     := ClientDataSetUsuarios.FieldByName('nome').AsString;
+    edtUsuarioEmail.Text    := ClientDataSetUsuarios.FieldByName('email').AsString;
+
+    edmUsuarioTelefone.Text :=
+      ClientDataSetUsuarios.FieldByName('telefone').AsString;
+
+    // Datas
+    if ClientDataSetUsuarios.FindField('criado_em') <> nil then
+      edtCriadoEm.Text := ClientDataSetUsuarios.FieldByName('criado_em').AsString;
+
+    if ClientDataSetUsuarios.FindField('atualizado_em') <> nil then
+      edtAtualizadoEm.Text := ClientDataSetUsuarios.FieldByName('atualizado_em').AsString;
+
+    // Nunca traz a senha (senha_hash)
+    edtUsuarioSenha.Clear;
+
+    // Nível
+    Nivel := ClientDataSetUsuarios.FieldByName('nivel_usuario').AsInteger;
+    rdbUsuarioN1.Checked := (Nivel = 1);
+    rdbUsuarioN2.Checked := (Nivel = 2);
+    rdbUsuarioN3.Checked := (Nivel = 3);
+
+    // Ativo
+    if ClientDataSetUsuarios.FieldByName('ativo').AsBoolean then
+      rdbUsuarioAtivo.Checked := True
+    else
+      rdbUsuarioInativo.Checked := True;
+
+    // Marca edição
+    EditandoUsuario := True;
+
+    // Ajusta botões
+    spdEditarUsuario.Caption := 'Salvar';
+    spdUsuarioAdicionar.Enabled := False;
+
+    Exit; // Para aqui — ainda não salva
+  end;
+
+  // ===== SEGUNDO CLIQUE: SALVAR =====
+  spdUsuarioAdicionarClick(Sender);
+end;
+
+
+procedure TFMain.spdExcluirUsuarioClick(Sender: TObject);
+var
+  Id: Integer;
+  Msg: string;
+  Nome: string;
+begin
+  if (not ClientDataSetUsuarios.Active) or ClientDataSetUsuarios.IsEmpty then
+  begin
+    ShowMessage('Nenhum usuário selecionado para excluir.');
+    Exit;
+  end;
+
+  Id   := ClientDataSetUsuarios.FieldByName('id_usuario').AsInteger;
+  Nome := ClientDataSetUsuarios.FieldByName('nome').AsString;
+
+  Msg := Format('Deseja realmente excluir o usuário %d - %s?', [Id, Nome]);
+  if MessageDlg(Msg, mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  try
+    if UsuariosController.ExcluirUsuario(Id) then
+    begin
+      ShowMessage('Usuário excluído com sucesso.');
+      LimparCamposUsuario;
+      CarregarUsuariosNoGrid;
+    end
+    else
+      ShowMessage('Não foi possível excluir o usuário.');
+  except
+    on E: Exception do
+      ShowMessage('Erro ao excluir usuário: ' + E.Message);
+  end;
+end;
+
 {$ENDREGION}
 
-// ---- Funcoes Auxiliares
 {$REGION 'Validação e helpers de formulário'}
 
 function TFMain.ValidarFormulario: Boolean;
@@ -1406,14 +1514,12 @@ begin
   if Trim(Edit1.Text) = '' then
   begin
     ShowMessage('Digite o nome!');
-//    Edit1.SetFocus;
     Exit;
   end;
 
   if Trim(Numero.Text) = '' then
   begin
     ShowMessage('Digite o telefone!');
-//    Numero.SetFocus;
     Exit;
   end;
 
@@ -1463,16 +1569,6 @@ begin
   Result := True;
 end;
 
-function TFMain.ValidarFormularioGrupo: Boolean;
-begin
-
-end;
-
-function TFMain.ValidarPermissaoGrupo(Operacao: string): Boolean;
-begin
-
-end;
-
 function TFMain.ContatoSelecionado: Contatos;
 var
   IdSelecionado: Integer;
@@ -1494,14 +1590,38 @@ begin
         end;
       end;
     except
-
     end;
   end;
 end;
 
 procedure TFMain.PreencherCamposUsuario(AUsuario: TUsuario);
 begin
+  if AUsuario = nil then
+    Exit;
 
+  edtIdUsuario.Text       := AUsuario.Id.ToString;
+  edtNomeUsuario.Text     := AUsuario.Nome;
+  edtUsuarioEmail.Text    := AUsuario.Email;
+  edmUsuarioTelefone.Text := AUsuario.Telefone;
+
+  edtUsuarioSenha.Clear;
+
+  rdbUsuarioN1.Checked := AUsuario.NivelUsuario = 1;
+  rdbUsuarioN2.Checked := AUsuario.NivelUsuario = 2;
+  rdbUsuarioN3.Checked := AUsuario.NivelUsuario = 3;
+
+  rdbUsuarioAtivo.Checked   := AUsuario.Ativo;
+  rdbUsuarioInativo.Checked := not AUsuario.Ativo;
+
+  if AUsuario.CriadoEm <> 0 then
+    edtCriadoEm.Text := DateTimeToStr(AUsuario.CriadoEm)
+  else
+    edtCriadoEm.Clear;
+
+  if AUsuario.AtualizadoEm <> 0 then
+    edtAtualizadoEm.Text := DateTimeToStr(AUsuario.AtualizadoEm)
+  else
+    edtAtualizadoEm.Clear;
 end;
 
 procedure TFMain.PreencherFormulario(Contato: Contatos);
@@ -1511,9 +1631,7 @@ begin
     Edit1.Text := Contato.Nome;
     Numero.Text := Contato.Telefone;
     Edit2.Text := Contato.Email;
-    Edit3.Text := Contato.Empresa;
     txtLogradouro.Text := Contato.Endereco;
-    Edit4.Text := Contato.Observacoes;
   end;
 end;
 
@@ -1535,10 +1653,7 @@ begin
   Edit1.Text := '';
   Numero.Text := '';
   Edit2.Text := '';
-  Edit3.Text := '';
   txtLogradouro.Text := '';
-  Edit4.Text := '';
-//  Edit1.SetFocus;
 end;
 
 procedure TFMain.LimparFormularioEmpresa;
@@ -1553,7 +1668,30 @@ end;
 
 procedure TFMain.LimparFormularioGrupo;
 begin
+  Edit7.Clear;
+  Edit8.Clear;
 
+  rdbGrupoAtivo.Checked := True;
+  rdbGrupoInativo.Checked := False;
+
+  GrupoAtualId := 0;
+  EditandoGrupo := False;
+
+  SpdEditarGrupo.Caption := 'Editar Grupo';
+end;
+
+function TFMain.ValidarFormularioGrupo: Boolean;
+begin
+  Result := False;
+
+  if Trim(Edit8.Text) = '' then
+  begin
+    ShowMessage('Informe o nome do grupo.');
+    Edit8.SetFocus;
+    Exit;
+  end;
+
+  Result := True;
 end;
 
 function TFMain.EmpresaSelecionada: TEmpresa;
@@ -1576,7 +1714,6 @@ end;
 
 {$ENDREGION}
 
-// ---- Botoes painel Lateral
 {$REGION 'Controle visual de painéis e navegação de cards'}
 
 procedure TFMain.AtivarPainel(Panel: TPanel);
@@ -1649,21 +1786,18 @@ begin
   AtivarPainel(pnlImportExport);
   CardPanel1.ActiveCard := crdImpExp;
   crdImpExp.Visible := True;
-  pgcImpexp.Visible := True;
+  pgcImpExp.Visible := True;
   pgcImpExp.ActivePage := tbsImport;
 end;
 
 procedure TFMain.PanelConfiguraçaoClick(Sender: TObject);
 begin
-  AtivarPainel(pnlConfiguracao);
+  AtivarPainel(pnlUsuarios);
   CardPanel1.ActiveCard := crdUsuarios;
   crdUsuarios.Visible := True;
   pgcUsuarios.Visible := True;
   pgcUsuarios.ActivePage := tbsUsuarios;
-  ConfigurarDBgridPerm;
-  CarregarPermissoes;
 end;
-
 
 procedure TFMain.pnlRelatoriosClick(Sender: TObject);
 begin
@@ -1689,7 +1823,6 @@ end;
 
 {$ENDREGION}
 
-// ---- Animacao menu Lateral
 {$REGION 'Mouse Enter/Leave dos painéis do menu lateral'}
 
 procedure TFMain.pnlContatosMouseEnter(Sender: TObject);
@@ -1758,7 +1891,6 @@ begin
   end;
 end;
 
-// ----- Evento OnMouseEnter - pnlImportExport
 procedure TFMain.pnlImportExportMouseEnter(Sender: TObject);
 begin
   if PainelPressionado <> pnlImportExport then
@@ -1770,7 +1902,6 @@ begin
   end;
 end;
 
-// ----- Evento OnMouseLeave - pnlImportExport
 procedure TFMain.pnlImportExportMouseLeave(Sender: TObject);
 begin
   if PainelPressionado <> pnlImportExport then
@@ -1793,7 +1924,6 @@ begin
   end;
 end;
 
-// ----- Evento OnMouseLeave - pnlRelatorios
 procedure TFMain.pnlRelatoriosMouseLeave(Sender: TObject);
 begin
  if PainelPressionado <> pnlRelatorios then
@@ -1827,31 +1957,30 @@ begin
   end;
 end;
 
-procedure TFMain.pnlConfiguracaoMouseEnter(Sender: TObject);
+procedure TFMain.pnlUsuariosMouseEnter(Sender: TObject);
 begin
-  if PainelPressionado <> pnlConfiguracao then
+  if PainelPressionado <> pnlUsuarios then
   begin
-    pnlConfiguracao.BevelOuter := bvRaised;
-    pnlConfiguracao.Color := $00D6498F;
-    pnlConfiguracao.Cursor := crHandPoint;
-    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoPreta.png');
+    pnlUsuarios.BevelOuter := bvRaised;
+    pnlUsuarios.Color := $00D6498F;
+    pnlUsuarios.Cursor := crHandPoint;
+    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\icon_usuario_2.png');
   end;
 end;
 
-procedure TFMain.pnlConfiguracaoMouseLeave(Sender: TObject);
+procedure TFMain.pnlUsuariosMouseLeave(Sender: TObject);
 begin
-  if PainelPressionado <> pnlConfiguracao then
+  if PainelPressionado <> pnlUsuarios then
   begin
-    pnlConfiguracao.BevelOuter := bvNone;
-    pnlConfiguracao.Color := $00121212;
-    pnlConfiguracao.Cursor := crDefault;
-    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\ConfiguracaoRoxa.png');
+    pnlUsuarios.BevelOuter := bvNone;
+    pnlUsuarios.Color := $00121212;
+    pnlUsuarios.Cursor := crDefault;
+    ImgConfig.Picture.LoadFromFile(ExtractFilePath(Application.ExeName) + 'Pictures\icon_usuario_2.png');
   end;
 end;
 
 {$ENDREGION}
 
-// ----- Botoes Contato
 {$REGION 'Eventos de clique - Contatos'}
 
 procedure TFMain.SpdAdicionarClick(Sender: TObject);
@@ -1866,11 +1995,20 @@ begin
     NovoContato.Nome := Edit1.Text;
     NovoContato.Telefone := Numero.Text;
     NovoContato.Email := Edit2.Text;
-    NovoContato.Empresa := Edit3.Text;
     NovoContato.Endereco := txtLogradouro.Text;
-    NovoContato.Observacoes := Edit4.Text;
     NovoContato.Favorito := False;
     NovoContato.Ativo := True;
+
+    if ComboBox.ItemIndex = -1 then
+    begin
+      NovoContato.IdEmpresa := 0;
+      NovoContato.Empresa := '';
+    end
+    else
+    begin
+      NovoContato.IdEmpresa := Integer(ComboBox.Items.Objects[ComboBox.ItemIndex]);
+      NovoContato.Empresa := ComboBox.Text;
+    end;
 
     if ContatosController.AdicionarContato(NovoContato, Mensagem) then
     begin
@@ -1882,8 +2020,9 @@ begin
     else
     begin
       NovoContato.Free;
-      ShowMessage('Email ou Telefone ja cadastrados');
+      ShowMessage('Erro ao salvar: ' + Mensagem);
     end;
+
   except
     on E: Exception do
     begin
@@ -1904,20 +2043,16 @@ end;
 
 procedure TFMain.SpdEditarClick(Sender: TObject);
 var
-Mensagem: String;
-
+  Mensagem: String;
 begin
   if Editando and (ContatoAtual <> nil) then
   begin
-    // Se estamos editando, salva as alterações
     if not ValidarFormulario then Exit;
 
     ContatoAtual.Nome := Edit1.Text;
     ContatoAtual.Telefone := Numero.Text;
     ContatoAtual.Email := Edit2.Text;
-    ContatoAtual.Empresa := Edit3.Text;
     ContatoAtual.Endereco := txtLogradouro.Text;
-    ContatoAtual.Observacoes := Edit4.Text;
 
     if ContatosController.AtualizarContato(ContatoAtual, Mensagem) then
     begin
@@ -1926,7 +2061,6 @@ begin
       Editando := False;
       ContatoAtual := nil;
       SpdAdicionar.Enabled := True;
-//      SpdEditarContatosGridClick().Caption := 'Editar'; // volta a ser "Editar"
       ShowMessage('Contato atualizado!');
     end
     else
@@ -1934,7 +2068,6 @@ begin
   end
   else
   begin
-    // Caso não esteja editando
     ShowMessage('Selecione um contato no grid primeiro!');
   end;
 end;
@@ -1943,12 +2076,10 @@ procedure TFMain.SpdEditarContatosGridClick(Sender: TObject);
 var
   Contato: Contatos;
 begin
-  // Se o usuário está editando diretamente no grid (dataset em modo de edição),
-  // então apenas finalize a edição (Post) — isso dispara AfterPost -> SalvarEdicaoGridView
   if cdsContatos.State in [dsEdit, dsInsert] then
   begin
     try
-      cdsContatos.Post; // dispara AfterPost que você já ligou a SalvarEdicaoGridView
+      cdsContatos.Post;
       ShowMessage('Alterações do grid salvas.');
     except
       on E: Exception do
@@ -1957,7 +2088,6 @@ begin
     Exit;
   end;
 
-  // Caso não esteja editando no grid, mantém comportamento atual: carregar no formulário
   Contato := ContatoSelecionado;
   if Contato <> nil then
   begin
@@ -1965,8 +2095,6 @@ begin
     PreencherFormulario(ContatoAtual);
     Editando := True;
     SpdAdicionar.Enabled := False;
-//    SpdEditarContatosGrid.Caption := 'Salvar'; // muda para "Salvar" ao editar
-    // Edit1.SetFocus; // opcional
   end
   else
     ShowMessage('Selecione um contato no grid!');
@@ -1986,11 +2114,11 @@ begin
 
   if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
-    Contato.Ativo := False; // exclusão lógica
+    Contato.Ativo := False;
     if ContatosController.AtualizarContato(Contato, Mensagem) then
     begin
       ShowMessage('Contato excluído com sucesso!');
-      CarregarContatosDB; // atualiza o grid
+      CarregarContatosDB;
     end
     else
       ShowMessage('Erro ao excluir o contato!');
@@ -2004,10 +2132,7 @@ begin
   ContatoAtual := nil;
   SpdAdicionar.Enabled := True;
 
-  // FORÇA A ABA DE LISTA
   pgcContatos.ActivePage := tbsContatosList;
-
-  // --- ESTA LINHA QUE CARREGA OS DADOS!
   CarregarContatosDB;
 
   if dbgContatos.CanFocus then
@@ -2019,11 +2144,8 @@ begin
   SpdEditarContatosGridClick(Sender);
 end;
 
-
-
 {$ENDREGION}
 
-// ----- Botoes Favoritos
 {$REGION 'Eventos de clique - Favoritos'}
 
 procedure TFMain.SpdAdicionarFavoritoClick(Sender: TObject);
@@ -2043,8 +2165,8 @@ begin
   begin
     ShowMessage(Msg);
     CarregarFavoritos;
-    CarregarContatosNoComboBox;  // ← ATUALIZA COMBOBOX
-    ComboBoxContatos.ItemIndex := -1; // limpa seleção
+    CarregarContatosNoComboBox;
+    ComboBoxContatos.ItemIndex := -1;
   end
   else
     ShowMessage(Msg);
@@ -2077,7 +2199,6 @@ end;
 
 {$ENDREGION}
 
-// ----- Botoes Empresas
 {$REGION 'Eventos de clique - Empresas'}
 
 procedure TFMain.SpdAdicionarEmpresaClick(Sender: TObject);
@@ -2115,7 +2236,6 @@ var
   EmpresaTemp: TEmpresa;
   Mensagem: string;
 begin
-  // === SALVAR EDIÇÃO ===
   if EditandoEmpresa and (EmpresaAtual <> nil) then
   begin
     if not ValidarFormularioEmpresa then Exit;
@@ -2142,7 +2262,6 @@ begin
       ShowMessage('Erro: ' + Mensagem);
   end
   else
-  // === INICIAR EDIÇÃO ===
   begin
     EmpresaTemp := EmpresaSelecionada;
     if EmpresaTemp = nil then
@@ -2151,9 +2270,8 @@ begin
       Exit;
     end;
 
-    // CRIA CÓPIA COMPLETA (COM CODIGO!)
     EmpresaAtual := TEmpresa.Create;
-    EmpresaAtual.setCodigo(EmpresaTemp.getCodigo);  // ← USANDO CODIGO!
+    EmpresaAtual.setCodigo(EmpresaTemp.getCodigo);
     EmpresaAtual.setCNPJ(EmpresaTemp.getCNPJ);
     EmpresaAtual.setNome(EmpresaTemp.getNome);
     EmpresaAtual.setTelefone(EmpresaTemp.getTelefone);
@@ -2195,13 +2313,42 @@ begin
   end;
 end;
 
+procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
+var
+  IdGrupo: Integer;
+  NomeGrupo: string;
+begin
+  if ClientDataSetGrupos.IsEmpty then
+  begin
+    ShowMessage('Selecione um grupo no grid para excluir.');
+    Exit;
+  end;
+
+  IdGrupo   := ClientDataSetGrupos.FieldByName('id_grupo').AsInteger;
+  NomeGrupo := ClientDataSetGrupos.FieldByName('nome').AsString;
+
+  if MessageDlg(
+       Format('Excluir DEFINITIVAMENTE o grupo "%s" (ID %d)?' + sLineBreak +
+              'Esta ação não poderá ser desfeita.', [NomeGrupo, IdGrupo]),
+       mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  if GruposController.ExcluirGrupo(IdGrupo) then
+  begin
+    ShowMessage('Grupo excluído com sucesso.');
+    CarregarGrupos;
+    LimparFormularioGrupo;
+  end
+  else
+    ShowMessage('Erro ao excluir grupo. Verifique se ele não está sendo usado em outros cadastros.');
+end;
+
 procedure TFMain.SpdRestaurarEmpresaClick(Sender: TObject);
 var
   Query: TFDQuery;
   TotalRestauradas: Integer;
   Msg: string;
 begin
-  // Pergunta se quer restaurar TODAS
   if MessageDlg('Deseja restaurar TODAS as empresas excluídas?',
                 mtConfirmation, [mbYes, mbNo], 0) = mrNo then
     Exit;
@@ -2210,24 +2357,22 @@ begin
   TotalRestauradas := 0;
   try
     Query.Connection := DataModule1.FDConnection1;
-    Query.SQL.Text := 'SELECT codigo FROM empresa WHERE ativo = FALSE';
+    Query.SQL.Text := 'SELECT id_empresa FROM empresa WHERE ativo = FALSE';
     Query.Open;
 
-    // Percorre todas as empresas inativas
     while not Query.Eof do
     begin
-      if EmpresasController.Restaurar(Query.FieldByName('codigo').AsInteger, Msg) then
+      if EmpresasController.Restaurar(Query.FieldByName('id_empresa').AsInteger, Msg) then
         Inc(TotalRestauradas);
       Query.Next;
     end;
 
-    // Mensagem final
     if TotalRestauradas > 0 then
       ShowMessage(Format('Restauradas %d empresa(s) com sucesso!', [TotalRestauradas]))
     else
       ShowMessage('Nenhuma empresa inativa para restaurar.');
 
-    CarregarEmpresas; // Atualiza o grid
+    CarregarEmpresas;
   finally
     Query.Free;
   end;
@@ -2240,13 +2385,9 @@ begin
   SpdAdicionarEmpresa.Enabled := True;
   SpdEditarEmpresa.Caption := 'Editar';
 
-  // FORÇA IR PARA A ABA DO GRID
   pgcEmpresas.ActivePage := tbsEmpresasList;
-
-  // ATUALIZA O GRID AUTOMATICAMENTE
   CarregarEmpresas;
 end;
-
 
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
 begin
@@ -2256,25 +2397,19 @@ end;
 
 {$ENDREGION}
 
-// ----- Botoes Grupos
 {$REGION 'Eventos de clique - Grupos'}
 
 procedure TFMain.SpdAdicionarGrupoClick(Sender: TObject);
 var
   Grupo: TGrupos;
 begin
-  // VALIDA NOME (Edit8)
-  if Trim(Edit8.Text) = '' then
-  begin
-    ShowMessage('Digite o nome do grupo!');
-    Edit8.SetFocus;
+  if not ValidarFormularioGrupo then
     Exit;
-  end;
 
   Grupo := TGrupos.Create;
   try
-    Grupo.setNome(Trim(Edit8.Text));           // NOME
-    Grupo.setIdPermissao(GruposController.NivelUsuarioLogado);
+    Grupo.setNome(Trim(Edit8.Text));
+    Grupo.setAtivo(rdbGrupoAtivo.Checked);
 
     if GruposController.AdicionarGrupo(Grupo) then
     begin
@@ -2289,7 +2424,6 @@ begin
   end;
 end;
 
-
 procedure TFMain.SpdEditarGrupoClick(Sender: TObject);
 var
   Grupo: TGrupos;
@@ -2298,307 +2432,114 @@ begin
   begin
     if ClientDataSetGrupos.IsEmpty then
     begin
-      ShowMessage('Selecione um grupo para editar!');
+      ShowMessage('Selecione um grupo no grid para editar.');
       Exit;
     end;
 
-    Edit7.Text := ClientDataSetGrupos.FieldByName('ID').AsString;
-    Edit8.Text := ClientDataSetGrupos.FieldByName('NOME').AsString;
-    GrupoAtualId := ClientDataSetGrupos.FieldByName('ID').AsInteger;
+    GrupoAtualId := ClientDataSetGrupos.FieldByName('id_grupo').AsInteger;
+    Edit7.Text   := IntToStr(GrupoAtualId);
+    Edit8.Text   := ClientDataSetGrupos.FieldByName('nome').AsString;
+
+    if ClientDataSetGrupos.FieldByName('ativo').AsBoolean then
+      rdbGrupoAtivo.Checked := True
+    else
+      rdbGrupoInativo.Checked := True;
 
     EditandoGrupo := True;
-    SpdAdicionarGrupo.Enabled := False;
     SpdEditarGrupo.Caption := 'Salvar';
     Exit;
   end;
 
-  // SALVAR
-  if Trim(Edit8.Text) = '' then
-  begin
-    ShowMessage('Nome do grupo obrigatório!');
-    Edit8.SetFocus;
+  if not ValidarFormularioGrupo then
     Exit;
-  end;
 
   Grupo := TGrupos.Create;
   try
     Grupo.setId(GrupoAtualId);
     Grupo.setNome(Trim(Edit8.Text));
-    Grupo.setIdPermissao(GruposController.NivelUsuarioLogado);
+    Grupo.setAtivo(rdbGrupoAtivo.Checked);
 
     if GruposController.AtualizarGrupo(Grupo) then
     begin
-      ShowMessage('Grupo atualizado!');
+      ShowMessage('Grupo atualizado com sucesso!');
       LimparFormularioGrupo;
       CarregarGrupos;
-      EditandoGrupo := False;
-      SpdAdicionarGrupo.Enabled := True;
-      SpdEditarGrupo.Caption := 'Editar';
     end
     else
-      ShowMessage('Erro ao atualizar.');
+      ShowMessage('Erro ao atualizar grupo.');
   finally
     Grupo.Free;
   end;
 end;
 
-
-procedure TFMain.spdEditarUsuarioClick(Sender: TObject);
-var
-  IdUsuario: Integer;
-begin
-  if ClientDataSetPermissoes.IsEmpty then
-  begin
-    ShowMessage('Selecione um usuário para editar.');
-    Exit;
-  end;
-
-  IdUsuario := ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger;
-
-  FreeAndNil(UsuarioAtual);
-  UsuarioAtual := UsuariosController.BuscarPorId(IdUsuario);
-
-  if not Assigned(UsuarioAtual) then
-  begin
-    ShowMessage('Erro ao carregar usuário.');
-    Exit;
-  end;
-
-  // Preenche os campos
-  edtIdUsuario.Text := IntToStr(UsuarioAtual.Id);
-  edtNomeUsuario.Text := UsuarioAtual.Nome;
-  edtUsuarioEmail.Text := UsuarioAtual.Email;
-  edtUsuarioTelefone.Text := UsuarioAtual.Telefone;
-  edtCriadoEm.Text := DateTimeToStr(UsuarioAtual.CriadoEm);
-  edtAtualizadoEm.Text := DateTimeToStr(UsuarioAtual.AtualizadoEm);
-
-  case UsuarioAtual.NivelUsuario of
-    1: rdbUsuarioN1.Checked := True;
-    2: rdbUsuarioN2.Checked := True;
-    3: rdbUsuarioN3.Checked := True;
-  end;
-
-  if UsuarioAtual.Ativo then
-    rdbUsuarioAtivo.Checked := True
-  else
-    rdbUsuarioInativo.Checked := True;
-
-  edtUsuarioSenha.Clear;
-  EditandoUsuario := True;
-  spdUsuarioAdicionar.Caption := 'Salvar Alterações';
-end;
-
-procedure TFMain.SpdExcluirGrupoClick(Sender: TObject);
+procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
 var
   IdGrupo: Integer;
   NomeGrupo: string;
 begin
   if ClientDataSetGrupos.IsEmpty then
   begin
-    ShowMessage('Selecione um grupo para excluir!');
+    ShowMessage('Selecione um grupo no grid para restaurar (ativar).');
     Exit;
   end;
 
-  IdGrupo := ClientDataSetGrupos.FieldByName('ID').AsInteger;
-  NomeGrupo := ClientDataSetGrupos.FieldByName('NOME').AsString;
+  IdGrupo   := ClientDataSetGrupos.FieldByName('id_grupo').AsInteger;
+  NomeGrupo := ClientDataSetGrupos.FieldByName('nome').AsString;
 
-  if MessageDlg(Format('Excluir o grupo "%s"?', [NomeGrupo]),
-                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    if GruposController.ExcluirGrupo(IdGrupo) then
-    begin
-      ShowMessage('Grupo excluído com sucesso!');
-      CarregarGrupos;
-    end
-    else
-      ShowMessage('Erro ao excluir grupo.');
-  end;
-end;
-
-
-procedure TFMain.spdExcluirUsuarioClick(Sender: TObject);
-var
-  UsuarioSelecionado: TUsuario;
-  IdUsuario: Integer;
-  NomeUsuario: string;
-begin
-  // 1) Verifica se tem algo selecionado no grid
-  if ClientDataSetPermissoes.IsEmpty then
-  begin
-    ShowMessage('Selecione um usuário na lista para excluir.');
-    Exit;
-  end;
-
-  IdUsuario := ClientDataSetPermissoes.FieldByName('id_usuario').AsInteger;
-  NomeUsuario := ClientDataSetPermissoes.FieldByName('nome').AsString;
-
-  // 2) Confirmação com o nome do cara (fica mais profissional)
   if MessageDlg(
-       Format('Tem certeza que deseja EXCLUIR o usuário "%s"?%sEsta ação não pode ser desfeita.',
-              [NomeUsuario, sLineBreak]),
-       mtWarning, [mbYes, mbNo], 0) <> mrYes then
+       Format('Marcar o grupo "%s" (ID %d) como ATIVO?', [NomeGrupo, IdGrupo]),
+       mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
     Exit;
 
-  // 3) Busca o objeto completo (pra passar pro controller)
-  UsuarioSelecionado := UsuariosController.BuscarPorId(IdUsuario);
-  if UsuarioSelecionado = nil then
+  if GruposController.RestaurarGrupo(IdGrupo) then
   begin
-    ShowMessage('Usuário não encontrado no banco de dados.');
-    Exit;
-  end;
-
-  try
-    // 4) Exclusão lógica (recomendado) ou física — eu faço lógica (campo ativo = false)
-    if UsuariosController.ExcluirUsuario(UsuarioSelecionado.Id) then
-    begin
-      ShowMessage(Format('Usuário "%s" excluído com sucesso!', [NomeUsuario]));
-      CarregarUsuariosNoGrid; // atualiza o grid
-      LimparCamposUsuario;    // limpa os edits da direita
-    end
-    else
-      ShowMessage('Erro ao excluir usuário. Verifique se ele possui registros vinculados.');
-  finally
-    FreeAndNil(UsuarioSelecionado);
-  end;
-end;
-
-procedure TFMain.SpdRestaurarGruposClick(Sender: TObject);
-var
-  IdDigitado: Integer;
-  Grupo: TGrupos;
-  NomeGrupo: string;
-begin
-  // 1. SE O EDIT TEM ALGO → RESTAURA POR ID
-  if Trim(Edit7.Text) <> '' then
-  begin
-    // Valida número
-    if not TryStrToInt(Edit7.Text, IdDigitado) then
-    begin
-      ShowMessage('ID inválido! Digite apenas números.');
-      Edit7.Color := clRed;
-      Edit7.SetFocus;
-      Exit;
-    end;
-
-    // Valida permissão
-    if GruposController.NivelUsuarioLogado < 3 then
-    begin
-      ShowMessage('Apenas administradores podem restaurar grupos.');
-      Exit;
-    end;
-
-    // Tenta restaurar
-    if not GruposController.RestaurarGrupo(IdDigitado) then
-    begin
-      ShowMessage('Erro ao restaurar grupo. Verifique o ID.');
-      Exit;
-    end;
-
-    // Busca o grupo restaurado
-    Grupo := GruposController.BuscarGrupoPorId(IdDigitado);
-    if Grupo = nil then
-    begin
-      ShowMessage('Grupo restaurado, mas não encontrado.');
-      Exit;
-    end;
-
-    // Adiciona no grid
-    try
-      ClientDataSetGrupos.Append;
-      ClientDataSetGrupos.FieldByName('ID').AsInteger := Grupo.getId;
-      ClientDataSetGrupos.FieldByName('NOME').AsString := Grupo.getNome;
-      ClientDataSetGrupos.Post;
-
-      ShowMessage(Format('Grupo "%s" (ID: %d) restaurado com sucesso!', [Grupo.getNome, Grupo.getId]));
-    finally
-      Grupo.Free;
-    end;
-
-    // Limpa o campo
-    Edit7.Clear;
-    Edit7.Color := clWindow;
-    Exit; // ← SAI AQUI, NÃO FAZ O RESTAURAR DO GRID
-  end;
-
-  // 2. SE NÃO TEM ID → RESTAURA O GRUPO SELECIONADO NO GRID (COMPORTAMENTO ORIGINAL)
-  if ClientDataSetGrupos.IsEmpty then
-  begin
-    ShowMessage('Nenhum grupo selecionado para restaurar!');
-    Exit;
-  end;
-
-  IdDigitado := ClientDataSetGrupos.FieldByName('ID').AsInteger;
-  NomeGrupo := ClientDataSetGrupos.FieldByName('NOME').AsString;
-
-  if MessageDlg(Format('Restaurar o grupo "%s" (ID: %d)?', [NomeGrupo, IdDigitado]),
-                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-  begin
-    if GruposController.RestaurarGrupo(IdDigitado) then
-    begin
-      ShowMessage(Format('Grupo "%s" restaurado com sucesso!', [NomeGrupo]));
-      CarregarGrupos; // atualiza tudo
-    end
-    else
-      ShowMessage('Erro ao restaurar grupo.');
-  end;
+    ShowMessage('Grupo restaurado com sucesso.');
+    CarregarGrupos;
+    LimparFormularioGrupo;
+  end
+  else
+    ShowMessage('Erro ao restaurar grupo.');
 end;
 
 {$ENDREGION}
 
-// ----- API de Busca de CEP
 {$REGION 'Busca de CEP (SpeedButton5)'}
 
 procedure TFMain.SpeedButton5Click(Sender: TObject);
 var
-  cep, url: string;                 // Variáveis para CEP e URL da API
-  http: THTTPClient;                // Cliente HTTP usado na requisição
-  resp: IHTTPResponse;              // Resposta da API
-  json: string;                     // Texto JSON obtido da resposta
-  jo: TJSONObject;                  // Objeto JSON para leitura
+  cep, url: string;
+  http: THTTPClient;
+  resp: IHTTPResponse;
+  json: string;
+  jo: TJSONObject;
   logradouro, bairro, cidade, uf: string;
 begin
-  // ---------------------------------------------------------
-  // 0) LIMPAR TODOS OS CAMPOS ANTES DE UMA NOVA PESQUISA
-  // ---------------------------------------------------------
   txtLogradouro.Clear;
   txtBairro.Clear;
   txtLocalidade.Clear;
   txtUF.Clear;
-  txtComplemento.Clear;  // também limpar!
-  txtNumero.Clear;       // também limpar!
+  txtComplemento.Clear;
+  txtNumero.Clear;
 
-  // ---------------------------------------------------------
-  // 1) LER O CEP DIGITADO PELO USUÁRIO
-  // ---------------------------------------------------------
-  cep := Trim(txtCEP.Text);         // Remove espaços extras
+  cep := Trim(txtCEP.Text);
 
-  // Padronizar removendo caracteres inválidos
   cep := StringReplace(cep, '-', '', [rfReplaceAll]);
   cep := StringReplace(cep, '.', '', [rfReplaceAll]);
   cep := StringReplace(cep, ' ', '', [rfReplaceAll]);
 
-  // Verificar se o campo ficou vazio
   if cep = '' then
   begin
     ShowMessage('Digite um CEP.');
     Exit;
   end;
 
-  // ---------------------------------------------------------
-  // 2) MONTAR A URL PARA CONSULTAR A API
-  // ---------------------------------------------------------
   url := Format('https://viacep.com.br/ws/%s/json/', [cep]);
 
-  // Criar o cliente HTTP
   http := THTTPClient.Create;
   try
     try
-      // -----------------------------------------------------
-      // 3) FAZER A REQUISIÇÃO PARA A API
-      // -----------------------------------------------------
       resp := http.Get(url);
 
-      // Conferir se retornou HTTP 200 (OK)
       if resp.StatusCode <> 200 then
       begin
         ShowMessage('Erro ao consultar CEP. Código HTTP: ' +
@@ -2606,43 +2547,28 @@ begin
         Exit;
       end;
 
-      // Converter conteúdo retornado para JSON string
       json := resp.ContentAsString(TEncoding.UTF8);
 
-      // -----------------------------------------------------
-      // 4) PARSE DO JSON → TJSONObject
-      // -----------------------------------------------------
       jo := TJSONObject.ParseJSONValue(json) as TJSONObject;
       try
-        // Verificar se o CEP existe (API traz "erro": true)
         if (jo = nil) or (jo.GetValue('erro') <> nil) then
         begin
           ShowMessage('CEP não encontrado.');
           Exit;
         end;
 
-        // ---------------------------------------------------
-        // 5) EXTRAIR OS CAMPOS DO JSON
-        // ---------------------------------------------------
         logradouro := jo.GetValue<string>('logradouro', '');
         bairro     := jo.GetValue<string>('bairro', '');
         cidade     := jo.GetValue<string>('localidade', '');
         uf         := jo.GetValue<string>('uf', '');
 
-        // ---------------------------------------------------
-        // 6) PREENCHER OS EDITS DO FORMULÁRIO
-        // ---------------------------------------------------
         txtlogradouro.Text := logradouro;
         txtBairro.Text     := bairro;
         txtLocalidade.Text := cidade;
         txtUF.Text         := uf;
 
-        // IMPORTANTE:
-        // txtComplemento e txtNumero continuam vazios,
-        // pois devem ser preenchidos MANUALMENTE pelo usuário.
-
       finally
-        jo.Free; // liberar memória
+        jo.Free;
       end;
 
     except
@@ -2651,21 +2577,33 @@ begin
     end;
 
   finally
-    http.Free; // liberar cliente HTTP
+    http.Free;
   end;
 end;
 
 function TFMain.UsuarioSelecionado: TUsuario;
+var
+  Id: Integer;
 begin
+  Result := nil;
 
+  if (not ClientDataSetUsuarios.Active) or ClientDataSetUsuarios.IsEmpty then
+    Exit;
+
+  Id := ClientDataSetUsuarios.FieldByName('id_usuario').AsInteger;
+
+  try
+    Result := UsuariosController.BuscarPorId(Id);
+  except
+    on E: Exception do
+      ShowMessage('Erro ao buscar usuário selecionado: ' + E.Message);
+  end;
 end;
 
 {$ENDREGION}
 
-// ----- Importacao de Contatos vCard
 {$REGION 'Importação de contatos .VCF (MemTable e Grid4)'}
 
-// ----- Importacao VCF
 procedure TFMain.PrepareMemTable;
 begin
   mtbImportCont.Active := False;
@@ -2678,16 +2616,13 @@ end;
 
 procedure TFMain.ConfigurarGrid;
 begin
-  // ligações
   dsImportCont.DataSet := mtbImportCont;
   dbgImportCont.DataSource  := dsImportCont;
 
-  // edição habilitada
   dsImportCont.AutoEdit := True;
   mtbImportCont.ReadOnly := False;
   dbgImportCont.Options := DBGrid1.Options + [dgEditing, dgTitles, dgColLines, dgRowLines, dgIndicator];
 
-  // colunas
   dbgImportCont.Columns.BeginUpdate;
   try
     dbgImportCont.Columns.Clear;
@@ -2755,8 +2690,8 @@ end;
 procedure TFMain.sdbImpNovoClick(Sender: TObject);
 begin
   mtbImportCont.Append;
-  DBGrid1.SelectedIndex := 0;
-  DBGrid1.SetFocus;
+  dbgImportCont.SelectedIndex := 0;
+  dbgImportCont.SetFocus;
 end;
 
 procedure TFMain.spdImpExcluirClick(Sender: TObject);
@@ -2768,11 +2703,9 @@ end;
 
 procedure TFMain.spdImprimirClick(Sender: TObject);
 begin
-  // 1. Garante que a conexão está aberta
   if not FDConnRel.Connected then
     FDConnRel.Connected := True;
 
-  // ---------- Relatório de Contatos - Ordenado por Nome ----------
   if RadioButton1.Checked then
   begin
     qryRelContatos.Close;
@@ -2782,7 +2715,6 @@ begin
       'ORDER BY nome ASC';
     qryRelContatos.Open;
 
-    // Dataset usado pelo FastReport deste relatório
     frxDBDados.DataSet := qryRelContatos;
 
     frxReportContatosNome.PrepareReport;
@@ -2790,7 +2722,6 @@ begin
     Exit;
   end;
 
-  // ---------- Relatório de Contatos - Ordenado por Número Telefônico ----------
   if RadioButton2.Checked then
   begin
     qryRelContatos.Close;
@@ -2800,7 +2731,6 @@ begin
       'ORDER BY telefone ASC';
     qryRelContatos.Open;
 
-    // Continua usando o mesmo frxDBDados (contatos)
     frxDBDados.DataSet := qryRelContatos;
 
     frxReportContatosTelefone.PrepareReport;
@@ -2808,40 +2738,31 @@ begin
     Exit;
   end;
 
-// ---------- Relatório de Usuários - Ordenado por Nome ----------
-if RadioButton3.Checked then
-begin
-  if not FDConnRel.Connected then
-    FDConnRel.Connected := True;
+  if RadioButton3.Checked then
+  begin
+    if not FDConnRel.Connected then
+      FDConnRel.Connected := True;
 
-  qryRelUsuarios.Close;
-  qryRelUsuarios.SQL.Text :=
-    'SELECT  id_usuario, '  +
-    '        nome, '        +
-    '        email, '       +
-    '        criado_em, '   +
-    '        atualizado_em, '+
-    '        ativo, '       +
-    '        telefone '     +
-    'FROM "Usuario" '       +
-    'ORDER BY nome ASC';
-  qryRelUsuarios.Open;
+    qryRelUsuarios.Close;
+    qryRelUsuarios.SQL.Text :=
+      'SELECT  id_usuario, '  +
+      '        nome, '        +
+      '        email, '       +
+      '        criado_em, '   +
+      '        atualizado_em, '+
+      '        ativo, '       +
+      '        telefone '     +
+      'FROM "Usuario" '       +
+      'ORDER BY nome ASC';
+    qryRelUsuarios.Open;
 
-  frxReportUsuariosNome.PrepareReport;
-  frxReportUsuariosNome.ShowReport;
-  Exit;
-end;
+    frxReportUsuariosNome.PrepareReport;
+    frxReportUsuariosNome.ShowReport;
+    Exit;
+  end;
 
-
-  // Nenhum marcado
   ShowMessage('Selecione um relatório para imprimir!');
 end;
-
-
-
-
-
-
 
 procedure TFMain.spdImpSalvarDBClick(Sender: TObject);
 var
@@ -2856,10 +2777,7 @@ begin
   Controller := TVCardController.Create;
   try
     try
-      // Agora é procedure → não retorna nada
       Controller.SalvarNoBanco(mtbImportCont, DataModule1.FDConnection1);
-
-      // A mensagem já é exibida DENTRO do controller
       memImportCont.Lines.Add('Contatos salvos com sucesso (ver mensagem acima).');
     except
       on E: Exception do

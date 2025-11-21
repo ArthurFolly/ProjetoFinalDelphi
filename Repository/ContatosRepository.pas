@@ -3,7 +3,11 @@
 interface
 
 uses
-  ConexaoBanco, FireDAC.Comp.Client, FireDAC.DApt, TContatosModel, SysUtils,
+  ConexaoBanco,
+  FireDAC.Comp.Client,
+  FireDAC.DApt,
+  TContatosModel,
+  SysUtils,
   System.Generics.Collections;
 
 type
@@ -34,15 +38,15 @@ implementation
 
 constructor TContatosRepository.Create;
 begin
-  inherited Create;  // CORRETO
-  Self.query := TFDQuery.Create(nil);
-  Self.query.Connection := DataModule1.FDConnection1;
+  inherited Create;
+  query := TFDQuery.Create(nil);
+  query.Connection := DataModule1.FDConnection1;
 end;
 
 destructor TContatosRepository.Destroy;
 begin
-  Self.query.Free;
-  inherited;  // CORRETO
+  query.Free;
+  inherited;
 end;
 
 // ====================================================================
@@ -51,37 +55,49 @@ end;
 function TContatosRepository.Adicionar(AContato: Contatos): Boolean;
 begin
   Result := False;
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
+  query.SQL.Clear;
+
+  query.SQL.Text :=
     'INSERT INTO public."Contato" ' +
-    '(nome, telefone, email, empresa, endereco, observacoes, ' +
-    'cep, logradouro, numero, complemento, bairro, cidade, uf, ativo) ' +
-    'VALUES (:nome, :telefone, :email, :empresa, :endereco, :observacoes, ' +
-    ':cep, :logradouro, :numero, :complemento, :bairro, :cidade, :uf, :ativo) ' +
+    '(nome, telefone, email, id_empresa, empresa, endereco, observacoes, ' +
+    ' cep, logradouro, numero, complemento, bairro, cidade, uf, ativo) ' +
+    'VALUES (:nome, :telefone, :email, :id_empresa, :empresa, :endereco, :observacoes, ' +
+    ' :cep, :logradouro, :numero, :complemento, :bairro, :cidade, :uf, :ativo) ' +
     'RETURNING id_contato';
 
-  Self.query.ParamByName('nome').AsString := AContato.Nome;
-  Self.query.ParamByName('telefone').AsString := AContato.Telefone;
-  Self.query.ParamByName('email').AsString := AContato.Email;
-  Self.query.ParamByName('empresa').AsString := AContato.Empresa;
-  Self.query.ParamByName('endereco').AsString := AContato.Endereco;
-  Self.query.ParamByName('observacoes').AsString := AContato.Observacoes;
-  Self.query.ParamByName('cep').AsString := AContato.CEP;
-  Self.query.ParamByName('logradouro').AsString := AContato.Logradouro;
-  Self.query.ParamByName('numero').AsString := AContato.Numero;
-  Self.query.ParamByName('complemento').AsString := AContato.Complemento;
-  Self.query.ParamByName('bairro').AsString := AContato.Bairro;
-  Self.query.ParamByName('cidade').AsString := AContato.Cidade;
-  Self.query.ParamByName('uf').AsString := AContato.UF;
-  Self.query.ParamByName('ativo').AsBoolean := AContato.Ativo;
+  query.ParamByName('nome').AsString      := AContato.Nome;
+  query.ParamByName('telefone').AsString  := AContato.Telefone;
+  query.ParamByName('email').AsString     := AContato.Email;
 
-  Self.query.Open;
-  if not Self.query.Eof then
+  // --------- ID_EMPRESA: manda NULL quando não tiver empresa ----------
+  if (AContato.IdEmpresa <= 0) then
+    query.ParamByName('id_empresa').Clear  // grava NULL no PostgreSQL
+  else
+    query.ParamByName('id_empresa').AsInteger := AContato.IdEmpresa;
+
+  // Nome da empresa (campo texto, opcional)
+  query.ParamByName('empresa').AsString   := AContato.Empresa;
+
+  query.ParamByName('endereco').AsString      := AContato.Endereco;
+  query.ParamByName('observacoes').AsString   := AContato.Observacoes;
+  query.ParamByName('cep').AsString           := AContato.CEP;
+  query.ParamByName('logradouro').AsString    := AContato.Logradouro;
+  query.ParamByName('numero').AsString        := AContato.Numero;
+  query.ParamByName('complemento').AsString   := AContato.Complemento;
+  query.ParamByName('bairro').AsString        := AContato.Bairro;
+  query.ParamByName('cidade').AsString        := AContato.Cidade;
+  query.ParamByName('uf').AsString            := AContato.UF;
+  query.ParamByName('ativo').AsBoolean        := AContato.Ativo;
+
+  query.Open; // por causa do RETURNING
+
+  if not query.Eof then
   begin
-    AContato.Id := Self.query.FieldByName('id_contato').AsInteger;
+    AContato.Id := query.FieldByName('id_contato').AsInteger;
     Result := True;
   end;
-  Self.query.Close;  // ADICIONADO
+
+  query.Close;
 end;
 
 // ====================================================================
@@ -90,34 +106,80 @@ end;
 function TContatosRepository.Atualizar(AContato: Contatos): Boolean;
 begin
   Result := False;
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
+  query.SQL.Clear;
+
+  query.SQL.Text :=
     'UPDATE public."Contato" SET ' +
-    'nome = :nome, telefone = :telefone, email = :email, ' +
-    'empresa = :empresa, endereco = :endereco, observacoes = :observacoes, ' +
-    'cep = :cep, logradouro = :logradouro, numero = :numero, ' +
-    'complemento = :complemento, bairro = :bairro, cidade = :cidade, uf = :uf, ' +
-    'ativo = :ativo ' +
+    ' nome = :nome, ' +
+    ' telefone = :telefone, ' +
+    ' email = :email, ' +
+    ' id_empresa = :id_empresa, ' + // <--- incluído
+    ' empresa = :empresa, ' +
+    ' endereco = :endereco, ' +
+    ' observacoes = :observacoes, ' +
+    ' cep = :cep, ' +
+    ' logradouro = :logradouro, ' +
+    ' numero = :numero, ' +
+    ' complemento = :complemento, ' +
+    ' bairro = :bairro, ' +
+    ' cidade = :cidade, ' +
+    ' uf = :uf, ' +
+    ' ativo = :ativo ' +
     'WHERE id_contato = :id_contato';
 
-  Self.query.ParamByName('id_contato').AsInteger := AContato.Id;
-  Self.query.ParamByName('nome').AsString := AContato.Nome;
-  Self.query.ParamByName('telefone').AsString := AContato.Telefone;
-  Self.query.ParamByName('email').AsString := AContato.Email;
-  Self.query.ParamByName('empresa').AsString := AContato.Empresa;
-  Self.query.ParamByName('endereco').AsString := AContato.Endereco;
-  Self.query.ParamByName('observacoes').AsString := AContato.Observacoes;
-  Self.query.ParamByName('cep').AsString := AContato.CEP;
-  Self.query.ParamByName('logradouro').AsString := AContato.Logradouro;
-  Self.query.ParamByName('numero').AsString := AContato.Numero;
-  Self.query.ParamByName('complemento').AsString := AContato.Complemento;
-  Self.query.ParamByName('bairro').AsString := AContato.Bairro;
-  Self.query.ParamByName('cidade').AsString := AContato.Cidade;
-  Self.query.ParamByName('uf').AsString := AContato.UF;
-  Self.query.ParamByName('ativo').AsBoolean := AContato.Ativo;
+  query.ParamByName('id_contato').AsInteger := AContato.Id;
+  query.ParamByName('nome').AsString        := AContato.Nome;
+  query.ParamByName('telefone').AsString    := AContato.Telefone;
+  query.ParamByName('email').AsString       := AContato.Email;
 
-  Self.query.ExecSQL;
-  Result := Self.query.RowsAffected > 0;
+  // --------- ID_EMPRESA: manda NULL quando não tiver empresa ----------
+  if (AContato.IdEmpresa <= 0) then
+    query.ParamByName('id_empresa').Clear
+  else
+    query.ParamByName('id_empresa').AsInteger := AContato.IdEmpresa;
+
+  query.ParamByName('empresa').AsString      := AContato.Empresa;
+  query.ParamByName('endereco').AsString     := AContato.Endereco;
+  query.ParamByName('observacoes').AsString  := AContato.Observacoes;
+  query.ParamByName('cep').AsString          := AContato.CEP;
+  query.ParamByName('logradouro').AsString   := AContato.Logradouro;
+  query.ParamByName('numero').AsString       := AContato.Numero;
+  query.ParamByName('complemento').AsString  := AContato.Complemento;
+  query.ParamByName('bairro').AsString       := AContato.Bairro;
+  query.ParamByName('cidade').AsString       := AContato.Cidade;
+  query.ParamByName('uf').AsString           := AContato.UF;
+  query.ParamByName('ativo').AsBoolean       := AContato.Ativo;
+
+  query.ExecSQL;
+  Result := query.RowsAffected > 0;
+end;
+
+// ====================================================================
+// Preenchimento comum do Model a partir do Dataset
+// ====================================================================
+procedure PreencherContatoFromQuery(AQuery: TFDQuery; AContato: Contatos);
+begin
+  AContato.Id         := AQuery.FieldByName('id_contato').AsInteger;
+  AContato.Nome       := AQuery.FieldByName('nome').AsString;
+  AContato.Telefone   := AQuery.FieldByName('telefone').AsString;
+  AContato.Email      := AQuery.FieldByName('email').AsString;
+  AContato.Endereco   := AQuery.FieldByName('endereco').AsString;
+  AContato.Empresa    := AQuery.FieldByName('empresa').AsString;
+  AContato.Observacoes:= AQuery.FieldByName('observacoes').AsString;
+  AContato.CEP        := AQuery.FieldByName('cep').AsString;
+  AContato.Logradouro := AQuery.FieldByName('logradouro').AsString;
+  AContato.Numero     := AQuery.FieldByName('numero').AsString;
+  AContato.Complemento:= AQuery.FieldByName('complemento').AsString;
+  AContato.Bairro     := AQuery.FieldByName('bairro').AsString;
+  AContato.Cidade     := AQuery.FieldByName('cidade').AsString;
+  AContato.UF         := AQuery.FieldByName('uf').AsString;
+  AContato.Ativo      := AQuery.FieldByName('ativo').AsBoolean;
+
+  // Trata id_empresa NULL -> 0
+  if not AQuery.FieldByName('id_empresa').IsNull then
+    AContato.IdEmpresa := AQuery.FieldByName('id_empresa').AsInteger
+  else
+    AContato.IdEmpresa := 0;
 end;
 
 // ====================================================================
@@ -126,215 +188,166 @@ end;
 function TContatosRepository.BuscarPorId(AId: Integer): Contatos;
 begin
   Result := nil;
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
-    'SELECT * FROM public."Contato" WHERE id_contato = :id_contato AND ativo = TRUE';
-  Self.query.ParamByName('id_contato').AsInteger := AId;
-  Self.query.Open;
-  if not Self.query.Eof then
+  query.SQL.Clear;
+  query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE id_contato = :id_contato AND ativo = TRUE';
+
+  query.ParamByName('id_contato').AsInteger := AId;
+  query.Open;
+
+  if not query.Eof then
   begin
     Result := Contatos.Create;
-    Result.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Result.Nome := Self.query.FieldByName('nome').AsString;
-    Result.Telefone := Self.query.FieldByName('telefone').AsString;
-    Result.Email := Self.query.FieldByName('email').AsString;
-    Result.Endereco := Self.query.FieldByName('endereco').AsString;
-    Result.Empresa := Self.query.FieldByName('empresa').AsString;
-    Result.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Result.CEP := Self.query.FieldByName('cep').AsString;
-    Result.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Result.Numero := Self.query.FieldByName('numero').AsString;
-    Result.Complemento := Self.query.FieldByName('complemento').AsString;
-    Result.Bairro := Self.query.FieldByName('bairro').AsString;
-    Result.Cidade := Self.query.FieldByName('cidade').AsString;
-    Result.UF := Self.query.FieldByName('uf').AsString;
-    Result.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    PreencherContatoFromQuery(query, Result);
   end;
-  Self.query.Close;
+
+  query.Close;
 end;
 
-
+// ====================================================================
+// LISTAR TODOS
+// ====================================================================
 function TContatosRepository.ListarTodos: TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
 
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
+  query.SQL.Clear;
+  query.SQL.Text :=
     'SELECT * FROM public."Contato" ' +
-    'WHERE ativo = TRUE ' +  // Só TRUE → simples e direto
+    'WHERE ativo = TRUE ' +
     'ORDER BY nome';
 
   try
-    Self.query.Open;
-
-    while not Self.query.Eof do
+    query.Open;
+    while not query.Eof do
     begin
       Contato := Contatos.Create;
-
-      Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-      Contato.Nome := Self.query.FieldByName('nome').AsString;
-      Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-      Contato.Email := Self.query.FieldByName('email').AsString;
-      Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-      Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-      Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-      Contato.CEP := Self.query.FieldByName('cep').AsString;
-      Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-      Contato.Numero := Self.query.FieldByName('numero').AsString;
-      Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-      Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-      Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-      Contato.UF := Self.query.FieldByName('uf').AsString;
-
-      Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean; // TRUE → True
-
+      PreencherContatoFromQuery(query, Contato);
       Result.Add(Contato);
-      Self.query.Next;
+      query.Next;
     end;
   finally
-    Self.query.Close;
+    query.Close;
   end;
 end;
 
-
-
+// ====================================================================
+// BUSCAR POR NOME
+// ====================================================================
 function TContatosRepository.BuscarPorNome(ANome: string): TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT * FROM public."Contato" WHERE nome LIKE :nome AND ativo = TRUE';
-  Self.query.ParamByName('nome').AsString := '%' + ANome + '%';
-  Self.query.Open;
-  while not Self.query.Eof do
+
+  query.SQL.Clear;
+  query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE nome LIKE :nome AND ativo = TRUE';
+
+  query.ParamByName('nome').AsString := '%' + ANome + '%';
+  query.Open;
+
+  while not query.Eof do
   begin
     Contato := Contatos.Create;
-    Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Contato.Nome := Self.query.FieldByName('nome').AsString;
-    Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-    Contato.Email := Self.query.FieldByName('email').AsString;
-    Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-    Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-    Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Contato.CEP := Self.query.FieldByName('cep').AsString;
-    Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Contato.Numero := Self.query.FieldByName('numero').AsString;
-    Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-    Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-    Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-    Contato.UF := Self.query.FieldByName('uf').AsString;
-    Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    PreencherContatoFromQuery(query, Contato);
     Result.Add(Contato);
-    Self.query.Next;
+    query.Next;
   end;
-  Self.query.Close;
+
+  query.Close;
 end;
 
+// ====================================================================
+// BUSCAR POR TELEFONE
+// ====================================================================
 function TContatosRepository.BuscarPorTelefone(ATelefone: string): TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT * FROM public."Contato" WHERE telefone LIKE :telefone AND ativo = TRUE';
-  Self.query.ParamByName('telefone').AsString := '%' + ATelefone + '%';
-  Self.query.Open;
-  while not Self.query.Eof do
+
+  query.SQL.Clear;
+  query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE telefone LIKE :telefone AND ativo = TRUE';
+
+  query.ParamByName('telefone').AsString := '%' + ATelefone + '%';
+  query.Open;
+
+  while not query.Eof do
   begin
     Contato := Contatos.Create;
-    Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Contato.Nome := Self.query.FieldByName('nome').AsString;
-    Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-    Contato.Email := Self.query.FieldByName('email').AsString;
-    Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-    Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-    Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Contato.CEP := Self.query.FieldByName('cep').AsString;
-    Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Contato.Numero := Self.query.FieldByName('numero').AsString;
-    Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-    Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-    Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-    Contato.UF := Self.query.FieldByName('uf').AsString;
-    Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    PreencherContatoFromQuery(query, Contato);
     Result.Add(Contato);
-    Self.query.Next;
+    query.Next;
   end;
-  Self.query.Close;
+
+  query.Close;
 end;
 
+// ====================================================================
+// BUSCAR POR EMPRESA (campo texto "empresa")
+// ====================================================================
 function TContatosRepository.BuscarPorEmpresa(AEmpresa: string): TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text := 'SELECT * FROM public."Contato" WHERE empresa = :empresa AND ativo = TRUE';
-  Self.query.ParamByName('empresa').AsString := AEmpresa;
-  Self.query.Open;
-  while not Self.query.Eof do
+
+  query.SQL.Clear;
+  query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE empresa = :empresa AND ativo = TRUE';
+
+  query.ParamByName('empresa').AsString := AEmpresa;
+  query.Open;
+
+  while not query.Eof do
   begin
     Contato := Contatos.Create;
-    Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Contato.Nome := Self.query.FieldByName('nome').AsString;
-    Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-    Contato.Email := Self.query.FieldByName('email').AsString;
-    Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-    Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-    Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Contato.CEP := Self.query.FieldByName('cep').AsString;
-    Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Contato.Numero := Self.query.FieldByName('numero').AsString;
-    Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-    Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-    Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-    Contato.UF := Self.query.FieldByName('uf').AsString;
-    Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    PreencherContatoFromQuery(query, Contato);
     Result.Add(Contato);
-    Self.query.Next;
+    query.Next;
   end;
-  Self.query.Close;
+
+  query.Close;
 end;
 
+// ====================================================================
+// BUSCAR POR EMAIL
+// ====================================================================
 function TContatosRepository.BuscarPorEmail(AEmail: string): TObjectList<Contatos>;
 var
   Contato: Contatos;
 begin
   Result := TObjectList<Contatos>.Create(True);
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
-    'SELECT * FROM public."Contato" WHERE email = :email AND ativo = TRUE';
-  Self.query.ParamByName('email').AsString := AEmail;
-  Self.query.Open;
-  while not Self.query.Eof do
+
+  query.SQL.Clear;
+  query.SQL.Text :=
+    'SELECT * FROM public."Contato" ' +
+    'WHERE email = :email AND ativo = TRUE';
+
+  query.ParamByName('email').AsString := AEmail;
+  query.Open;
+
+  while not query.Eof do
   begin
     Contato := Contatos.Create;
-    Contato.Id := Self.query.FieldByName('id_contato').AsInteger;
-    Contato.Nome := Self.query.FieldByName('nome').AsString;
-    Contato.Telefone := Self.query.FieldByName('telefone').AsString;
-    Contato.Email := Self.query.FieldByName('email').AsString;
-    Contato.Endereco := Self.query.FieldByName('endereco').AsString;
-    Contato.Empresa := Self.query.FieldByName('empresa').AsString;
-    Contato.Observacoes := Self.query.FieldByName('observacoes').AsString;
-    Contato.CEP := Self.query.FieldByName('cep').AsString;
-    Contato.Logradouro := Self.query.FieldByName('logradouro').AsString;
-    Contato.Numero := Self.query.FieldByName('numero').AsString;
-    Contato.Complemento := Self.query.FieldByName('complemento').AsString;
-    Contato.Bairro := Self.query.FieldByName('bairro').AsString;
-    Contato.Cidade := Self.query.FieldByName('cidade').AsString;
-    Contato.UF := Self.query.FieldByName('uf').AsString;
-    Contato.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+    PreencherContatoFromQuery(query, Contato);
     Result.Add(Contato);
-    Self.query.Next;
+    query.Next;
   end;
-  Self.query.Close;
+
+  query.Close;
 end;
 
 // ====================================================================
-// ATUALIZAR POR ID (PARA GRID)
+// ATUALIZAR POR ID (EDIÇÃO NO GRID) – continua sem id_empresa
 // ====================================================================
 function TContatosRepository.AtualizarPorId(
   AId: Integer; ANome, ATelefone, AEmail, AEmpresa, AEndereco,
@@ -342,31 +355,41 @@ function TContatosRepository.AtualizarPorId(
 ): Boolean;
 begin
   Result := False;
-  Self.query.SQL.Clear;
-  Self.query.SQL.Text :=
+  query.SQL.Clear;
+
+  query.SQL.Text :=
     'UPDATE public."Contato" SET ' +
-    'nome = :nome, telefone = :telefone, email = :email, ' +
-    'empresa = :empresa, endereco = :endereco, ' +
-    'cep = :cep, logradouro = :logradouro, numero = :numero, ' +
-    'complemento = :complemento, bairro = :bairro, cidade = :cidade, uf = :uf ' +
+    ' nome = :nome, ' +
+    ' telefone = :telefone, ' +
+    ' email = :email, ' +
+    ' empresa = :empresa, ' +
+    ' endereco = :endereco, ' +
+    ' cep = :cep, ' +
+    ' logradouro = :logradouro, ' +
+    ' numero = :numero, ' +
+    ' complemento = :complemento, ' +
+    ' bairro = :bairro, ' +
+    ' cidade = :cidade, ' +
+    ' uf = :uf ' +
     'WHERE id_contato = :id_contato AND ativo = TRUE';
 
-  Self.query.ParamByName('id_contato').AsInteger := AId;
-  Self.query.ParamByName('nome').AsString := ANome;
-  Self.query.ParamByName('telefone').AsString := ATelefone;
-  Self.query.ParamByName('email').AsString := AEmail;
-  Self.query.ParamByName('empresa').AsString := AEmpresa;
-  Self.query.ParamByName('endereco').AsString := AEndereco;
-  Self.query.ParamByName('cep').AsString := ACEP;
-  Self.query.ParamByName('logradouro').AsString := ALogradouro;
-  Self.query.ParamByName('numero').AsString := ANumero;
-  Self.query.ParamByName('complemento').AsString := AComplemento;
-  Self.query.ParamByName('bairro').AsString := ABairro;
-  Self.query.ParamByName('cidade').AsString := ACidade;
-  Self.query.ParamByName('uf').AsString := AUF;
+  query.ParamByName('id_contato').AsInteger := AId;
+  query.ParamByName('nome').AsString        := ANome;
+  query.ParamByName('telefone').AsString    := ATelefone;
+  query.ParamByName('email').AsString       := AEmail;
+  query.ParamByName('empresa').AsString     := AEmpresa;
+  query.ParamByName('endereco').AsString    := AEndereco;
+  query.ParamByName('cep').AsString         := ACEP;
+  query.ParamByName('logradouro').AsString  := ALogradouro;
+  query.ParamByName('numero').AsString      := ANumero;
+  query.ParamByName('complemento').AsString := AComplemento;
+  query.ParamByName('bairro').AsString      := ABairro;
+  query.ParamByName('cidade').AsString      := ACidade;
+  query.ParamByName('uf').AsString          := AUF;
 
-  Self.query.ExecSQL;
-  Result := Self.query.RowsAffected > 0;
+  query.ExecSQL;
+  Result := query.RowsAffected > 0;
 end;
 
 end.
+

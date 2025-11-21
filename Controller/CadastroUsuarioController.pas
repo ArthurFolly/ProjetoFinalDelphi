@@ -34,56 +34,51 @@ implementation
 
 function TUsuarioController.CadastrarUsuario(id: Integer; senha, email, CPF,
   nome, numero: String; var msgErro: String): Boolean;
-  var
-  usuario :TUsuario;
-
+var
+  usuario : TUsuario;
 begin
-Result := False;
-msgErro := '';
+  Result := False;
+  msgErro := '';
 
-if Trim(nome) = '' then  begin
-  msgErro := 'Nome não pode estar vazio';
-  exit;
+  if Trim(nome) = '' then begin
+    msgErro := 'Nome não pode estar vazio';
+    Exit;
+  end;
+
+  if Trim(email) = '' then begin
+    msgErro := 'Email não pode estar vazio';
+    Exit;
+  end;
+
+  if Trim(numero) = '' then begin
+    msgErro := 'O Campo número não pode estar vazio';
+    Exit;
+  end;
+
+  if Trim(senha) = '' then begin
+    msgErro := 'O campo senha não pode estar vazio';
+    Exit;
+  end;
+
+  usuario := TUsuario.Create;
+
+  try
+    usuario.Id := id;
+    usuario.Nome := nome;
+    usuario.Email := email;
+    usuario.Telefone := numero;
+    usuario.Senha := senha;
+
+
+    usuario.NivelUsuario := 1;
+    usuario.Ativo := True;
+
+    Result := repository.Salvar(usuario);
+
+  finally
+    usuario.Free;
+  end;
 end;
-
-if Trim(email) = '' then  begin
-  msgErro:= 'Email não pode estar vazio';
-  Exit;
-
-end;
-
-if Trim(numero) = '' then  begin
-  msgErro:= 'O Campo numero não pode estar vazio';
-  Exit;
-
-end;
-if Trim(senha) = '' then  begin
-  msgErro:= 'O campo senha não pode estar vazio';
-  Exit;
-
-end;
-
-usuario := TUsuario.Create;
-
-try
-  usuario.Id := Id;
-  usuario.Nome := nome;
-  usuario.Email := email;
-
-  usuario.Telefone := numero;
-  usuario.senha := senha;
-
-  Result := repository.Salvar(usuario);
-finally
-
-usuario.Free;
-
-end;
-
-
-
-end;
-
 
 
 

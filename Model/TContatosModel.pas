@@ -11,11 +11,10 @@ type
     Telefone: String;
     Endereco: String;
     Empresa: String;
+    IdEmpresa : Integer;
     Observacoes: String;
     Favorito: Boolean;
     Ativo: Boolean;
-
-    // === NOVAS COLUNAS DO ENDEREÇO ===
     CEP: String;
     Logradouro: String;
     Numero: String;
@@ -41,6 +40,9 @@ type
     function getBairro: String;
     function getCidade: String;
     function getUF: String;
+    function getIdEmpresa:Integer;
+
+
 
     // === SETTERS ===
     procedure setId(AId: Integer);
@@ -59,6 +61,7 @@ type
     procedure setBairro(ABairro: String);
     procedure setCidade(ACidade: String);
     procedure setUF(AUF: String);
+    procedure setIdEmpresa(AIdEmpresa:Integer);
   end;
 
 implementation
@@ -69,6 +72,11 @@ implementation
 function Contatos.getId: Integer;
 begin
   Result := Id;
+end;
+
+function Contatos.getIdEmpresa: Integer;
+begin
+   Result := IdEmpresa;
 end;
 
 function Contatos.getNome: String;
@@ -150,6 +158,11 @@ end;
 procedure Contatos.setId(AId: Integer);
 begin
   Id := AId;
+end;
+
+procedure Contatos.setIdEmpresa(AIdEmpresa: Integer);
+begin
+ IdEmpresa := AIdEmpresa;
 end;
 
 procedure Contatos.setNome(ANome: String);

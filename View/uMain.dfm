@@ -33,6 +33,7 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
+    ExplicitHeight = 673
     object pnlImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -354,7 +355,7 @@
           A7184BF7CFA95BED2F4649F421D7341B760000000049454E44AE426082}
       end
     end
-    object pnlConfiguracao: TPanel
+    object pnlUsuarios: TPanel
       AlignWithMargins = True
       Left = 3
       Top = 568
@@ -363,7 +364,7 @@
       Margins.Top = 8
       Align = alTop
       BevelOuter = bvNone
-      Caption = 'Configura'#231#227'o'
+      Caption = 'Usu'#225'rios'
       Color = 1184274
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -374,59 +375,121 @@
       ParentFont = False
       TabOrder = 0
       OnClick = PanelConfiguraçaoClick
-      OnMouseEnter = pnlConfiguracaoMouseEnter
-      OnMouseLeave = pnlConfiguracaoMouseLeave
+      OnMouseEnter = pnlUsuariosMouseEnter
+      OnMouseLeave = pnlUsuariosMouseLeave
       object ImgConfig: TImage
-        Left = 0
-        Top = 0
+        Left = 4
+        Top = -5
         Width = 47
         Height = 70
-        Align = alLeft
         Center = True
         Picture.Data = {
-          0954506E67496D61676589504E470D0A1A0A0000000D49484452000000200000
-          00200806000000737A7AF4000000097048597300000EC300000EC301C76FA864
-          0000001974455874536F667477617265007777772E696E6B73636170652E6F72
-          679BEE3C1A000004CC4944415478DAB5576B689B55183EE7E4B676A669BD4C71
-          151DB3FE194C9A74032F3FACB456614B52B515EA3A179A64AC82A2B0EDCFEA46
-          DBC1BCB01F8A2BB9D4AEDD3AB061ACC99C42055B4405B549147FA953416CA1B3
-          CEC5581793F43B3E27263197EFCB0DF742C8F9CE39EFFB3CE73DEFFB9E7328A9
-          41BC96E0DB9CD00368D26C2727638E8071B05A5BB45A85638FCCAB371B1AAE42
-          555F30B426DD2E35ED77B7256E0801977351A3BEA26E9788D487D53EA7606D92
-          11762EB929395F291159022EEBE25626B1714EF9973A963C11E79A5E801EC1D0
-          9D15F25D82E5E35A9A98894BEAC384D39D9470BB3D60BA5C96400A9CB37934EF
-          4A77ADE3A7AAC6AD3992ABFB0BE5BCBD90441E01EF93A1BBA1B2C009B9A746C0
-          725244228F80DB12FC8812DA7E83C033B2E0F01BB31879043C96E06BE83A58DE
-          068F62DEA79C92E594112E62833F249319C59A84BFE1F49BB218790426BB3FBF
-          252E695688F29E5FE69C0CC512FA0B2F7CD0F277EEC09B4F7CAFABD3FE6185C9
-          517CDEABA0BF2E49D21DFB2FB6ADCA7BC01A3A008AA71494DF8D6A63B6977D0F
-          5E1FEBFE7A935A5A7F9C52D2C225024EF4DB469DD6D7EBDB164F11D1455D2552
-          75D0316B1C2B2220F29CADB09FD0DC2CE3B869BBDFD8EF7606D5AA153682207D
-          119D1BF26650FE8C73D634935D8C397C067BB34786C2120AD6964C9DA0390A9D
-          509893733B56BE7D6393360982EFE3BB4366CE178CFFD5311078389AE938D9F3
-          599D3EBEE11B34B716AF873EE608B47E982520CA6BB3A1C10357EE2BF6187DD6
-          EE6F3DE7B5844E60E587E5C0D59476D9665BAF150E782DE13E04DDB4CC364C2E
-          5D8BD88F2DB427A9C71C3A858EBDE8DE28637C4D1D89DCCA6F33E8D7E3E4E742
-          B70BEF007C472EF8B8F913BDC4EA771934BAF36BBF5E6149836155C936E2648A
-          7A2C2151AD98CC0491327348992EAF35D48F489B2A1E27C34EBFF168E6DBD5B3
-          68607126B6712742B3DF11309D4560CF61622791172E084844E14C40FD3E6DF7
-          9B6C30320423C332EAEF612F7717810B5D4A46EDB3C6211CDD13725B9BC52845
-          00A0E338E3EDD8A661CC1852F0D225CA6908E37D2427E032043C96F03B98652B
-          4540710BB0C2B35861BFD71CEE419ACD902A2413BCB02FA2BD43611AA7E9DB8D
-          281A8581124C24D59D8397B6FF5ECA030A12D3B244732476F39F75DAE86FA454
-          108AD6BFB71CC3389A7BD3F4438984BA4380BBCDA12370E74835ABC7C25E77F8
-          4D873CE6E01EECC51919F7FC9786993E7777701795E845014E35BA4EBB6FDBD5
-          DAC0C9C748DDAEB85ECF542AF615B2A745C6F1F98528E3856683E13CD1EA6C35
-          82A3B45277547BFDE04BBE07622842A7B31ECD17F9529C2BE5C04584E3EF3BFC
-          EE13DF12A13FA8243E3710302EBB762FD633AA72299C03CA875146BCD6E021CE
-          E9AB8AE0841CC5C154541352C08C3D2D9C89DF1605F5D2C771A5E013D6706352
-          226FA1237DF3E5C213F7E37753B97D52BC905405CEB908A0B672600A04E641E0
-          D13C0295821796DB1AA4F852EAB686F7A173425185925710342335AEBCFCB51C
-          A5F247A214346970D1C48DF902CAABB5D29522FF8FEB54095FEA6142E80E803B
-          641F262080771E692A052E2455271A1ABB7026F412F9FC4E9D9E48C9E9E54864
-          4154B94A988A0B89179A03A5C073E57F7F9CA66E30B4FE24DA4FA1C0ACC275A3
-          78384C955292799EE389C0C7707778BE1A7021FF00296645B3D783B02F000000
-          0049454E44AE426082}
+          0954506E67496D61676589504E470D0A1A0A0000000D49484452000000400000
+          00400806000000AA6971DE000000017352474200AECE1CE90000000467414D41
+          0000B18F0BFC6105000000097048597300000EC400000EC401952B0E1B00000C
+          AE4944415478DAED9B075893D71AC7FF491811225BA68A54EBB6823800B55A04
+          6A71E300451CB870A0D68AA30EC0BDBD8A5A07431C284A458BAB204A1F177845
+          A088FB223850012B21612481E49E93B45C4628A009466FDFE7F93F9CEF3BE77B
+          93F3CB77CE79CF800115B77919026FB1401013D44D274F19FE191FBB827F6773
+          EF899C9992F218F23553448CD2C1BB3BEABEFDBF02408DBC01ABC412C9F1A0CE
+          EC7BCAF0AFF200A6DF96A8EFEFCE1029CBBFCA0390632CA23E44DD890C890A89
+          528912884A3F7700938802982C86A5655B43E81A35019F2B40F6C3B71009CAF3
+          49DE26A2ED44659F1B0075A2839A6CB5712367D9C2754217E81834A9C82C2912
+          E1F2C9FB88D896045E41E915726B38646FC66703609F9E91D6F4C023C360D5D1
+          A8D64279393CF87B9EC18BFFBC8B2597DF11893F07004EE4958FDB103512ED6D
+          CDEA2CFCE65921E60E3C8612BE7006B9DCAF2A003A117912F5236A4DA455294F
+          40F43BD141A2A3A8F9ABC50F18DDC171DE5627F9157E5E88C39B6EA2BC4C0CCF
+          1FECD0BC8D3E2277FC1B47B7266692EC364412A502D898EC646ED54DFFCD18C6
+          C97239D916443B88DCCCF4B51956C6BA30E0B0A1A1C6AC2850562EC68BB77CA4
+          3FCF87A84C1C4FCB12F1899A13E911DD5977C28DD5D9CE425AD993BB6E434D9D
+          09F7B93D505A5C8665EEA7D0B67537A8A9A921FB751A8262C7213F870F6FBB30
+          EADE9A284D690036A73A1B9731982F48A0B2729975EC866AD974A88A36D7E718
+          39766901333DEDBFF5C52D16202AF131FEE097DE2597A644158DFDC4031FB0B5
+          D4F1BDEB711868B7865020441E3713C2D232D87CD517E1115188387C1001FE0B
+          10913E5DFACC846E2128C82FA66F5D84D200F84BFC999AE989F3212E3BFBA375
+          FCA34A59748CBE626365CC71ECDC024C46FD3E86541EB169D9E8D8DC102D8C9A
+          22975B8C98E44C9CCE9A03EAC2BDE33E6CDEF213868E1889B12387429BD31407
+          8F9E40C2E5384CF21C034FBF9E1831C346EA6B7ADF43789DCD9D4692C14A0350
+          8B7188D23BB5306CE56A63F5418EF2792508BB9281B05BDE3034D526ED3A0931
+          073270FCE75FD0BB6F3F69995F2F9C95567ED41C1B78CCEF29BD272E9710587B
+          2128291B4A2E631A1B40A04E138D95DE8E9DA1CE627E9023D2B4B0FB621A7C36
+          F687E3A80ED27B21ABAE222EE2310E1D8B42119F8F69933DAB549E5AC6AD1C2C
+          1DF533ED4CE9B091DB98003488725CBA5A1A76B56CA61087F1E9CFF08E2DC6F6
+          F31E20C3A1F45ED8DAEB88DE7787340B06E9F97B610CE9102BDB9A2967712BEE
+          E939921C5C97FF0603284C72FD9A2511676ADB5D7C2127DB89C564C4CD19684D
+          7A7A96420014094408BD7C174348DBF65A645F719FB46FB0C868D2CCA26995F2
+          7191F710E4174F274F944A5A5DFE1B0480973AC2982910C54222C929640B479B
+          59C715552BB2C4544F7BBDD7D71DEAEDB34C2C4672662E5A1870606EC0915B26
+          33978BE85B4F306C9A35BCFCECA1A65113AE84349798D03484AEB926217DC04C
+          726B5F7D3EBFDE000A6EB81868B034F692CF194D44838B1DDAA6864B1956E195
+          67603BBF34D3F71DDEA375BD7CD2364E7BF99C8252949496A24F7B0BD87E6102
+          F216D5289B95578873779E42C7440B033D3BA3B3BD05740D9BA0A8508007C9AF
+          117B2C03991979347E984D74A8BEF56AD01B406ACD284E1C1C2691881F73ECCF
+          AF9553644F7B0B8399436CBFA8D317AF44880BA959282967E2D7036B917CEF09
+          166D0926637C29880FB434D28121099AB434D52A9A535A761E1D2669257388DA
+          5672F79C288A682BD1CB86D4A9C17D40F175574B36432B97E910555217005EA9
+          101C4D75696745AD5C2CC19B82223CC8F903BF67E7C3B6535B84AFF7432B0B13
+          693E975F84C3BFC423FAD20DDCCE78845212F050A3B1047D33FE0440E38D7644
+          BA440690CDFADE7BA94CD1A3C09E76E6FA331DDA9A23252B17A95979D2D7B989
+          861A69A364DA2A2C93C2E86DD309D3C7B862A44B9F5A83A4721222BFCCCDC792
+          EDA1B875270D4E9D5BE2E53B7E65000A314503D84BEA338356965674A4731F78
+          BB7D8B77853C30994C981AE9A3531B4BE872B4EBED70CEDADD088EBA28EDE4D4
+          49AF4FE60B2A0BA02351D2F821033801B3C763E9F630E8E96863D7B2D91FE494
+          0228282CC2FAF99311B0E7088EC4C4D3A647436D852C922A1240F4C03EDD879F
+          0E0A90C6EDE3176F522880231B17499BD130DF00FC7AED763464B3469502C08B
+          DCF62367B8A383F4421E80ABC97771EDCE5DCCF31A012DB6660D07074FC749FF
+          4E1AEE2C1700B5D3F137E0FEC33A1E49EAA81A0041CCEE400D97DEB6B502E832
+          DC078FB25E2064CD028C1FEC58E5E19CDCB7B07299284D67C686C3C2D8502E80
+          D8EBC91832DB9F0E0F9AF5F84E8D0AE0BA8FFB20871D4B67D60A202C3A1617AF
+          DD062D433BC4CA4683A21F36EDA7211DB62E9E51313A54073077DD4FD877E2DC
+          75C8D61B540A802B8BC93C1BB46C1683F6FC5E4B362BB40F38BCC10FA1A762E1
+          BB76B7A45C2C1E44B22EA81A006A3E44DB5B9A19B3691033A47F2FEC59E9FB41
+          0E67AE0AC2D98424B03535F0EC552E0DBBE7A39E71FEC70040CD9C681891E7A0
+          7E3D7B9FDAB1B24681A72F5EC3843481CA1DE143D2377CD1DC948CF56A55CABA
+          CD5B8573BFDDA2AF3C5D303D035918AC3053E6AAF0241343BDB0AC4B876B447B
+          8366AEC01F5C1E964C7587B1811EE26EDEC1A69093883DB00E0E361D2BCAD17E
+          C1D2C90BB96F0B2643B66AAC705326001AE0BF38BF778DDA003BEB2A196FDE16
+          60F1D6609CB99288E29252B4B36A8EA5D33C30D6B57F9572F189A970F5594EB7
+          B9E80AF19B4F0D00B5A3F6D61DC65D09DB543121AA6C623239129595415343BD
+          461E0D7DBF99BC083753EFD3555D4F657D416503B0244A5FED3BB1E9A229A31B
+          F4206D122B82C269C0F31551D6A70A80DA28F2EB476E5E3895E9EB39AC5E0F04
+          1D3D03BF2DC1A40B90B84336CF579A291200EDD2E9AEACAE9C3CFAF33BD16171
+          60DF1E7FEBE4E2D5DB884948A4C94B4427E514E1129D866C4B4DA5001CD1D5D5
+          F56C666CA24097352D2FF70DB85C2E1D12C7AB1A80ACA09F822DC7794D522A00
+          BA05E63B736A3649B6523500D97BF687B5741FE7A55400911187316BFAE46790
+          75B0FF00F807402D26F65E6629663187B1F6AF0A22A350AD67043E4B00626FBF
+          A6E5CC262B49ECB590C560F485196E300203E51E97510400FA45BE21FA1701A0
+          DB4800E850486785F4405476F532A2A92BAE935FDDA1020824BE1A0756EF5234
+          8016442144CE5A86C610F0B808DAB5178D01C0778E0F3475F4509C2F9D1ED075
+          B429906D8EC82A3CD5DF91547A21A9DD770C89642D43CCDCC30C0D943B8B7C5F
+          0074132FC5BC9B439BFE3F6E8371076B8438B5C5C6C0C04601B0D8DF1F532E3D
+          42EEFD5424AC5B809C3B379E902C7A3282FF573991F78A010C16633969028318
+          FB038B6BF3F7BE00BEE798986F9B782E1DEA5AB20DCD90015FD61BC0AB9C9738
+          1919219DF048BF0469ACA3DDC7C1CCDCA2FE00E21FCB2A5ACC47B86B17F07373
+          16407648B241F6BE007EFECA63869BE3CA9D15371A0220E9E60DAC5CE6873FEB
+          2F5D465FB56E337AD939D4F96C7500D42EAF9E8BDF8FED3B4592231B0B4082DD
+          EC15FDEC662F7F2F001F62F20024EE5E43B4FA3792ECDF580052FA2DD96C6D33
+          61AE4A004839B413BF6DF0A307A66D1A0B40A6F39AFD569DDC26AA04808C53E1
+          885B3EFD29494AB7A5794983463320B9CAE975FEB5B200E40FDE71DCB08DF308
+          9500F024361A67E77BD02D72237E92AB29C44C32E449FC39F6E7562B0B80C82D
+          E4825A4BFBFFEDEE7C4C00CF6E5EC6A929DFD1B543E9DA5A51E220DB266CE103
+          66CD233C0A0140F7B6F96323AFC3A44B779500F026FD368EB9F7A6493A26D759
+          E90F0540D7FD5F3A05EE01C7B445C5CDD8A5DED8B26153A30058B864115CD687
+          56DCE3BD7E8E78FF593449038906ED1BD405A02B64E7EED995EED14DBDB96C0D
+          8D2A4F0B8422ECDE17DA280066CFF0AEBA924CE28952A1F4380DDD54B8AF2800
+          7441922E3DD1B37695FFFB827E72F7591E8335B72FF191DEA03BB613966E4687
+          2E36E86A63AB54006929C9B89F9E82431BFCE0E220FBAC1281107ABDA4C705EC
+          88921405800E2BF4B899BF9C3C4712BEC63F3C170C2D361BAD9C27A05B4F7BA8
+          ABABA35C5C0E651A8BC942994884E45B379175E9109AE9CBD6609BF6180EA1A8
+          EC5B928C5514001AA8D26EFE4A2DCF89E382D7A34B5B2B58F41F870347A2D0A7
+          FF00A556FE2FBB96108F69E347E1654204F4756473118B6F3C91FF8E3B06F257
+          92EB0580BEDA740FCEFCCF6BFACB1F849CF9F65FF95E439DD0CADC58BAEFCF17
+          96C3CDDD13DADA4DA14C2BE2F3702AF228389A2C4C1EE152717FE7D133E0F28A
+          E8E6696A1D2E5E11D11E54541D80BF86B65E80AE99C20E60A9A4715F3D84B0A8
+          20802403AB033866E5E0E16133A6CEE0E993B694132BF0F4C6F1E32439B63A80
+          83C6EDFA4C6CEFECF3B1BFA352ED41DC5EE43EBC160ED93F615601D08B88CEA9
+          CDDFC3EFA764B40FA09318E970F95F5AF0F97DBAAE65020000000049454E44AE
+          426082}
       end
     end
     object ContactHub: TPanel
@@ -1393,6 +1456,8 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 880
+    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1865,6 +1930,8 @@
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
+      ExplicitWidth = 880
+      ExplicitHeight = 673
       object crdImpExp: TCard
         Left = 0
         Top = 0
@@ -3805,7 +3872,7 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsContatosList
+          ActivePage = tbsContatosCad
           Align = alClient
           TabOrder = 0
           TabWidth = 100
@@ -5161,7 +5228,7 @@
                 Caption = 'Empresa'
               end
               object SpdAdicionar: TSpeedButton
-                Left = 328
+                Left = 336
                 Top = 455
                 Width = 185
                 Height = 121
@@ -5920,30 +5987,12 @@
                 TabOrder = 4
                 TextHint = 'Endere'#231'o'
               end
-              object Edit3: TEdit
-                Left = 488
-                Top = 344
-                Width = 217
-                Height = 23
-                Color = clBtnFace
-                TabOrder = 5
-                TextHint = 'Informe sua empresa'
-              end
-              object Edit4: TEdit
-                Left = 16
-                Top = 371
-                Width = 689
-                Height = 23
-                Color = clBtnFace
-                TabOrder = 6
-                TextHint = 'Observa'#231#227'o'
-              end
               object txtNumero: TEdit
                 Left = 577
                 Top = 192
                 Width = 120
                 Height = 23
-                TabOrder = 7
+                TabOrder = 5
                 TextHint = 'Numero'
               end
               object txtComplemento: TEdit
@@ -5951,7 +6000,7 @@
                 Top = 243
                 Width = 225
                 Height = 23
-                TabOrder = 8
+                TabOrder = 6
                 TextHint = 'Complemento'
               end
               object txtBairro: TEdit
@@ -5959,7 +6008,7 @@
                 Top = 243
                 Width = 425
                 Height = 23
-                TabOrder = 9
+                TabOrder = 7
                 TextHint = 'Bairro'
               end
               object txtCEP: TEdit
@@ -5967,7 +6016,7 @@
                 Top = 139
                 Width = 120
                 Height = 23
-                TabOrder = 10
+                TabOrder = 8
                 TextHint = 'CEP'
               end
               object txtLocalidade: TEdit
@@ -5975,7 +6024,7 @@
                 Top = 294
                 Width = 521
                 Height = 23
-                TabOrder = 11
+                TabOrder = 9
                 TextHint = 'Localidade'
               end
               object txtUF: TEdit
@@ -5983,8 +6032,17 @@
                 Top = 291
                 Width = 121
                 Height = 23
-                TabOrder = 12
+                TabOrder = 10
                 TextHint = 'UF'
+              end
+              object ComboBox: TComboBox
+                Left = 488
+                Top = 344
+                Width = 209
+                Height = 23
+                TabOrder = 11
+                TextHint = 'Selecione sua empresa'
+                OnChange = ComboBoxChange
               end
             end
           end
@@ -9245,18 +9303,11 @@
                   Transparent = False
                   ExplicitWidth = 86
                 end
-                object Label16: TLabel
-                  Left = 32
-                  Top = 125
-                  Width = 86
-                  Height = 15
-                  Caption = 'Nome do Grupo'
-                end
                 object SpdAdicionarGrupo: TSpeedButton
-                  Left = 56
-                  Top = 432
-                  Width = 129
-                  Height = 97
+                  Left = 48
+                  Top = 437
+                  Width = 110
+                  Height = 110
                   Caption = 'Adicionar Grupo'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -9649,10 +9700,10 @@
                   OnClick = SpdAdicionarGrupoClick
                 end
                 object SpdExcluirGrupo: TSpeedButton
-                  Left = 280
-                  Top = 438
-                  Width = 97
-                  Height = 92
+                  Left = 264
+                  Top = 437
+                  Width = 110
+                  Height = 110
                   Caption = 'Excluir Grupo'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -10045,10 +10096,10 @@
                   OnClick = SpdExcluirGrupoClick
                 end
                 object SpdEditarGrupo: TSpeedButton
-                  Left = 512
+                  Left = 496
                   Top = 437
-                  Width = 81
-                  Height = 92
+                  Width = 110
+                  Height = 110
                   Caption = 'Editar Grupo'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -10443,8 +10494,8 @@
                 object SpdRestaurarGrupos: TSpeedButton
                   Left = 704
                   Top = 437
-                  Width = 89
-                  Height = 92
+                  Width = 110
+                  Height = 110
                   Caption = 'Restaurar Grupos'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -10850,39 +10901,78 @@
                   Height = 24
                   Shape = bsBottomLine
                 end
-                object Label17: TLabel
-                  Left = 32
-                  Top = 68
-                  Width = 62
-                  Height = 15
-                  Caption = 'Id do grupo'
-                end
                 object DBGridGrupos: TDBGrid
-                  Left = 276
-                  Top = 68
-                  Width = 525
-                  Height = 226
-                  TabOrder = 2
+                  Left = 304
+                  Top = 76
+                  Width = 513
+                  Height = 245
+                  TabOrder = 0
                   TitleFont.Charset = DEFAULT_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
                   TitleFont.Name = 'Segoe UI'
                   TitleFont.Style = []
                 end
-                object Edit8: TEdit
-                  Left = 32
-                  Top = 146
-                  Width = 206
-                  Height = 23
+                object Cadastrar: TGroupBox
+                  Left = 24
+                  Top = 68
+                  Width = 257
+                  Height = 253
+                  Caption = 'Cadastrar'
                   TabOrder = 1
-                  TextHint = 'Informe o nome do Grupo'
-                end
-                object Edit7: TEdit
-                  Left = 32
-                  Top = 89
-                  Width = 206
-                  Height = 23
-                  TabOrder = 0
+                  object Label17: TLabel
+                    Left = 24
+                    Top = 29
+                    Width = 62
+                    Height = 15
+                    Caption = 'Id do grupo'
+                  end
+                  object Label16: TLabel
+                    Left = 24
+                    Top = 86
+                    Width = 86
+                    Height = 15
+                    Caption = 'Nome do Grupo'
+                  end
+                  object Edit7: TEdit
+                    Left = 24
+                    Top = 50
+                    Width = 206
+                    Height = 23
+                    TabOrder = 0
+                  end
+                  object Edit8: TEdit
+                    Left = 24
+                    Top = 107
+                    Width = 206
+                    Height = 23
+                    TabOrder = 1
+                    TextHint = 'Informe o nome do Grupo'
+                  end
+                  object GroupBox3: TGroupBox
+                    Left = 21
+                    Top = 154
+                    Width = 209
+                    Height = 77
+                    Caption = 'Status Atual do Grupo:'
+                    TabOrder = 2
+                    object rdbGrupoAtivo: TRadioButton
+                      Left = 24
+                      Top = 35
+                      Width = 65
+                      Height = 17
+                      Caption = 'Ativo'
+                      TabOrder = 0
+                    end
+                    object rdbGrupoInativo: TRadioButton
+                      Left = 120
+                      Top = 35
+                      Width = 73
+                      Height = 17
+                      Caption = 'Inativo'
+                      TabOrder = 1
+                    end
+                  end
                 end
               end
             end
@@ -10897,6 +10987,8 @@
         Caption = 'crdUsuarios'
         CardIndex = 5
         TabOrder = 5
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcUsuarios: TPageControl
           Left = 0
           Top = 0
@@ -10905,7 +10997,8 @@
           ActivePage = tbsUsuarios
           Align = alClient
           TabOrder = 0
-          ExplicitLeft = 3
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsUsuarios: TTabSheet
             Caption = 'Cadastro'
             object Panel11: TPanel
@@ -10917,6 +11010,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel12: TPanel
                 Left = 24
                 Top = 21
@@ -10945,23 +11040,23 @@
                 end
                 object Bevel8: TBevel
                   Left = 1
-                  Top = 377
+                  Top = 464
                   Width = 824
-                  Height = 32
+                  Height = 9
                   Shape = bsBottomLine
                 end
                 object Bevel10: TBevel
                   Left = 0
-                  Top = 359
+                  Top = 464
                   Width = 824
-                  Height = 34
+                  Height = 1
                   Shape = bsBottomLine
                 end
                 object spdUsuarioAdicionar: TSpeedButton
-                  Left = 56
-                  Top = 448
-                  Width = 113
-                  Height = 89
+                  Left = 24
+                  Top = 485
+                  Width = 115
+                  Height = 110
                   Caption = 'Adicionar Usuario'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -11354,10 +11449,10 @@
                   OnClick = spdUsuarioAdicionarClick
                 end
                 object spdExcluirUsuario: TSpeedButton
-                  Left = 280
-                  Top = 448
-                  Width = 105
-                  Height = 81
+                  Left = 355
+                  Top = 485
+                  Width = 115
+                  Height = 110
                   Caption = 'Excluir Usu'#225'rio'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -11750,10 +11845,10 @@
                   OnClick = spdExcluirUsuarioClick
                 end
                 object spdEditarUsuario: TSpeedButton
-                  Left = 496
-                  Top = 448
-                  Width = 97
-                  Height = 89
+                  Left = 686
+                  Top = 485
+                  Width = 115
+                  Height = 110
                   Caption = 'Editar Usu'#225'rio'
                   Glyph.Data = {
                     36300000424D3630000000000000360000002800000040000000400000000100
@@ -12147,91 +12242,93 @@
                 end
                 object Label19: TLabel
                   Left = 24
-                  Top = 52
+                  Top = 44
                   Width = 56
                   Height = 15
                   Caption = 'ID_Usu'#225'rio'
                 end
                 object Label21: TLabel
                   Left = 184
-                  Top = 52
+                  Top = 44
                   Width = 93
                   Height = 15
                   Caption = 'Nome do Usu'#225'rio'
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 111
+                  Top = 90
                   Width = 34
                   Height = 15
                   Caption = 'E-mail'
                 end
                 object Label23: TLabel
                   Left = 570
-                  Top = 176
+                  Top = 144
                   Width = 57
                   Height = 15
                   Caption = 'Criado_em'
                 end
                 object Label24: TLabel
                   Left = 567
-                  Top = 246
+                  Top = 205
                   Width = 78
                   Height = 15
                   Caption = 'Atualizado_em'
                 end
                 object Label25: TLabel
                   Left = 250
-                  Top = 176
+                  Top = 144
                   Width = 32
                   Height = 15
                   Caption = 'Senha'
                 end
                 object Label26: TLabel
                   Left = 250
-                  Top = 246
+                  Top = 205
                   Width = 49
                   Height = 15
                   Caption = 'Tel. / Cel.'
                 end
                 object edtIdUsuario: TEdit
                   Left = 24
-                  Top = 73
+                  Top = 65
                   Width = 121
                   Height = 23
                   TabOrder = 0
                 end
                 object edtNomeUsuario: TEdit
                   Left = 184
-                  Top = 73
+                  Top = 65
                   Width = 321
                   Height = 23
                   TabOrder = 1
                 end
                 object edtUsuarioEmail: TEdit
                   Left = 24
-                  Top = 132
+                  Top = 111
                   Width = 481
                   Height = 23
                   TabOrder = 2
                 end
                 object edtCriadoEm: TEdit
                   Left = 567
-                  Top = 197
+                  Top = 165
                   Width = 234
                   Height = 23
-                  TabOrder = 3
+                  Enabled = False
+                  TabOrder = 7
                 end
                 object edtAtualizadoEm: TEdit
                   Left = 567
-                  Top = 267
-                  Width = 226
+                  Top = 226
+                  Width = 234
                   Height = 23
-                  TabOrder = 4
+                  Enabled = False
+                  TabOrder = 8
                 end
                 object GroupBox1: TGroupBox
                   Left = 24
-                  Top = 184
+                  Top = 140
                   Width = 193
                   Height = 149
                   Caption = 'N'#237'vel do Usu'#225'rio:'
@@ -12263,14 +12360,14 @@
                 end
                 object GroupBox2: TGroupBox
                   Left = 560
-                  Top = 62
+                  Top = 54
                   Width = 241
-                  Height = 93
+                  Height = 80
                   Caption = 'Status Atual do Usu'#225'rio:'
                   TabOrder = 6
                   object rdbUsuarioAtivo: TRadioButton
                     Left = 40
-                    Top = 48
+                    Top = 40
                     Width = 65
                     Height = 17
                     Caption = 'Ativo'
@@ -12278,7 +12375,7 @@
                   end
                   object rdbUsuarioInativo: TRadioButton
                     Left = 136
-                    Top = 48
+                    Top = 40
                     Width = 73
                     Height = 17
                     Caption = 'Inativo'
@@ -12287,35 +12384,34 @@
                 end
                 object edtUsuarioSenha: TEdit
                   Left = 248
-                  Top = 197
-                  Width = 257
+                  Top = 165
+                  Width = 153
                   Height = 23
-                  TabOrder = 7
+                  TabOrder = 3
                 end
-                object edtUsuarioTelefone: TEdit
+                object DBGridPerm: TDBGrid
+                  Left = 24
+                  Top = 304
+                  Width = 777
+                  Height = 145
+                  TabOrder = 9
+                  TitleFont.Charset = DEFAULT_CHARSET
+                  TitleFont.Color = clWindowText
+                  TitleFont.Height = -12
+                  TitleFont.Name = 'Segoe UI'
+                  TitleFont.Style = []
+                end
+                object edmUsuarioTelefone: TMaskEdit
                   Left = 248
-                  Top = 267
-                  Width = 257
+                  Top = 226
+                  Width = 149
                   Height = 23
-                  TabOrder = 8
+                  EditMask = '!\(99\)00000-0000;1;_'
+                  MaxLength = 14
+                  TabOrder = 4
+                  Text = '(  )     -    '
                 end
               end
-            end
-          end
-          object tbsUsuariosList: TTabSheet
-            Caption = 'tbsUsuariosList'
-            ImageIndex = 1
-            object DBGridPerm: TDBGrid
-              Left = 27
-              Top = 39
-              Width = 833
-              Height = 321
-              TabOrder = 0
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -12
-              TitleFont.Name = 'Segoe UI'
-              TitleFont.Style = []
             end
           end
         end
@@ -12943,8 +13039,8 @@
   end
   object OpenDialog1: TOpenDialog
     Filter = 'vCard (*.vcf)|*.vcf|Todos os arquivos (*.*)|*.*'
-    Left = 452
-    Top = 447
+    Left = 620
+    Top = 375
   end
   object mtbContatos: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -12954,22 +13050,22 @@
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 564
-    Top = 402
+    Left = 732
+    Top = 330
   end
   object fdcContatos: TSQLConnection
-    Left = 676
-    Top = 402
+    Left = 844
+    Top = 330
   end
   object dsContatos: TDataSource
-    Left = 780
-    Top = 394
+    Left = 948
+    Top = 322
   end
   object cdsContatos: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 884
-    Top = 402
+    Left = 1052
+    Top = 330
   end
   object qryContatos: TSQLQuery
     MaxBlobSize = -1
@@ -12977,8 +13073,8 @@
     SQL.Strings = (
       'SELECT * FROM "Contato" ORDER BY nome;')
     SQLConnection = fdcContatos
-    Left = 996
-    Top = 402
+    Left = 1164
+    Top = 330
   end
   object mtbImportCont: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -12988,27 +13084,27 @@
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 564
-    Top = 447
+    Left = 732
+    Top = 375
   end
   object fdcImportCont: TSQLConnection
-    Left = 676
-    Top = 447
+    Left = 844
+    Top = 375
   end
   object dsImportCont: TDataSource
-    Left = 780
-    Top = 447
+    Left = 948
+    Top = 375
   end
   object cdsImportCont: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 884
-    Top = 447
+    Left = 1052
+    Top = 375
   end
   object qryImportCont: TSQLQuery
     Params = <>
-    Left = 996
-    Top = 447
+    Left = 1164
+    Top = 375
   end
   object frxDBDados: TfrxDBDataset
     UserName = 'Contatos'
@@ -13016,11 +13112,11 @@
     DataSet = qryRelContatos
     BCDToCurrency = False
     DataSetOptions = []
-    Left = 668
-    Top = 570
+    Left = 708
+    Top = 450
   end
   object frxReportContatosNome: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -13035,8 +13131,8 @@
       'begin'
       ''
       'end.')
-    Left = 876
-    Top = 570
+    Left = 916
+    Top = 450
     Datasets = <
       item
         DataSet = frxDBDados
@@ -17915,7 +18011,7 @@
     end
   end
   object frxReportContatosTelefone: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -17930,8 +18026,8 @@
       'begin'
       ''
       'end.')
-    Left = 1028
-    Top = 570
+    Left = 1068
+    Top = 450
     Datasets = <
       item
         DataSet = frxDBDados
@@ -22805,7 +22901,7 @@
     end
   end
   object frxReportUsuariosNome: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -22820,8 +22916,8 @@
       'begin'
       ''
       'end.')
-    Left = 876
-    Top = 624
+    Left = 916
+    Top = 504
     Datasets = <
       item
         DataSet = frxDBUsuarios
@@ -27820,8 +27916,8 @@
       'SELECT id_contato, nome, telefone, email'
       'FROM "Contato"'
       'ORDER BY nome;')
-    Left = 756
-    Top = 570
+    Left = 796
+    Top = 450
   end
   object FDConnRel: TFDConnection
     Params.Strings = (
@@ -27833,8 +27929,8 @@
       'Port=5432')
     Connected = True
     LoginPrompt = False
-    Left = 580
-    Top = 570
+    Left = 620
+    Top = 450
   end
   object qryRelUsuarios: TFDQuery
     Active = True
@@ -27849,8 +27945,8 @@
       '            telefone'
       'FROM "Usuario"'
       'ORDER BY nome ASC;')
-    Left = 756
-    Top = 624
+    Left = 796
+    Top = 504
   end
   object frxDBUsuarios: TfrxDBDataset
     UserName = 'Usuarios'
@@ -27858,12 +27954,18 @@
     DataSet = qryRelUsuarios
     BCDToCurrency = False
     DataSetOptions = []
-    Left = 668
-    Top = 624
+    Left = 708
+    Top = 504
   end
   object qryUsuarioCRUD: TFDQuery
     Connection = FDConnRel
-    Left = 1116
-    Top = 479
+    Left = 1092
+    Top = 511
+  end
+  object TClientDataSet: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 948
+    Top = 575
   end
 end
