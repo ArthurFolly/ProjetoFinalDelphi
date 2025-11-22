@@ -8,7 +8,8 @@ uses
   FireDAC.DApt,
   TContatosModel,
   SysUtils,
-  System.Generics.Collections;
+  System.Generics.Collections,
+  Data.DB;  // << ADICIONE ESTA LINHA
 
 type
   TContatosRepository = class
@@ -20,6 +21,7 @@ type
 
     function Adicionar(AContato: Contatos): Boolean;
     function Atualizar(AContato: Contatos): Boolean;
+    function Excluir(AId: Integer): Boolean;   // << NOVA FUNÇÃO
     function BuscarPorId(AId: Integer): Contatos;
     function ListarTodos: TObjectList<Contatos>;
     function BuscarPorNome(ANome: string): TObjectList<Contatos>;
@@ -69,11 +71,15 @@ begin
   query.ParamByName('telefone').AsString  := AContato.Telefone;
   query.ParamByName('email').AsString     := AContato.Email;
 
-  // --------- ID_EMPRESA: manda NULL quando não tiver empresa ----------
-  if (AContato.IdEmpresa <= 0) then
-    query.ParamByName('id_empresa').Clear  // grava NULL no PostgreSQL
-  else
-    query.ParamByName('id_empresa').AsInteger := AContato.IdEmpresa;
+  // --------- ID_EMPRESA: garante tipo e manda NULL quando não tiver empresa ----------
+  with query.ParamByName('id_empresa') do
+  begin
+    DataType := ftInteger;  // IMPORTANTE para evitar o erro [ID_EMPRESA] data type is unknown
+    if (AContato.IdEmpresa <= 0) then
+      Clear                    // grava NULL no PostgreSQL
+    else
+      AsInteger := AContato.IdEmpresa;
+  end;
 
   // Nome da empresa (campo texto, opcional)
   query.ParamByName('empresa').AsString   := AContato.Empresa;
@@ -89,7 +95,8 @@ begin
   query.ParamByName('uf').AsString            := AContato.UF;
   query.ParamByName('ativo').AsBoolean        := AContato.Ativo;
 
-  query.Open; // por causa do RETURNING
+  // Como usamos RETURNING, abrimos o dataset para pegar o id gerado
+  query.Open;
 
   if not query.Eof then
   begin
@@ -113,7 +120,7 @@ begin
     ' nome = :nome, ' +
     ' telefone = :telefone, ' +
     ' email = :email, ' +
-    ' id_empresa = :id_empresa, ' + // <--- incluído
+    ' id_empresa = :id_empresa, ' +
     ' empresa = :empresa, ' +
     ' endereco = :endereco, ' +
     ' observacoes = :observacoes, ' +
@@ -132,11 +139,15 @@ begin
   query.ParamByName('telefone').AsString    := AContato.Telefone;
   query.ParamByName('email').AsString       := AContato.Email;
 
-  // --------- ID_EMPRESA: manda NULL quando não tiver empresa ----------
-  if (AContato.IdEmpresa <= 0) then
-    query.ParamByName('id_empresa').Clear
-  else
-    query.ParamByName('id_empresa').AsInteger := AContato.IdEmpresa;
+  // --------- ID_EMPRESA: garante tipo e manda NULL quando não tiver empresa ----------
+  with query.ParamByName('id_empresa') do
+  begin
+    DataType := ftInteger;  // evita o erro de tipo desconhecido
+    if (AContato.IdEmpresa <= 0) then
+      Clear
+    else
+      AsInteger := AContato.IdEmpresa;
+  end;
 
   query.ParamByName('empresa').AsString      := AContato.Empresa;
   query.ParamByName('endereco').AsString     := AContato.Endereco;
@@ -153,6 +164,22 @@ begin
   query.ExecSQL;
   Result := query.RowsAffected > 0;
 end;
+
+function TContatosRepository.Excluir(AId: Integer): Boolean;
+begin
+  Result := False;
+  query.SQL.Clear;
+
+  query.SQL.Text :=
+    'DELETE FROM public."Contato" ' +
+    'WHERE id_contato = :id';
+
+  query.ParamByName('id').AsInteger := AId;
+
+  query.ExecSQL;
+  Result := query.RowsAffected > 0;
+end;
+
 
 // ====================================================================
 // Preenchimento comum do Model a partir do Dataset

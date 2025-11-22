@@ -39,37 +39,48 @@ implementation
 
 
 function UsuarioRepository.AutenticarUsuario(email, senha: String): TUsuario;
-
-var Usuario : TUsuario;
-    senhaHash: String;
-
+var
+  Usuario  : TUsuario;
+  senhaHash: String;
 begin
-    Result := nil;
+  Result := nil;
 
-    senhaHash := GerarHashSenha(senha);
+  senhaHash := GerarHashSenha(senha);
 
+  Self.query.Close;
+  Self.query.SQL.Clear;
+  Self.query.SQL.Text :=
+    'SELECT id_usuario, nome, email, telefone, senha_hash, nivel_usuario, ativo ' +
+    'FROM "Usuario" ' +
+    'WHERE email = :email AND senha_hash = :senha_hash';
 
-    Self.query.Close;
-    Self.query.SQL.Clear;
-    Self.query.SQL.Text := 'SELECT * FROM "Usuario" WHERE email = :email AND senha_hash = :senha_hash';
-    Self.query.ParamByName('email').AsString := email;
-    Self.query.ParamByName('senha_hash').AsString := senhaHash;
-    Self.query.Open();
+  Self.query.ParamByName('email').AsString      := email;
+  Self.query.ParamByName('senha_hash').AsString := senhaHash;
+  Self.query.Open;
 
-    if not Self.query.IsEmpty then begin
-      Usuario := TUsuario.Create;
-      Usuario.Email := Self.query.FieldByName('email').AsString;
-      Usuario.Nome := Self.query.FieldByName('nome').AsString;
-      Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-      Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
-      //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
-      Result := Usuario;
-    end;
-    Self.query.Close;
+  if not Self.query.IsEmpty then
+  begin
+    Usuario := TUsuario.Create;
 
+    // campos básicos
+    Usuario.Id       := Self.query.FieldByName('id_usuario').AsInteger;
+    Usuario.Nome     := Self.query.FieldByName('nome').AsString;
+    Usuario.Email    := Self.query.FieldByName('email').AsString;
+    Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
+    Usuario.Senha    := Self.query.FieldByName('senha_hash').AsString;
 
+    // **CAMPO QUE FALTAVA**  -> vem da coluna nivel_usuario do banco
+    Usuario.NivelUsuario := Self.query.FieldByName('nivel_usuario').AsInteger;
 
+    // opcional, mas recomendável
+    Usuario.Ativo := Self.query.FieldByName('ativo').AsBoolean;
+
+    Result := Usuario;
+  end;
+
+  Self.query.Close;
 end;
+
 
 function UsuarioRepository.BuscarPorEmail(email: String): TUsuario;
 var Usuario: TUsuario;
@@ -95,51 +106,40 @@ begin
 
 end;
 
-function UsuarioRepository.BuscarUsuarioPorId(id: integer): TUsuario;
-var Usuario : TUsuario;
+function UsuarioRepository.BuscarUsuarioPorId(id: Integer): TUsuario;
+var
+  Usuario: TUsuario;
 begin
+  Result := nil;
 
+  Self.query.Close;
+  Self.query.SQL.Clear;
+  Self.query.SQL.Text :=
+    'SELECT id_usuario, nome, email, telefone, senha_hash, nivel_usuario, ativo ' +
+    'FROM "Usuario" ' +
+    'WHERE id_usuario = :id_usuario';
+
+  Self.query.ParamByName('id_usuario').AsInteger := id;
+  Self.query.Open;
+
+  if not Self.query.IsEmpty then
+  begin
     Usuario := TUsuario.Create;
+    Usuario.Id           := Self.query.FieldByName('id_usuario').AsInteger;
+    Usuario.Nome         := Self.query.FieldByName('nome').AsString;
+    Usuario.Email        := Self.query.FieldByName('email').AsString;
+    Usuario.Telefone     := Self.query.FieldByName('telefone').AsString;
+    Usuario.Senha        := Self.query.FieldByName('senha_hash').AsString;
+    Usuario.NivelUsuario := Self.query.FieldByName('nivel_usuario').AsInteger;
+    Usuario.Ativo        := Self.query.FieldByName('ativo').AsBoolean;
 
-     Self.query.SQL.Text := 'SELECT * FROM usuario WHERE id_usuario = :id  '; // DEFINE O COMANDO SQL
-     Self.query.ParamByName('id_usuario').AsInteger := id;
-     Self.query.Open(); // EXECUTA E RETORNA DADOS
+    Result := Usuario;
+  end;
 
-
-
-
-//     Self.query.ExecSQL;          // S� EXECUTA O COMANDO E N�O RETORNA NADA
-
-
-     // PARA ACESSAR OS DADOS
-     // CASO SEJAM V�RIOS RESULTADOS
-     if not Self.query.IsEmpty then begin
-       Usuario.Email := Self.query.FieldByName('email').AsString;
-        Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger;
-        Usuario.Nome := Self.query.FieldByName('nome').AsString;
-        Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-        Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
-        //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
-
-
-
-      while not Self.query.Eof do begin // Percorre os resultados at� chegar ao final (query.Eof)
-        Usuario.Email := Self.query.FieldByName('email').AsString; // acessa o campo email e retorna com string
-        Usuario.Id := Self.query.FieldByName('id_usuario').AsInteger; //acessa o id e retorna como integer
-        Usuario.Nome := Self.query.FieldByName('nome').AsString;
-        Usuario.Telefone := Self.query.FieldByName('telefone').AsString;
-        Usuario.Senha := Self.query.FieldByName('senha_hash').AsString;
-        //Usuario.TipoUsuario := Self.query.FieldByName('tipo_usuario').AsString;
-        Self.query.Next; // Vai para o pr�ximo usu�rio
-      end;
-     end;
-     // CASO SEJA S� UM RESULTADO
-//     Self.query.FieldByName('');
-
-     // Depois que terminar de usar tudo
-     Self.query.Close;
-     Result := Usuario;
+  Self.query.Close;
 end;
+
+
 constructor UsuarioRepository.Create;
 begin
 
@@ -158,14 +158,13 @@ begin
 
 end;
 
-
-
 function UsuarioRepository.GerarHashSenha(senha: String): String;
 begin
 
   Result := THashMD5.GetHashString(senha);
 
 end;
+
 function UsuarioRepository.Salvar(usuario: TUsuario): Boolean;
 var
   senhaHash: String;
@@ -194,8 +193,6 @@ begin
     Result := False;
   end;
 end;
-
-
 
 function UsuarioRepository.VerificarSenha(email, senha: string): Boolean;
 

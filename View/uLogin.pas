@@ -44,7 +44,9 @@ var
 
 implementation
 
-  uses uCadastroUsuariosView,System.Hash;
+uses
+  uCadastroUsuariosView, System.Hash, uSessao;
+
 
 {$R *.dfm}
 
@@ -89,56 +91,65 @@ end;
 
 
 procedure TFLogin.Panel1Click(Sender: TObject);
-
- var Usuario :TUsuario;
-     Mensagem : String;
-
+var
+  Usuario : TUsuario;
+  Mensagem: string;
 begin
-
-if (Trim(EditEmail.Text) = '') or  (Trim(EditSenha.Text) = '') then begin
-  if Trim(EditEmail.Text) = '' then  begin
-   ShowMessage('Preencha os campos, Corretamente');
-  EditEmail.SetFocus;
-
-  end else  begin
-
-
-    EditSenha.SetFocus;
-
+  // 1) Validação simples dos campos
+  if Trim(EditEmail.Text) = '' then
+  begin
+    ShowMessage('Preencha o e-mail.');
+    EditEmail.SetFocus;
+    Exit;
   end;
 
-  Exit;
+  if Trim(EditSenha.Text) = '' then
+  begin
+    ShowMessage('Preencha a senha.');
+    EditSenha.SetFocus;
+    Exit;
+  end;
 
+  // 2) Chama o controller para autenticar
+  Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text, Mensagem);
 
-end;
-
-Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text,Mensagem);
-
-  if Assigned(Usuario) then begin
+  // 3) Se encontrou usuário válido
+  if Assigned(Usuario) then
+  begin
+    // --- grava a sessão global ---
+    SessaoUsuarioID    := Usuario.Id;
+    SessaoUsuarioNome  := Usuario.Nome;
+    SessaoNivelUsuario := Usuario.NivelUsuario;  // << AQUI VEM O 1, 2 ou 3 DO BANCO
 
     ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
+
     EditEmail.Clear;
     EditSenha.Clear;
 
-
+    // Esconde o login
     Self.Hide;
 
-
+    // Mantém o estado da janela principal
     if WindowState = wsMaximized then
-
       FMain.WindowState := wsMaximized
     else
       FMain.WindowState := wsNormal;
 
+    // Aplica as permissões na tela principal
+    FMain.AplicarPermissoesUsuario;
+
+    // Mostra a tela principal
     FMain.Show;
-
-  end else begin
-
+  end
+  else
+  begin
+    // 4) Deu erro na autenticação
     ShowMessage(Mensagem);
     EditSenha.Clear;
     EditSenha.SetFocus;
   end;
 end;
+
 
 
 

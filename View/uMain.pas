@@ -19,7 +19,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, frxSmartMemo, frxClass,
-  frCoreClasses, frxDBSet, TUsuarioModel,UsuarioController;
+  frCoreClasses, frxDBSet, TUsuarioModel, UsuarioController, uSessao;
 
 type
   TFMain = class(TForm)
@@ -216,6 +216,9 @@ type
     rdbGrupoInativo: TRadioButton;
     DBGridPerm: TDBGrid;
     edmUsuarioTelefone: TMaskEdit;
+    Label27: TLabel;
+    lblUsuarioLogado: TLabel;
+    lblNivel: TLabel;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -271,6 +274,10 @@ type
     procedure SpdExcluirGrupoClick(Sender: TObject);
     procedure spdExcluirUsuarioClick(Sender: TObject);
     procedure spdEditarUsuarioClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+
+  public
+    procedure AplicarPermissoesUsuario;
 
   private
     Editando: Boolean;
@@ -453,6 +460,11 @@ begin
 
   PrepareMemTable;
   ConfigurarGrid;
+
+  // Aplica permissões iniciais (caso SessaoNivelUsuario ainda seja 0,
+  // tudo que depender de nível vai ficar desabilitado)
+  AplicarPermissoesUsuario;
+
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
@@ -521,6 +533,14 @@ begin
   end;
 end;
 
+procedure TFMain.FormShow(Sender: TObject);
+begin
+  lblUsuarioLogado.Caption := 'Usuário Logado: ' + SessaoUsuarioNome;
+  lblNivel.Caption         := 'Nível: ' + IntToStr(SessaoNivelUsuario);
+end;
+
+
+
 procedure TFMain.LogoClick(Sender: TObject);
 begin
   Logo.Stretch := True;
@@ -528,7 +548,119 @@ begin
   Logo.Center := True;
 end;
 
+
+
 {$ENDREGION}
+
+// ----- Controle de Permissao dos usuarios
+{$REGION 'CONTROLE DE PERMISSÃO - USUÁRIOS'}
+procedure TFMain.AplicarPermissoesUsuario;
+begin
+  // Se por algum motivo o nível ainda não estiver definido (0),
+  // desabilita tudo que depende de permissão explícita.
+  if SessaoNivelUsuario <= 0 then
+  begin
+    // Usuários
+    spdUsuarioAdicionar.Enabled := False;
+    spdEditarUsuario.Enabled    := False;
+    spdExcluirUsuario.Enabled   := False;
+
+    // Contatos
+    SpdAdicionar.Enabled        := False;
+    SpdEditarContatosGrid.Enabled := False;
+    SpdExcluir.Enabled          := False;
+
+    // Favoritos
+    SpdAdicionarFavorito.Enabled := False;
+    SpdRemoverFavorito.Enabled   := False;
+
+    // Grupos
+    SpdAdicionarGrupo.Enabled    := False;
+    SpdEditarGrupo.Enabled       := False;
+    SpdExcluirGrupo.Enabled      := False;
+    SpdRestaurarGrupos.Enabled   := False;
+
+    // Empresas
+    SpdAdicionarEmpresa.Enabled  := False;
+    SpdEditarEmpresa.Enabled     := False;
+    SpdExcluirEmpresa.Enabled    := False;
+    SpdRestaurarEmpresa.Enabled  := False;
+
+    Exit;
+  end;
+
+  // ===============================
+  // USUÁRIOS
+  // ===============================
+  // Nível 1 = Usuário    -> não mexe em usuários
+  // Nível 2 = Supervisor -> não cadastrar/editar/ecluir usuários
+  // Nível 3 = Admin      -> tudo liberado
+
+  // Cadastrar
+  spdUsuarioAdicionar.Enabled := (SessaoNivelUsuario >= 3); // só nível 3
+
+  // Alterar
+  spdEditarUsuario.Enabled    := (SessaoNivelUsuario >= 3); // só nível 3
+
+  // Excluir
+  spdExcluirUsuario.Enabled   := (SessaoNivelUsuario >= 3); // só nível  3
+
+
+  // ===============================
+  // CONTATOS
+  // ===============================
+  // Pela tabela: todos os níveis podem Cadastrar / Consultar / Alterar / Excluir
+  SpdAdicionar.Enabled := True;
+  SpdEditarContatosGrid.Enabled := True;
+  SpdExcluir.Enabled   := True;
+
+
+  // ===============================
+  // FAVORITOS
+  // ===============================
+  // Cadastrar / Alterar: todos os níveis podem
+  SpdAdicionarFavorito.Enabled := True;
+
+  // Excluir Favorito:
+  //   Nível 1: S
+  //   Nível 2: N
+  //   Nível 3: S
+  SpdRemoverFavorito.Enabled := (SessaoNivelUsuario <> 2);
+
+
+  // ===============================
+  // GRUPOS
+  // ===============================
+  // Cadastrar / Consultar / Alterar: S para níveis 1, 2 e 3
+  SpdAdicionarGrupo.Enabled  := True;
+  SpdEditarGrupo.Enabled     := True;
+  SpdRestaurarGrupos.Enabled := True;
+
+  // Excluir Grupo:
+  //   Nível 1: N
+  //   Nível 2: N
+  //   Nível 3: S
+  SpdExcluirGrupo.Enabled := (SessaoNivelUsuario >= 3);
+
+
+  // ===============================
+  // EMPRESAS
+  // ===============================
+  // Cadastrar / Alterar / Excluir / Restaurar:
+  //   Nível 1: N
+  //   Nível 2: N
+  //   Nível 3: S
+  SpdAdicionarEmpresa.Enabled := (SessaoNivelUsuario >= 2);
+  SpdEditarEmpresa.Enabled    := (SessaoNivelUsuario >= 3);
+  SpdExcluirEmpresa.Enabled   := (SessaoNivelUsuario >= 3);
+  SpdRestaurarEmpresa.Enabled := (SessaoNivelUsuario >= 3);
+end;
+
+
+
+{$ENDREGION}
+
+
 
 {$REGION 'Configuração de grids e datasets (Contatos, Empresas, Favoritos, Grupos)'}
 
@@ -1599,6 +1731,7 @@ begin
   end;
 end;
 
+
 procedure TFMain.PreencherCamposUsuario(AUsuario: TUsuario);
 begin
   if AUsuario = nil then
@@ -2108,7 +2241,7 @@ end;
 procedure TFMain.SpdExcluirClick(Sender: TObject);
 var
   Contato: Contatos;
-  Mensagem:String;
+  Mensagem: string;
 begin
   Contato := ContatoSelecionado;
   if Contato = nil then
@@ -2117,16 +2250,18 @@ begin
     Exit;
   end;
 
-  if MessageDlg('Deseja realmente excluir este contato?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  if MessageDlg(
+       'Deseja realmente EXCLUIR DEFINITIVAMENTE este contato do banco de dados?',
+       mtConfirmation, [mbYes, mbNo], 0
+     ) = mrYes then
   begin
-    Contato.Ativo := False;
-    if ContatosController.AtualizarContato(Contato, Mensagem) then
+    if ContatosController.ExcluirContato(Contato.Id, Mensagem) then
     begin
-      ShowMessage('Contato excluído com sucesso!');
-      CarregarContatosDB;
+      ShowMessage(Mensagem);
+      CarregarContatosDB;   // atualiza o DBGrid
     end
     else
-      ShowMessage('Erro ao excluir o contato!');
+      ShowMessage(Mensagem);
   end;
 end;
 

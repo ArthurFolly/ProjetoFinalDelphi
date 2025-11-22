@@ -17,7 +17,7 @@ type
 
     function AdicionarContato(AContato: Contatos; out Mensagem: string): Boolean;
     function AtualizarContato(AContato: Contatos; out Mensagem: string): Boolean;
-
+    function ExcluirContato(AId: Integer; out Mensagem: string): Boolean; // << NOVA
     function ListarContatos: TObjectList<Contatos>;
     procedure CarregarContatos(ALista: TObjectList<Contatos>);
 
@@ -140,6 +140,32 @@ begin
     Exit(False);
   end;
 end;
+
+function TContatosController.ExcluirContato(AId: Integer; out Mensagem: string): Boolean;
+begin
+  Mensagem := '';
+
+  try
+    if ContatosRepository.Excluir(AId) then
+    begin
+      Mensagem := 'Contato excluído com sucesso!';
+      Result   := True;
+    end
+    else
+    begin
+      Mensagem := 'Contato não encontrado ou já excluído.';
+      Result   := False;
+    end;
+  except
+    on E: Exception do
+    begin
+      Mensagem := 'Erro ao excluir contato: ' + E.Message;
+      Result   := False;
+    end;
+  end;
+end;
+
+
 
 // ====================================================================
 // LISTAR

@@ -3,7 +3,11 @@ unit UsuarioController;
 interface
 
 uses
-  FireDAC.Comp.Client, System.SysUtils, System.Generics.Collections, TUsuarioModel;
+  FireDAC.Comp.Client,
+  System.SysUtils,
+  System.Generics.Collections,
+  System.Hash,          // << ADICIONE ESTA LINHA
+  TUsuarioModel;
 
 type
   TUsuarioController = class
@@ -39,8 +43,7 @@ type
 
 implementation
 
-uses
-  System.Hash;
+
 
 { TUsuarioController }
 
@@ -59,8 +62,11 @@ function TUsuarioController.HashSenha(const Senha: string): string;
 begin
   if Trim(Senha) = '' then
     Exit('');
-  Result := THashSHA2.GetHashString(Senha, SHA256);
+
+  // Mesmo algoritmo do TUsuarioRepository e do Arthur: MD5
+  Result := THashMD5.GetHashString(Senha);
 end;
+
 
 function TUsuarioController.Login(const Email, Senha: string;
   out Nome: string; out Nivel, IdUsuario: Integer): Boolean;

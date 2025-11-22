@@ -16,6 +16,7 @@
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
+  OnShow = FormShow
   TextHeight = 15
   object Bevel4: TBevel
     Left = 608
@@ -33,6 +34,48 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
+    ExplicitHeight = 673
+    object Label27: TLabel
+      Left = 136
+      Top = 536
+      Width = 97
+      Height = 17
+      Caption = 'Usu'#225'rio Logado:'
+      Color = clBlack
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+    end
+    object lblUsuarioLogado: TLabel
+      Left = 7
+      Top = 660
+      Width = 103
+      Height = 20
+      Caption = 'Usu'#225'rio Logado:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clYellow
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsItalic]
+      ParentFont = False
+    end
+    object lblNivel: TLabel
+      Left = 279
+      Top = 660
+      Width = 36
+      Height = 20
+      Caption = 'N'#237'vel:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clYellow
+      Font.Height = -15
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsItalic]
+      ParentFont = False
+    end
     object pnlImportExport: TPanel
       AlignWithMargins = True
       Left = 3
@@ -1379,6 +1422,8 @@
       OnClick = pnlRelatoriosClick
       OnMouseEnter = pnlRelatoriosMouseEnter
       OnMouseLeave = pnlRelatoriosMouseLeave
+      ExplicitLeft = 20
+      ExplicitTop = 460
       object imgRelatorios: TImage
         Left = 0
         Top = 0
@@ -1455,6 +1500,8 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 880
+    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1923,10 +1970,12 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdUsuarios
+      ActiveCard = crdContatos
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
+      ExplicitWidth = 880
+      ExplicitHeight = 673
       object crdImpExp: TCard
         Left = 0
         Top = 0
@@ -3862,6 +3911,8 @@
         CardIndex = 1
         CardVisible = False
         TabOrder = 1
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcContatos: TPageControl
           Left = 0
           Top = 0
@@ -3872,6 +3923,8 @@
           TabOrder = 0
           TabWidth = 100
           Visible = False
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsContatosList: TTabSheet
             Caption = 'Lista'
             object Panel2: TPanel
@@ -5147,6 +5200,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
             end
             object Panel4: TPanel
               Left = 16
@@ -5159,7 +5214,7 @@
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 248
+                Width = 839
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -5172,6 +5227,7 @@
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
+                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -6081,7 +6137,7 @@
                 object Label5: TLabel
                   Left = 1
                   Top = 1
-                  Width = 95
+                  Width = 823
                   Height = 32
                   Align = alTop
                   Caption = 'Favoritos'
@@ -6094,6 +6150,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 95
                 end
                 object SpdAdicionarFavorito: TSpeedButton
                   Left = 52
@@ -6959,7 +7016,7 @@
                 object Label6: TLabel
                   Left = 1
                   Top = 1
-                  Width = 227
+                  Width = 791
                   Height = 32
                   Align = alTop
                   Caption = 'Cadastro De Empresa'
@@ -6972,6 +7029,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 227
                 end
                 object Label7: TLabel
                   Left = 32
@@ -8021,7 +8079,7 @@
                 object Label14: TLabel
                   Left = 1
                   Top = 1
-                  Width = 188
+                  Width = 799
                   Height = 32
                   Align = alTop
                   Caption = 'Lista de Empresas'
@@ -8034,6 +8092,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 188
                 end
                 object SpdEditarEmpresa: TSpeedButton
                   Left = 368
@@ -9279,7 +9338,7 @@
                 object Label15: TLabel
                   Left = 1
                   Top = 1
-                  Width = 86
+                  Width = 839
                   Height = 37
                   Align = alTop
                   Caption = 'Grupos'
@@ -9292,6 +9351,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 86
                 end
                 object SpdAdicionarGrupo: TSpeedButton
                   Left = 48
@@ -13100,7 +13160,7 @@
     Top = 450
   end
   object frxReportContatosNome: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -17995,7 +18055,7 @@
     end
   end
   object frxReportContatosTelefone: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -22885,7 +22945,7 @@
     end
   end
   object frxReportUsuariosNome: TfrxReport
-    Version = '2026.1.2'
+    Version = '2026.1.1'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
