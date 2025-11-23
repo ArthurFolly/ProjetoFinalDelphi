@@ -162,6 +162,7 @@
         <DCCReference Include="Repository\VCardImportRepository.pas"/>
         <DCCReference Include="Controller\UsuarioController.pas"/>
         <DCCReference Include="Core\uSessao.pas"/>
+        <DCCReference Include="Repository\LogsRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

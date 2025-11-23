@@ -25,7 +25,8 @@ uses
   VCardImportController in 'Controller\VCardImportController.pas',
   VCardImportRepository in 'Repository\VCardImportRepository.pas',
   UsuarioController in 'Controller\UsuarioController.pas',
-  uSessao in 'Core\uSessao.pas';
+  uSessao in 'Core\uSessao.pas',
+  LogsRepository in 'Repository\LogsRepository.pas';
 
 {$R *.res}
 

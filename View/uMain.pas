@@ -19,7 +19,8 @@ uses
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, VCardImportController,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait, frxSmartMemo, frxClass,
-  frCoreClasses, frxDBSet, TUsuarioModel, UsuarioController, uSessao;
+  frCoreClasses, frxDBSet, TUsuarioModel, UsuarioController,
+  uSessao;
 
 type
   TFMain = class(TForm)
@@ -219,6 +220,15 @@ type
     Label27: TLabel;
     lblUsuarioLogado: TLabel;
     lblNivel: TLabel;
+    tbsLogs: TTabSheet;
+    spdExportarVCF: TSpeedButton;
+    spdExportarTXT: TSpeedButton;
+    memExportVCF: TMemo;
+    SaveDialogVCF: TSaveDialog;
+    SaveDialogTXT: TSaveDialog;
+    dbgLogsUsuarios: TDBGrid;
+    spdListarLogs: TSpeedButton;
+
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -275,6 +285,9 @@ type
     procedure spdExcluirUsuarioClick(Sender: TObject);
     procedure spdEditarUsuarioClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure spdExportarVCFClick(Sender: TObject);
+    procedure spdExportarTXTClick(Sender: TObject);
+    procedure spdListarLogsClick(Sender: TObject);
 
   public
     procedure AplicarPermissoesUsuario;
@@ -313,6 +326,11 @@ type
     EditandoGrupo: Boolean;
     GrupoAtualId: Integer;
     GruposController: TGruposController;
+
+    // === LOGS DE USUÁRIOS ===
+    ClientDataSetLogs: TClientDataSet;
+    DataSourceLogs: TDataSource;
+
 
     // === GRUPOS - MÉTODOS ===
     procedure ConfigurarDBGridGrupos;
@@ -359,6 +377,9 @@ type
     procedure PreencherFormularioEmpresa(TEmpresa: TEmpresa);
     procedure DBGrid1DblClick(Sender: TObject);
 
+    // === LOGS - MÉTODOS ===
+    procedure ConfigurarDBGridLogs;
+
     // ----- Importacao VCF
     procedure PrepareMemTable;
     procedure ConfigurarGrid;
@@ -370,6 +391,9 @@ var
 
 implementation
 
+uses
+  LogsRepository;  // unit que cuida da tabela Logs
+
 {$R *.dfm}
 
 var
@@ -378,10 +402,24 @@ var
 {$REGION 'Ciclo de vida do formulário / Layout'}
 
 procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  LogsRepo: TLogsRepository;
 begin
+  // Se existe um log aberto para esta sessão, grava o log_out
+  if SessaoIdLog > 0 then
+  begin
+    LogsRepo := TLogsRepository.Create;
+    try
+      LogsRepo.EncerrarLogSessao(SessaoIdLog);
+    finally
+      LogsRepo.Free;
+    end;
+  end;
+
   Action := caFree;          // libera o FMain da memória
   Application.Terminate;     // encerra toda a aplicação de forma definitiva
 end;
+
 
 procedure TFMain.FormCreate(Sender: TObject);
 begin
@@ -430,6 +468,15 @@ begin
   DataSourceGrupos := TDataSource.Create(Self);
   DataSourceGrupos.DataSet := ClientDataSetGrupos;
   DBGridGrupos.DataSource := DataSourceGrupos;
+
+   // === LOGS DE USUÁRIOS ===
+  ClientDataSetLogs := TClientDataSet.Create(Self);
+  DataSourceLogs    := TDataSource.Create(Self);
+
+  DataSourceLogs.DataSet := ClientDataSetLogs;
+  dbgLogsUsuarios.DataSource := DataSourceLogs;
+
+
 
   LoadingGrupos := False;
   EditandoGrupo := False;
@@ -490,6 +537,11 @@ begin
   GruposController.Free;
   ClientDataSetGrupos.Free;
   DataSourceGrupos.Free;
+
+  ClientDataSetLogs.Free;
+  DataSourceLogs.Free;
+
+
 end;
 
 procedure TFMain.FormResize(Sender: TObject);
@@ -535,9 +587,14 @@ end;
 
 procedure TFMain.FormShow(Sender: TObject);
 begin
+  // Atualiza os labels com as infos da sessão
   lblUsuarioLogado.Caption := 'Usuário Logado: ' + SessaoUsuarioNome;
   lblNivel.Caption         := 'Nível: ' + IntToStr(SessaoNivelUsuario);
+
+  // Reaplica as permissões com base no nível já definido
+  AplicarPermissoesUsuario;
 end;
+
 
 
 
@@ -586,75 +643,56 @@ begin
     SpdExcluirEmpresa.Enabled    := False;
     SpdRestaurarEmpresa.Enabled  := False;
 
+    // LOGS – ninguém vê antes do login
+    tbsLogs.TabVisible := False;
+
     Exit;
   end;
 
-  // ===============================
-  // USUÁRIOS
-  // ===============================
-  // Nível 1 = Usuário    -> não mexe em usuários
-  // Nível 2 = Supervisor -> não cadastrar/editar/ecluir usuários
-  // Nível 3 = Admin      -> tudo liberado
+  // ============================================
+  // USUÁRIOS – somente nível 3
+  // ============================================
+  spdUsuarioAdicionar.Enabled := (SessaoNivelUsuario >= 3);
+  spdEditarUsuario.Enabled    := (SessaoNivelUsuario >= 3);
+  spdExcluirUsuario.Enabled   := (SessaoNivelUsuario >= 3);
 
-  // Cadastrar
-  spdUsuarioAdicionar.Enabled := (SessaoNivelUsuario >= 3); // só nível 3
-
-  // Alterar
-  spdEditarUsuario.Enabled    := (SessaoNivelUsuario >= 3); // só nível 3
-
-  // Excluir
-  spdExcluirUsuario.Enabled   := (SessaoNivelUsuario >= 3); // só nível  3
-
-
-  // ===============================
-  // CONTATOS
-  // ===============================
-  // Pela tabela: todos os níveis podem Cadastrar / Consultar / Alterar / Excluir
-  SpdAdicionar.Enabled := True;
+  // ============================================
+  // CONTATOS – todos os níveis podem
+  // ============================================
+  SpdAdicionar.Enabled          := True;
   SpdEditarContatosGrid.Enabled := True;
-  SpdExcluir.Enabled   := True;
+  SpdExcluir.Enabled            := True;
 
-
-  // ===============================
+  // ============================================
   // FAVORITOS
-  // ===============================
-  // Cadastrar / Alterar: todos os níveis podem
+  // ============================================
   SpdAdicionarFavorito.Enabled := True;
+  SpdRemoverFavorito.Enabled   := (SessaoNivelUsuario <> 2); // nível 2 não remove
 
-  // Excluir Favorito:
-  //   Nível 1: S
-  //   Nível 2: N
-  //   Nível 3: S
-  SpdRemoverFavorito.Enabled := (SessaoNivelUsuario <> 2);
-
-
-  // ===============================
+  // ============================================
   // GRUPOS
-  // ===============================
-  // Cadastrar / Consultar / Alterar: S para níveis 1, 2 e 3
+  // ============================================
   SpdAdicionarGrupo.Enabled  := True;
   SpdEditarGrupo.Enabled     := True;
   SpdRestaurarGrupos.Enabled := True;
 
-  // Excluir Grupo:
-  //   Nível 1: N
-  //   Nível 2: N
-  //   Nível 3: S
+  // Excluir somente nível 3
   SpdExcluirGrupo.Enabled := (SessaoNivelUsuario >= 3);
 
-
-  // ===============================
+  // ============================================
   // EMPRESAS
-  // ===============================
-  // Cadastrar / Alterar / Excluir / Restaurar:
-  //   Nível 1: N
-  //   Nível 2: N
-  //   Nível 3: S
+  // ============================================
   SpdAdicionarEmpresa.Enabled := (SessaoNivelUsuario >= 2);
   SpdEditarEmpresa.Enabled    := (SessaoNivelUsuario >= 3);
   SpdExcluirEmpresa.Enabled   := (SessaoNivelUsuario >= 3);
   SpdRestaurarEmpresa.Enabled := (SessaoNivelUsuario >= 3);
+
+  // ============================================
+  // LOGS – somente administrador (nível 3)
+  // ============================================
+  tbsLogs.TabVisible := (SessaoNivelUsuario = 3);
 end;
+
 
 
 
@@ -1053,6 +1091,70 @@ begin
      dgTabs, dgRowSelect];
   DBGridPerm.ReadOnly := True;
 end;
+
+procedure TFMain.ConfigurarDBGridLogs;
+begin
+  // Liga o DataSource ao ClientDataSet e ao DBGrid
+  DataSourceLogs.DataSet      := ClientDataSetLogs;
+  dbgLogsUsuarios.DataSource  := DataSourceLogs;
+
+  // Remove qualquer coluna criada automaticamente
+  dbgLogsUsuarios.Columns.Clear;
+
+  // === COLUNA: ID_LOG ===
+  with dbgLogsUsuarios.Columns.Add do
+  begin
+    FieldName    := 'id_log';   // nome do campo no ClientDataSet
+    Title.Caption := 'ID';      // texto do cabeçalho
+    Width        := 60;         // largura em pixels
+  end;
+
+  // === COLUNA: ID_USUARIO ===
+  with dbgLogsUsuarios.Columns.Add do
+  begin
+    FieldName    := 'id_usuario';
+    Title.Caption := 'ID Usuário';
+    Width        := 80;
+  end;
+
+  // === COLUNA: NOME DO USUÁRIO ===
+  with dbgLogsUsuarios.Columns.Add do
+  begin
+    FieldName    := 'usuario';
+    Title.Caption := 'Usuário';
+    Width        := 150;
+  end;
+
+  // === COLUNA: LOG_IN ===
+  with dbgLogsUsuarios.Columns.Add do
+  begin
+    FieldName    := 'log_in';
+    Title.Caption := 'Login';
+    Width        := 170;
+  end;
+
+  // === COLUNA: LOG_OUT ===
+  with dbgLogsUsuarios.Columns.Add do
+  begin
+    FieldName    := 'log_out';
+    Title.Caption := 'Logout';
+    Width        := 170;
+  end;
+
+  // Ajusta algumas opções visuais do grid
+  dbgLogsUsuarios.Options := [
+    dgTitles,       // mostra títulos das colunas
+    dgIndicator,    // mostra indicador (setinha) na linha selecionada
+    dgColumnResize, // permite redimensionar colunas com o mouse
+    dgColLines,     // linhas verticais entre colunas
+    dgRowLines,     // linhas horizontais entre linhas
+    dgTabs,         // navegação com TAB
+    dgRowSelect     // seleciona a linha inteira
+  ];
+
+  dbgLogsUsuarios.ReadOnly := True;  // logs são só para consulta
+end;
+
 
 {$ENDREGION}
 
@@ -1520,8 +1622,6 @@ begin
   end;
 end;
 
-
-
 procedure TFMain.LimparCamposUsuario;
 begin
   edtIdUsuario.Clear;
@@ -1545,8 +1645,6 @@ begin
   spdEditarUsuario.Caption := 'Editar';
   spdUsuarioAdicionar.Enabled := True;
 end;
-
-
 
 procedure TFMain.spdEditarUsuarioClick(Sender: TObject);
 var
@@ -1604,7 +1702,6 @@ begin
   // ===== SEGUNDO CLIQUE: SALVAR =====
   spdUsuarioAdicionarClick(Sender);
 end;
-
 
 procedure TFMain.spdExcluirUsuarioClick(Sender: TObject);
 var
@@ -2529,6 +2626,80 @@ begin
   CarregarEmpresas;
 end;
 
+procedure TFMain.spdListarLogsClick(Sender: TObject);
+var
+  Q: TFDQuery;
+begin
+  // Garante que o DataSet está criado com os campos corretos
+  if not ClientDataSetLogs.Active then
+  begin
+    ClientDataSetLogs.FieldDefs.Clear;
+
+    // tipos simples para o nosso uso
+    ClientDataSetLogs.FieldDefs.Add('id_log',      ftInteger);
+    ClientDataSetLogs.FieldDefs.Add('id_usuario',  ftInteger);
+    ClientDataSetLogs.FieldDefs.Add('usuario',     ftString,   100);
+    ClientDataSetLogs.FieldDefs.Add('log_in',      ftDateTime);
+    ClientDataSetLogs.FieldDefs.Add('log_out',     ftDateTime);
+
+    ClientDataSetLogs.CreateDataSet;
+
+    // >>> CONFIGURA AS COLUNAS DO GRID A PRIMEIRA VEZ <<<
+    ConfigurarDBGridLogs
+
+  end;
+
+  ClientDataSetLogs.DisableControls;
+  try
+    ClientDataSetLogs.EmptyDataSet;
+
+    Q := TFDQuery.Create(nil);
+    try
+      Q.Connection := DataModule1.FDConnection1;
+
+      // Aqui buscamos TODOS os logs com o nome do usuário
+      Q.SQL.Text :=
+        'SELECT L.id_log, L.id_usuario, U.nome AS usuario, ' +
+        '       L.log_in, L.log_out ' +
+        '  FROM "Logs" L ' +
+        '  JOIN "Usuario" U ON U.id_usuario = L.id_usuario ' +
+        ' ORDER BY L.id_log DESC';
+
+      Q.Open;
+
+      while not Q.Eof do
+      begin
+        ClientDataSetLogs.Append;
+        ClientDataSetLogs.FieldByName('id_log').AsInteger     := Q.FieldByName('id_log').AsInteger;
+        ClientDataSetLogs.FieldByName('id_usuario').AsInteger := Q.FieldByName('id_usuario').AsInteger;
+        ClientDataSetLogs.FieldByName('usuario').AsString     := Q.FieldByName('usuario').AsString;
+      // LOGIN sempre existe, então podemos atribuir direto
+      ClientDataSetLogs.FieldByName('log_in').AsDateTime :=
+        Q.FieldByName('log_in').AsDateTime;
+
+      // LOGOUT pode ser NULL (sessão ainda aberta).
+      // Se for NULL, limpamos o campo para o grid ficar em branco.
+      if Q.FieldByName('log_out').IsNull then
+        ClientDataSetLogs.FieldByName('log_out').Clear
+      else
+        ClientDataSetLogs.FieldByName('log_out').AsDateTime :=
+          Q.FieldByName('log_out').AsDateTime;
+
+      ClientDataSetLogs.Post;
+
+
+        Q.Next;
+      end;
+
+      ClientDataSetLogs.First;
+    finally
+      Q.Free;
+    end;
+  finally
+    ClientDataSetLogs.EnableControls;
+  end;
+end;
+
 procedure TFMain.DBGrid1DblClick(Sender: TObject);
 begin
   if not ClientDataSetEmpresas.IsEmpty then
@@ -2742,7 +2913,8 @@ end;
 
 {$ENDREGION}
 
-{$REGION 'Importação de contatos .VCF (MemTable e Grid4)'}
+
+{$REGION 'Importação de contatos .VCF / .TXT'}
 
 procedure TFMain.PrepareMemTable;
 begin
@@ -2932,6 +3104,249 @@ begin
 end;
 
 {$ENDREGION}
+
+
+{$REGION 'Exportação de contatos .VCF / .TXT '}
+
+// ----- Exportacao  VCF
+procedure TFMain.spdExportarVCFClick(Sender: TObject);
+var
+  Qry: TFDQuery;          // Consulta FireDAC para buscar os contatos
+  ListaVCF: TStringList;  // Onde vamos montar o conteúdo do arquivo .vcf
+  NomeArquivo: string;
+
+  // Campos do contato
+  NomeContato, Telefone, Email, Empresa: string;
+  CEP, Logradouro, Numero, Complemento, Bairro, Cidade, UF: string;
+  EnderecoLinha: string;
+  TotalExportados: Integer;
+begin
+  // Limpa o memo de log
+  memExportVCF.Clear;
+  memExportVCF.Lines.Add('Iniciando exportação de contatos para VCF...');
+  memExportVCF.Lines.Add('');
+
+  // 1) Garante que a conexão com o banco está ativa
+  if not FDConnRel.Connected then
+    FDConnRel.Connected := True;   // usa a mesma conexão dos relatórios
+
+  // 2) Pergunta ao usuário onde salvar o arquivo .vcf
+  SaveDialogVCF.FileName := 'Contatos_ContactHub.vcf';
+
+  if not SaveDialogVCF.Execute then
+  begin
+    memExportVCF.Lines.Add('Exportação cancelada pelo usuário.');
+    Exit; // Se o usuário cancelar, sai
+  end;
+
+  NomeArquivo := SaveDialogVCF.FileName;
+
+  // 3) Cria uma query em tempo de execução
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := FDConnRel;
+
+    // 4) SQL para buscar os dados da tabela "Contato"
+    Qry.SQL.Text :=
+      'SELECT nome, telefone, email, empresa, ' +
+      '       cep, logradouro, numero, complemento, bairro, cidade, uf ' +
+      'FROM "Contato" ' +
+      'ORDER BY nome';
+
+    Qry.Open;
+
+    TotalExportados := 0;
+
+    // 5) Monta o conteúdo do arquivo VCF
+    ListaVCF := TStringList.Create;
+    try
+      while not Qry.Eof do
+      begin
+        // Lê os campos do registro atual
+        NomeContato := Qry.FieldByName('nome').AsString;
+        Telefone    := Qry.FieldByName('telefone').AsString;
+        Email       := Qry.FieldByName('email').AsString;
+        Empresa     := Qry.FieldByName('empresa').AsString;
+
+        CEP         := Qry.FieldByName('cep').AsString;
+        Logradouro  := Qry.FieldByName('logradouro').AsString;
+        Numero      := Qry.FieldByName('numero').AsString;
+        Complemento := Qry.FieldByName('complemento').AsString;
+        Bairro      := Qry.FieldByName('bairro').AsString;
+        Cidade      := Qry.FieldByName('cidade').AsString;
+        UF          := Qry.FieldByName('uf').AsString;
+
+        // ============================
+        // MONTA O ENDEREÇO PARA O VCF
+        // ============================
+        // Street  -> logradouro + número + compl.
+        EnderecoLinha := '';
+
+        if Logradouro <> '' then
+          EnderecoLinha := Logradouro;
+
+        if Numero <> '' then
+        begin
+          if EnderecoLinha <> '' then
+            EnderecoLinha := EnderecoLinha + ', ';
+          EnderecoLinha := EnderecoLinha + Numero;
+        end;
+
+        if Complemento <> '' then
+        begin
+          if EnderecoLinha <> '' then
+            EnderecoLinha := EnderecoLinha + ' ';
+          EnderecoLinha := EnderecoLinha + Complemento;
+        end;
+
+        // ====== INÍCIO DO CONTATO NO VCF ======
+        ListaVCF.Add('BEGIN:VCARD');
+        ListaVCF.Add('VERSION:3.0');
+
+        // Nome completo
+        ListaVCF.Add('FN:' + NomeContato);
+        ListaVCF.Add('N:' + NomeContato + ';;;');
+
+        // Empresa (ORG)
+        if Empresa <> '' then
+          ListaVCF.Add('ORG:' + Empresa);
+
+        // Telefone
+        if Telefone <> '' then
+          ListaVCF.Add('TEL;TYPE=CELL,VOICE:' + Telefone);
+
+        // E-mail
+        if Email <> '' then
+          ListaVCF.Add('EMAIL;TYPE=INTERNET:' + Email);
+
+        // Endereço (ADR)
+        // Formato: ADR;TYPE=HOME:POBox;Extended;Street;City;Region;PostalCode;Country
+        if (EnderecoLinha <> '') or (Bairro <> '') or (Cidade <> '') or
+           (UF <> '') or (CEP <> '') then
+        begin
+          ListaVCF.Add(Format(
+            'ADR;TYPE=HOME:;%s;%s;%s;%s;%s;Brasil',
+            [Bairro, EnderecoLinha, Cidade, UF, CEP]
+          ));
+        end;
+
+        // ====== FIM DO CONTATO ======
+        ListaVCF.Add('END:VCARD');
+        ListaVCF.Add(''); // linha em branco entre contatos
+
+        // ---- Log no Memo ----
+        Inc(TotalExportados);
+        memExportVCF.Lines.Add(
+          Format('%d - %s | %s',
+                 [TotalExportados, NomeContato, Telefone])
+        );
+
+        Qry.Next;
+      end;
+
+      // 6) Salva o arquivo em UTF-8 (para acentos no Android)
+      ListaVCF.SaveToFile(NomeArquivo, TEncoding.UTF8);
+
+      memExportVCF.Lines.Add('');
+      memExportVCF.Lines.Add(
+        Format('Total de contatos exportados: %d', [TotalExportados])
+      );
+      memExportVCF.Lines.Add('Arquivo gerado em: ' + NomeArquivo);
+
+      ShowMessage('Contatos exportados com sucesso para:' + sLineBreak + NomeArquivo);
+    finally
+      ListaVCF.Free;
+    end;
+  finally
+    Qry.Free;
+  end;
+end;
+
+procedure TFMain.spdExportarTXTClick(Sender: TObject);
+var
+  Qry: TFDQuery;
+  ListaTXT: TStringList;
+  NomeArquivo: string;
+  NomeContato, Telefone: string;
+  TotalExportados: Integer;
+begin
+  // Limpa o memo e escreve um cabeçalho simples
+  memExportVCF.Clear;
+  memExportVCF.Lines.Add('Gerando lista de contatos (TXT)...');
+  memExportVCF.Lines.Add('');
+
+  // Garante que a conexão com o banco está ativa
+  if not FDConnRel.Connected then
+    FDConnRel.Connected := True;
+
+  // Sugere um nome padrão para o arquivo TXT
+  SaveDialogTXT.FileName := 'Lista_Contatos_ContactHub.txt';
+
+  // Pergunta onde salvar
+  if not SaveDialogTXT.Execute then
+    Exit; // usuário cancelou
+
+  NomeArquivo := SaveDialogTXT.FileName;
+
+  // Cria a query
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := FDConnRel;
+    Qry.SQL.Text :=
+      'SELECT nome, telefone ' +
+      'FROM "Contato" ' +
+      'ORDER BY nome';
+    Qry.Open;
+
+    // Monta o TXT
+    ListaTXT := TStringList.Create;
+    try
+      TotalExportados := 0;
+
+      while not Qry.Eof do
+      begin
+        NomeContato := Qry.FieldByName('nome').AsString;
+        Telefone    := Qry.FieldByName('telefone').AsString;
+
+        Inc(TotalExportados);
+        ListaTXT.Add(
+          Format('%d - %s | %s',
+                 [TotalExportados, NomeContato, Telefone])
+        );
+
+        Qry.Next;
+      end;
+
+      // Rodapé igual ao do memo que você mostrou
+      ListaTXT.Add('');
+      ListaTXT.Add(
+        Format('Total de contatos exportados: %d', [TotalExportados])
+      );
+      ListaTXT.Add('Arquivo gerado em: ' + NomeArquivo);
+
+      // Salva o arquivo TXT
+      ListaTXT.SaveToFile(NomeArquivo, TEncoding.UTF8);
+
+      // Deixa o memo com o MESMO conteúdo do TXT
+      memExportVCF.Lines.Assign(ListaTXT);
+
+      // >>> AQUI FORÇAMOS O MEMO A IR PARA O FINAL <<<
+      memExportVCF.SelStart  := Length(memExportVCF.Text);
+      memExportVCF.SelLength := 0;
+      memExportVCF.Perform(EM_SCROLLCARET, 0, 0);
+
+      ShowMessage('Lista de contatos salva em:' + sLineBreak + NomeArquivo);
+    finally
+      ListaTXT.Free;
+    end;
+  finally
+    Qry.Free;
+  end;
+end;
+
+
+{$ENDREGION}
+
 
 end.
 

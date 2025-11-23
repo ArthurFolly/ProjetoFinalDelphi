@@ -3,9 +3,11 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, uMain,TUsuarioRepository,LoginUsuarioController,TUsuarioModel,firedac.DApt;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.Imaging.jpeg,
+  Vcl.Imaging.pngimage, uMain,TUsuarioRepository,
+  LoginUsuarioController,TUsuarioModel,firedac.DApt, LogsRepository;
 
 type
   TFLogin = class(TForm)
@@ -92,8 +94,9 @@ end;
 
 procedure TFLogin.Panel1Click(Sender: TObject);
 var
-  Usuario : TUsuario;
-  Mensagem: string;
+  Usuario  : TUsuario;
+  Mensagem : string;
+  LogsRepo : TLogsRepository;
 begin
   // 1) Validação simples dos campos
   if Trim(EditEmail.Text) = '' then
@@ -110,40 +113,50 @@ begin
     Exit;
   end;
 
-  // 2) Chama o controller para autenticar
+  // 2) Chama o controller para autenticar o usuário
   Usuario := LoginUsuarioController.Login(EditEmail.Text, EditSenha.Text, Mensagem);
 
   // 3) Se encontrou usuário válido
   if Assigned(Usuario) then
   begin
-    // --- grava a sessão global ---
+    // --- grava os dados da sessão global ---
     SessaoUsuarioID    := Usuario.Id;
     SessaoUsuarioNome  := Usuario.Nome;
-    SessaoNivelUsuario := Usuario.NivelUsuario;  // << AQUI VEM O 1, 2 ou 3 DO BANCO
+    SessaoNivelUsuario := Usuario.NivelUsuario;  // 1, 2 ou 3 vindo do banco
 
+    // --- abre um registro na tabela Logs (grava log_in) ---
+    LogsRepo := TLogsRepository.Create;
+    try
+      SessaoIdLog := LogsRepo.AbrirLogSessao(SessaoUsuarioID);
+    finally
+      LogsRepo.Free;
+    end;
+
+    // Mensagem amigável
     ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
 
+    // Limpa os campos do formulário de login
     EditEmail.Clear;
     EditSenha.Clear;
 
-    // Esconde o login
+    // Esconde o formulário de login
     Self.Hide;
 
-    // Mantém o estado da janela principal
+    // Mantém o estado da janela principal (maximizado ou normal)
     if WindowState = wsMaximized then
       FMain.WindowState := wsMaximized
     else
       FMain.WindowState := wsNormal;
-
-    // Aplica as permissões na tela principal
-    FMain.AplicarPermissoesUsuario;
 
     // Mostra a tela principal
     FMain.Show;
   end
   else
   begin
-    // 4) Deu erro na autenticação
+    // 4) Deu erro na autenticação: mostra a mensagem retornada
+    if Mensagem = '' then
+      Mensagem := 'Não foi possível realizar o login.';
+
     ShowMessage(Mensagem);
     EditSenha.Clear;
     EditSenha.SetFocus;
