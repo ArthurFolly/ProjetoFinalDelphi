@@ -330,9 +330,8 @@ begin
     Query.Connection := DataModule1.FDConnection1;
     Query.SQL.Text :=
       'SELECT id_empresa AS ID, cnpj, nome_empresa AS NOME, telefone, ' +
-      '       email, endereco, uf ' +
+      '       email, endereco, uf, ativo ' +
       'FROM empresa ' +
-      'WHERE ativo = TRUE ' +
       'ORDER BY nome_empresa';
     Query.Open;
 
@@ -342,13 +341,14 @@ begin
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger        := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString       := Query.FieldByName('cnpj').AsString;
-        DataSet.FieldByName('NOME').AsString       := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('TELEFONE').AsString   := Query.FieldByName('telefone').AsString;
-        DataSet.FieldByName('EMAIL').AsString      := Query.FieldByName('email').AsString;
-        DataSet.FieldByName('ENDERECO').AsString   := Query.FieldByName('endereco').AsString;
-        DataSet.FieldByName('UF').AsString         := Query.FieldByName('uf').AsString;
+        DataSet.FieldByName('ID').AsInteger      := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString     := Query.FieldByName('cnpj').AsString;
+        DataSet.FieldByName('NOME').AsString     := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('telefone').AsString;
+        DataSet.FieldByName('EMAIL').AsString    := Query.FieldByName('email').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('endereco').AsString;
+        DataSet.FieldByName('UF').AsString       := Query.FieldByName('uf').AsString;
+        DataSet.FieldByName('ATIVO').AsBoolean   := Query.FieldByName('ativo').AsBoolean;
         DataSet.Post;
         Query.Next;
       end;
@@ -376,7 +376,7 @@ begin
     Query.Connection := DataModule1.FDConnection1;
     Query.SQL.Text :=
       'SELECT id_empresa AS ID, cnpj, nome_empresa AS NOME, telefone, ' +
-      '       email, endereco, uf ' +
+      '       email, endereco, uf, ativo ' +
       'FROM empresa ' +
       'WHERE ativo = FALSE ' +
       'ORDER BY nome_empresa';
@@ -388,13 +388,14 @@ begin
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger        := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString       := Query.FieldByName('cnpj').AsString;
-        DataSet.FieldByName('NOME').AsString       := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('TELEFONE').AsString   := Query.FieldByName('telefone').AsString;
-        DataSet.FieldByName('EMAIL').AsString      := Query.FieldByName('email').AsString;
-        DataSet.FieldByName('ENDERECO').AsString   := Query.FieldByName('endereco').AsString;
-        DataSet.FieldByName('UF').AsString         := Query.FieldByName('uf').AsString;
+        DataSet.FieldByName('ID').AsInteger      := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString     := Query.FieldByName('cnpj').AsString;
+        DataSet.FieldByName('NOME').AsString     := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('telefone').AsString;
+        DataSet.FieldByName('EMAIL').AsString    := Query.FieldByName('email').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('endereco').AsString;
+        DataSet.FieldByName('UF').AsString       := Query.FieldByName('uf').AsString;
+        DataSet.FieldByName('ATIVO').AsBoolean   := Query.FieldByName('ativo').AsBoolean;
         DataSet.Post;
         Query.Next;
       end;
@@ -408,6 +409,7 @@ begin
   end;
   Query.Free;
 end;
+
 
 // ============================================================================
 // CARREGAR TODAS (ativas e inativas)
@@ -433,15 +435,14 @@ begin
       while not Query.Eof do
       begin
         DataSet.Append;
-        DataSet.FieldByName('ID').AsInteger        := Query.FieldByName('ID').AsInteger;
-        DataSet.FieldByName('CNPJ').AsString       := Query.FieldByName('cnpj').AsString;
-        DataSet.FieldByName('NOME').AsString       := Query.FieldByName('NOME').AsString;
-        DataSet.FieldByName('TELEFONE').AsString   := Query.FieldByName('telefone').AsString;
-        DataSet.FieldByName('EMAIL').AsString      := Query.FieldByName('email').AsString;
-        DataSet.FieldByName('ENDERECO').AsString   := Query.FieldByName('endereco').AsString;
-        DataSet.FieldByName('UF').AsString         := Query.FieldByName('uf').AsString;
-        if DataSet.FindField('ATIVO') <> nil then
-          DataSet.FieldByName('ATIVO').AsBoolean := Query.FieldByName('ativo').AsBoolean;
+        DataSet.FieldByName('ID').AsInteger      := Query.FieldByName('ID').AsInteger;
+        DataSet.FieldByName('CNPJ').AsString     := Query.FieldByName('cnpj').AsString;
+        DataSet.FieldByName('NOME').AsString     := Query.FieldByName('NOME').AsString;
+        DataSet.FieldByName('TELEFONE').AsString := Query.FieldByName('telefone').AsString;
+        DataSet.FieldByName('EMAIL').AsString    := Query.FieldByName('email').AsString;
+        DataSet.FieldByName('ENDERECO').AsString := Query.FieldByName('endereco').AsString;
+        DataSet.FieldByName('UF').AsString       := Query.FieldByName('uf').AsString;
+        DataSet.FieldByName('ATIVO').AsBoolean   := Query.FieldByName('ativo').AsBoolean;
         DataSet.Post;
         Query.Next;
       end;
@@ -455,6 +456,7 @@ begin
   end;
   Query.Free;
 end;
+
 
 end.
 

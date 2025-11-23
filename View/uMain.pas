@@ -228,6 +228,9 @@ type
     SaveDialogTXT: TSaveDialog;
     dbgLogsUsuarios: TDBGrid;
     spdListarLogs: TSpeedButton;
+    Panel19: TPanel;
+    Label28: TLabel;
+    edtPesquisaContatos: TEdit;
 
 
     procedure FormCreate(Sender: TObject);
@@ -288,6 +291,7 @@ type
     procedure spdExportarVCFClick(Sender: TObject);
     procedure spdExportarTXTClick(Sender: TObject);
     procedure spdListarLogsClick(Sender: TObject);
+    procedure edtPesquisaContatosChange(Sender: TObject);
 
   public
     procedure AplicarPermissoesUsuario;
@@ -363,6 +367,7 @@ type
     procedure CarregarFavoritos;
     procedure SalvarEdicaoFavorito(DataSet: TDataSet);
     procedure ConfirmarExclusaoFavorito(DataSet: TDataSet);
+    procedure AplicarFiltroContatos(const Texto: string);
     procedure CarregarContatosNoComboBox;
 
     // === EMPRESAS ===
@@ -842,82 +847,96 @@ end;
 
 procedure TFMain.ConfigurarDBGridEmpresas;
 begin
+  // Liga o DataSet ao DataSource e ao DBGrid
   DataSourceEmpresas.DataSet := ClientDataSetEmpresas;
-  DBGrid1.DataSource := DataSourceEmpresas;
+  DBGrid1.DataSource         := DataSourceEmpresas;
 
+  // Define a estrutura do ClientDataSet
   ClientDataSetEmpresas.Close;
   ClientDataSetEmpresas.FieldDefs.Clear;
 
-  ClientDataSetEmpresas.FieldDefs.Add('ID', ftInteger);
-  ClientDataSetEmpresas.FieldDefs.Add('CNPJ', ftString, 18);
-  ClientDataSetEmpresas.FieldDefs.Add('NOME', ftString, 100);
+  ClientDataSetEmpresas.FieldDefs.Add('ID',       ftInteger);
+  ClientDataSetEmpresas.FieldDefs.Add('CNPJ',     ftString, 18);
+  ClientDataSetEmpresas.FieldDefs.Add('NOME',     ftString, 100);
   ClientDataSetEmpresas.FieldDefs.Add('TELEFONE', ftString, 20);
-  ClientDataSetEmpresas.FieldDefs.Add('EMAIL', ftString, 100);
+  ClientDataSetEmpresas.FieldDefs.Add('EMAIL',    ftString, 100);
   ClientDataSetEmpresas.FieldDefs.Add('ENDERECO', ftString, 200);
-  ClientDataSetEmpresas.FieldDefs.Add('UF', ftString, 2);
+  ClientDataSetEmpresas.FieldDefs.Add('UF',       ftString, 2);
+  ClientDataSetEmpresas.FieldDefs.Add('ATIVO',    ftBoolean); // << aqui já estava certo
 
   ClientDataSetEmpresas.CreateDataSet;
   ClientDataSetEmpresas.Open;
 
+  // Monta as colunas do DBGrid
   DBGrid1.Columns.Clear;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'ID';
+    FieldName    := 'ID';
     Title.Caption := 'ID';
-    Width := 50;
+    Width        := 50;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'CNPJ';
+    FieldName    := 'CNPJ';
     Title.Caption := 'CNPJ';
-    Width := 130;
+    Width        := 130;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'NOME';
+    FieldName    := 'NOME';
     Title.Caption := 'NOME';
-    Width := 180;
+    Width        := 180;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'TELEFONE';
+    FieldName    := 'TELEFONE';
     Title.Caption := 'TELEFONE';
-    Width := 110;
+    Width        := 110;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'EMAIL';
+    FieldName    := 'EMAIL';
     Title.Caption := 'EMAIL';
-    Width := 150;
+    Width        := 150;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'ENDERECO';
+    FieldName    := 'ENDERECO';
     Title.Caption := 'ENDEREÇO';
-    Width := 200;
+    Width        := 200;
   end;
 
   with DBGrid1.Columns.Add do
   begin
-    FieldName := 'UF';
+    FieldName    := 'UF';
     Title.Caption := 'UF';
-    Width := 50;
+    Width        := 50;
+  end;
+
+  // *** NOVA COLUNA ATIVO ***
+  with DBGrid1.Columns.Add do
+  begin
+    FieldName    := 'ATIVO';
+    Title.Caption := 'ATIVO';
+    Width        := 60; // ajuste como preferir
   end;
 
   DBGrid1.ReadOnly := False;
-  DBGrid1.Options := [dgEditing, dgColumnResize, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect];
+  DBGrid1.Options  := [dgEditing, dgColumnResize, dgTitles, dgIndicator,
+                       dgColLines, dgRowLines, dgTabs, dgRowSelect];
 
   ClientDataSetEmpresas.AfterPost := SalvarEdicaoEmpresaGrid;
 
   DBGrid1.Options := DBGrid1.Options + [dgEditing, dgAlwaysShowEditor];
   DBGrid1.Visible := True;
 end;
+
 
 procedure TFMain.ConfigurarDBGridFavoritos;
 begin
@@ -1286,6 +1305,43 @@ begin
     LoadingDataset := False;
   end;
 end;
+
+procedure TFMain.AplicarFiltroContatos(const Texto: string);
+var
+  S, Filtro: string;
+begin
+  // Garante que o DataSet está ativo
+  if not cdsContatos.Active then
+    Exit;
+
+  // Limpa filtro anterior
+  cdsContatos.Filtered := False;
+  cdsContatos.Filter   := '';
+
+  S := Trim(Texto);
+  if S = '' then
+    Exit; // sem texto => mostra todos os registros
+
+  // Evita problema com aspas simples na pesquisa
+  S := StringReplace(S, '''', '''''', [rfReplaceAll]);
+
+  // Monta o filtro para várias colunas
+  Filtro :=
+    Format(
+      'nome LIKE ''%%%0:s%%'' OR ' +
+      'telefone LIKE ''%%%0:s%%'' OR ' +
+      'email LIKE ''%%%0:s%%'' OR ' +
+      'empresa LIKE ''%%%0:s%%'' OR ' +
+      'endereco LIKE ''%%%0:s%%''',
+      [S]
+    );
+
+  // Ignora maiúsculas/minúsculas
+  cdsContatos.FilterOptions := [foCaseInsensitive];
+  cdsContatos.Filter   := Filtro;
+  cdsContatos.Filtered := True;
+end;
+
 
 procedure TFMain.AtualizarDBGridEmpresas;
 begin
@@ -1863,12 +1919,25 @@ procedure TFMain.PreencherFormulario(Contato: Contatos);
 begin
   if Contato <> nil then
   begin
-    Edit1.Text := Contato.Nome;
-    Numero.Text := Contato.Telefone;
-    Edit2.Text := Contato.Email;
-    txtLogradouro.Text := Contato.Endereco;
+    Edit1.Text    := Contato.Nome;
+    Numero.Text   := Contato.Telefone;
+    Edit2.Text    := Contato.Email;
+
+    // Se tiver logradouro preenchido, usa ele; senão usa o endereço "antigo"
+    if Contato.Logradouro <> '' then
+      txtLogradouro.Text := Contato.Logradouro
+    else
+      txtLogradouro.Text := Contato.Endereco;
+
+    txtCEP.Text        := Contato.CEP;
+    txtNumero.Text     := Contato.Numero;
+    txtComplemento.Text:= Contato.Complemento;
+    txtBairro.Text     := Contato.Bairro;
+    txtLocalidade.Text := Contato.Cidade;
+    txtUF.Text         := Contato.UF;
   end;
 end;
+
 
 procedure TFMain.PreencherFormularioEmpresa(TEmpresa: TEmpresa);
 begin
@@ -1885,11 +1954,20 @@ end;
 
 procedure TFMain.LimparFormulario;
 begin
-  Edit1.Text := '';
-  Numero.Text := '';
-  Edit2.Text := '';
+  Edit1.Text       := '';
+  Numero.Text      := '';
+  Edit2.Text       := '';
   txtLogradouro.Text := '';
+
+  txtCEP.Text        := '';
+  txtNumero.Text     := '';
+  txtComplemento.Text:= '';
+  txtBairro.Text     := '';
+  txtLocalidade.Text := '';
+  txtUF.Text         := '';
+  ComboBox.Text := '';
 end;
+
 
 procedure TFMain.LimparFormularioEmpresa;
 begin
@@ -2227,24 +2305,40 @@ begin
 
   NovoContato := Contatos.Create;
   try
-    NovoContato.Nome := Edit1.Text;
-    NovoContato.Telefone := Numero.Text;
-    NovoContato.Email := Edit2.Text;
-    NovoContato.Endereco := txtLogradouro.Text;
-    NovoContato.Favorito := False;
-    NovoContato.Ativo := True;
+    // DADOS BÁSICOS
+    NovoContato.Nome      := Edit1.Text;
+    NovoContato.Telefone  := Numero.Text;
+    NovoContato.Email     := Edit2.Text;
 
+    // ENDEREÇO "ANTIGO"
+    NovoContato.Endereco  := txtLogradouro.Text;
+
+    // NOVOS CAMPOS DE ENDEREÇO
+    NovoContato.CEP         := txtCEP.Text;
+    NovoContato.Logradouro  := txtLogradouro.Text;
+    NovoContato.Numero      := txtNumero.Text;
+    NovoContato.Complemento := txtComplemento.Text;
+    NovoContato.Bairro      := txtBairro.Text;
+    NovoContato.Cidade      := txtLocalidade.Text;
+    NovoContato.UF          := txtUF.Text;
+
+    // OUTROS CAMPOS
+    NovoContato.Favorito := False;
+    NovoContato.Ativo    := True;
+
+    // EMPRESA (id_empresa + nome)
     if ComboBox.ItemIndex = -1 then
     begin
       NovoContato.IdEmpresa := 0;
-      NovoContato.Empresa := '';
+      NovoContato.Empresa   := '';
     end
     else
     begin
       NovoContato.IdEmpresa := Integer(ComboBox.Items.Objects[ComboBox.ItemIndex]);
-      NovoContato.Empresa := ComboBox.Text;
+      NovoContato.Empresa   := ComboBox.Text;
     end;
 
+    // SALVAR
     if ContatosController.AdicionarContato(NovoContato, Mensagem) then
     begin
       ContatosLista.Add(NovoContato);
@@ -2284,28 +2378,39 @@ begin
   begin
     if not ValidarFormulario then Exit;
 
-    ContatoAtual.Nome := Edit1.Text;
+    // DADOS BÁSICOS
+    ContatoAtual.Nome     := Edit1.Text;
     ContatoAtual.Telefone := Numero.Text;
-    ContatoAtual.Email := Edit2.Text;
+    ContatoAtual.Email    := Edit2.Text;
+
+    // ENDEREÇO "ANTIGO"
     ContatoAtual.Endereco := txtLogradouro.Text;
+
+    // NOVOS CAMPOS DE ENDEREÇO
+    ContatoAtual.CEP         := txtCEP.Text;
+    ContatoAtual.Logradouro  := txtLogradouro.Text;
+    ContatoAtual.Numero      := txtNumero.Text;
+    ContatoAtual.Complemento := txtComplemento.Text;
+    ContatoAtual.Bairro      := txtBairro.Text;
+    ContatoAtual.Cidade      := txtLocalidade.Text;
+    ContatoAtual.UF          := txtUF.Text;
 
     if ContatosController.AtualizarContato(ContatoAtual, Mensagem) then
     begin
       AtualizarDBGrid;
       LimparFormulario;
-      Editando := False;
+      Editando    := False;
       ContatoAtual := nil;
       SpdAdicionar.Enabled := True;
       ShowMessage('Contato atualizado!');
     end
     else
-      ShowMessage('Erro ao atualizar!');
+      ShowMessage('Erro ao atualizar: ' + Mensagem);
   end
   else
-  begin
     ShowMessage('Selecione um contato no grid primeiro!');
-  end;
 end;
+
 
 procedure TFMain.SpdEditarContatosGridClick(Sender: TObject);
 var
@@ -2372,14 +2477,25 @@ begin
   pgcContatos.ActivePage := tbsContatosList;
   CarregarContatosDB;
 
+  // Reaplica o filtro, caso exista texto na busca
+  AplicarFiltroContatos(edtPesquisaContatos.Text);
+
   if dbgContatos.CanFocus then
     dbgContatos.SetFocus;
 end;
+
 
 procedure TFMain.DBGrid2DblClick(Sender: TObject);
 begin
   SpdEditarContatosGridClick(Sender);
 end;
+
+// Pesquisar contatos no DBGrid Contatos
+procedure TFMain.edtPesquisaContatosChange(Sender: TObject);
+begin
+  AplicarFiltroContatos(edtPesquisaContatos.Text);
+end;
+
 
 {$ENDREGION}
 
@@ -2582,38 +2698,37 @@ end;
 
 procedure TFMain.SpdRestaurarEmpresaClick(Sender: TObject);
 var
-  Query: TFDQuery;
-  TotalRestauradas: Integer;
+  IdEmpresa: Integer;
   Msg: string;
 begin
-  if MessageDlg('Deseja restaurar TODAS as empresas excluídas?',
-                mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+  if ClientDataSetEmpresas.IsEmpty then
+  begin
+    ShowMessage('Selecione uma empresa no grid!');
+    Exit;
+  end;
+
+  // Verifica se a empresa está inativa (ATIVO = FALSE)
+  if ClientDataSetEmpresas.FieldByName('ATIVO').AsBoolean then
+  begin
+    ShowMessage('A empresa selecionada já está ativa.');
+    Exit;
+  end;
+
+  IdEmpresa := ClientDataSetEmpresas.FieldByName('ID').AsInteger;
+
+  if MessageDlg('Deseja restaurar a empresa selecionada?',
+                mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
     Exit;
 
-  Query := TFDQuery.Create(nil);
-  TotalRestauradas := 0;
-  try
-    Query.Connection := DataModule1.FDConnection1;
-    Query.SQL.Text := 'SELECT id_empresa FROM empresa WHERE ativo = FALSE';
-    Query.Open;
-
-    while not Query.Eof do
-    begin
-      if EmpresasController.Restaurar(Query.FieldByName('id_empresa').AsInteger, Msg) then
-        Inc(TotalRestauradas);
-      Query.Next;
-    end;
-
-    if TotalRestauradas > 0 then
-      ShowMessage(Format('Restauradas %d empresa(s) com sucesso!', [TotalRestauradas]))
-    else
-      ShowMessage('Nenhuma empresa inativa para restaurar.');
-
-    CarregarEmpresas;
-  finally
-    Query.Free;
-  end;
+  if EmpresasController.Restaurar(IdEmpresa, Msg) then
+  begin
+    ShowMessage(Msg);
+    CarregarEmpresas;       // recarrega o grid com o novo status ATIVO = TRUE
+  end
+  else
+    ShowMessage('Erro: ' + Msg);
 end;
+
 
 procedure TFMain.SpdListarEmpresaClick(Sender: TObject);
 begin

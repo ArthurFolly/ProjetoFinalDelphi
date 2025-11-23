@@ -52,7 +52,7 @@
     end
     object lblUsuarioLogado: TLabel
       Left = 7
-      Top = 660
+      Top = 653
       Width = 103
       Height = 20
       Caption = 'Usu'#225'rio Logado:'
@@ -65,7 +65,7 @@
     end
     object lblNivel: TLabel
       Left = 279
-      Top = 660
+      Top = 653
       Width = 36
       Height = 20
       Caption = 'N'#237'vel:'
@@ -1968,7 +1968,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdUsuarios
+      ActiveCard = crdImpExp
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -1987,7 +1987,7 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsImport
+          ActivePage = tbsExport
           Align = alClient
           TabOrder = 0
           object tbsImport: TTabSheet
@@ -4967,16 +4967,20 @@
         CardIndex = 1
         CardVisible = False
         TabOrder = 1
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcContatos: TPageControl
           Left = 0
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsContatosCad
+          ActivePage = tbsContatosList
           Align = alClient
           TabOrder = 0
           TabWidth = 100
           Visible = False
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsContatosList: TTabSheet
             Caption = 'Lista'
             object Panel2: TPanel
@@ -6187,9 +6191,9 @@
               end
               object dbgContatos: TDBGrid
                 Left = 34
-                Top = 38
+                Top = 65
                 Width = 801
-                Height = 441
+                Height = 414
                 TabOrder = 1
                 TitleFont.Charset = DEFAULT_CHARSET
                 TitleFont.Color = clWindowText
@@ -6238,6 +6242,39 @@
                     Visible = True
                   end>
               end
+              object Panel19: TPanel
+                Left = 1
+                Top = 1
+                Width = 872
+                Height = 40
+                Align = alTop
+                Caption = 'Panel19'
+                TabOrder = 2
+                ExplicitLeft = 82
+                ExplicitTop = 40
+                ExplicitWidth = 185
+                object Label28: TLabel
+                  Left = 16
+                  Top = 7
+                  Width = 75
+                  Height = 23
+                  Caption = 'Pesquisar:'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -17
+                  Font.Name = 'Segoe UI'
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object edtPesquisaContatos: TEdit
+                  Left = 97
+                  Top = 9
+                  Width = 760
+                  Height = 23
+                  TabOrder = 0
+                  OnChange = edtPesquisaContatosChange
+                end
+              end
             end
           end
           object tbsContatosCad: TTabSheet
@@ -6252,6 +6289,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
             end
             object Panel4: TPanel
               Left = 16
@@ -12087,8 +12126,6 @@
         Caption = 'crdUsuarios'
         CardIndex = 5
         TabOrder = 5
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcUsuarios: TPageControl
           Left = 0
           Top = 0
@@ -29546,7 +29583,6 @@
     end
   end
   object qryRelContatos: TFDQuery
-    Active = True
     Connection = FDConnRel
     SQL.Strings = (
       'SELECT id_contato, nome, telefone, email'
@@ -29563,13 +29599,11 @@
       'User_Name=postgres'
       'Password=root'
       'Port=5432')
-    Connected = True
     LoginPrompt = False
     Left = 620
     Top = 450
   end
   object qryRelUsuarios: TFDQuery
-    Active = True
     Connection = FDConnRel
     SQL.Strings = (
       'SELECT id_usuario,'

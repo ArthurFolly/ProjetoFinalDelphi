@@ -61,9 +61,9 @@ begin
 
   query.SQL.Text :=
     'INSERT INTO public."Contato" ' +
-    '(nome, telefone, email, id_empresa, empresa, endereco, observacoes, ' +
+    '(nome, telefone, email, id_empresa, empresa, endereco, ' +
     ' cep, logradouro, numero, complemento, bairro, cidade, uf, ativo) ' +
-    'VALUES (:nome, :telefone, :email, :id_empresa, :empresa, :endereco, :observacoes, ' +
+    'VALUES (:nome, :telefone, :email, :id_empresa, :empresa, :endereco, ' +
     ' :cep, :logradouro, :numero, :complemento, :bairro, :cidade, :uf, :ativo) ' +
     'RETURNING id_contato';
 
@@ -85,7 +85,6 @@ begin
   query.ParamByName('empresa').AsString   := AContato.Empresa;
 
   query.ParamByName('endereco').AsString      := AContato.Endereco;
-  query.ParamByName('observacoes').AsString   := AContato.Observacoes;
   query.ParamByName('cep').AsString           := AContato.CEP;
   query.ParamByName('logradouro').AsString    := AContato.Logradouro;
   query.ParamByName('numero').AsString        := AContato.Numero;
@@ -123,7 +122,6 @@ begin
     ' id_empresa = :id_empresa, ' +
     ' empresa = :empresa, ' +
     ' endereco = :endereco, ' +
-    ' observacoes = :observacoes, ' +
     ' cep = :cep, ' +
     ' logradouro = :logradouro, ' +
     ' numero = :numero, ' +
@@ -151,7 +149,6 @@ begin
 
   query.ParamByName('empresa').AsString      := AContato.Empresa;
   query.ParamByName('endereco').AsString     := AContato.Endereco;
-  query.ParamByName('observacoes').AsString  := AContato.Observacoes;
   query.ParamByName('cep').AsString          := AContato.CEP;
   query.ParamByName('logradouro').AsString   := AContato.Logradouro;
   query.ParamByName('numero').AsString       := AContato.Numero;
@@ -192,7 +189,6 @@ begin
   AContato.Email      := AQuery.FieldByName('email').AsString;
   AContato.Endereco   := AQuery.FieldByName('endereco').AsString;
   AContato.Empresa    := AQuery.FieldByName('empresa').AsString;
-  AContato.Observacoes:= AQuery.FieldByName('observacoes').AsString;
   AContato.CEP        := AQuery.FieldByName('cep').AsString;
   AContato.Logradouro := AQuery.FieldByName('logradouro').AsString;
   AContato.Numero     := AQuery.FieldByName('numero').AsString;
