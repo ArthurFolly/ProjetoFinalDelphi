@@ -82,11 +82,11 @@ type
     Label7: TLabel;
     NomeDaEmpresa: TEdit;
     Label8: TLabel;
-    MaskEdit1: TMaskEdit;
+    MaskEditCNPJ: TMaskEdit;
     Label9: TLabel;
     Edit5: TEdit;
     Label10: TLabel;
-    MaskEdit2: TMaskEdit;
+    MaskEdit1: TMaskEdit;
     Label11: TLabel;
     Edit6: TEdit;
     Label12: TLabel;
@@ -232,6 +232,8 @@ type
     Label28: TLabel;
     edtPesquisaContatos: TEdit;
     RadioButton4: TRadioButton;
+    MaskEdit2: TMaskEdit;
+    Label29: TLabel;
 
 
     procedure FormCreate(Sender: TObject);
@@ -293,6 +295,7 @@ type
     procedure spdExportarTXTClick(Sender: TObject);
     procedure spdListarLogsClick(Sender: TObject);
     procedure edtPesquisaContatosChange(Sender: TObject);
+
 
   public
     procedure AplicarPermissoesUsuario;
@@ -466,6 +469,8 @@ begin
   DBGrid1.DataSource := DataSourceEmpresas;
   ConfigurarDBGridEmpresas;
   CarregarEmpresasNoComboBox;
+
+  crdRelatorios.Visible := false;
 
 
   GruposController := TGruposController.Create(3);
@@ -707,6 +712,8 @@ end;
 
 
 {$REGION 'Configuração de grids e datasets (Contatos, Empresas, Favoritos, Grupos)'}
+
+
 
 procedure TFMain.ComboBoxChange(Sender: TObject);
 begin
@@ -1817,11 +1824,14 @@ begin
   Result := True;
 end;
 
+
+
 function TFMain.ValidarFormularioEmpresa: Boolean;
 begin
   Result := False;
 
-  if Trim(CodigoEmpresa.Text) = '' then
+  // CNPJ
+  if Trim(MaskEditCNPJ.Text) = '' then
   begin
     ShowMessage('Digite o CNPJ!');
     Exit;
@@ -1859,6 +1869,7 @@ begin
 
   Result := True;
 end;
+
 
 function TFMain.ContatoSelecionado: Contatos;
 var
@@ -1944,14 +1955,20 @@ procedure TFMain.PreencherFormularioEmpresa(TEmpresa: TEmpresa);
 begin
   if TEmpresa <> nil then
   begin
-    CodigoEmpresa.Text := TEmpresa.getCNPJ;
+    // Código (ID gerado pelo banco)
+    CodigoEmpresa.Text := IntToStr(TEmpresa.getCodigo);
+
+    // CNPJ em seu campo correto
+    MaskEditCNPJ.Text := TEmpresa.getCNPJ;
+
     NomeDaEmpresa.Text := TEmpresa.getNome;
-    MaskEdit1.Text := TEmpresa.getTelefone;
-    Edit5.Text := TEmpresa.getEmail;
-    Edit6.Text := TEmpresa.getEndereco;
-    MaskEdit2.Text := TEmpresa.getUF;
+    MaskEdit1.Text     := TEmpresa.getTelefone;
+    Edit5.Text         := TEmpresa.getEmail;
+    Edit6.Text         := TEmpresa.getEndereco;
+    MaskEdit2.Text     := TEmpresa.getUF;
   end;
 end;
+
 
 procedure TFMain.LimparFormulario;
 begin
@@ -1972,13 +1989,15 @@ end;
 
 procedure TFMain.LimparFormularioEmpresa;
 begin
-  CodigoEmpresa.Text := '';
-  NomeDaEmpresa.Text := '';
-  MaskEdit1.Text := '';
-  Edit5.Text := '';
-  Edit6.Text := '';
-  MaskEdit2.Text := '';
+  CodigoEmpresa.Clear;     // ID
+  MaskEditCNPJ.Clear;      // CNPJ
+  NomeDaEmpresa.Clear;     // Nome da empresa
+  MaskEdit1.Clear;         // Telefone
+  Edit5.Clear;             // E-mail
+  Edit6.Clear;             // Endereço
+  MaskEdit2.Clear;         // UF
 end;
+
 
 procedure TFMain.LimparFormularioGrupo;
 begin
@@ -2565,7 +2584,8 @@ begin
 
   NovaEmpresa := TEmpresa.Create;
   try
-    NovaEmpresa.setCNPJ(CodigoEmpresa.Text);
+    // Agora o CNPJ vem do campo de CNPJ correto
+    NovaEmpresa.setCNPJ(MaskEditCNPJ.Text);
     NovaEmpresa.setNome(NomeDaEmpresa.Text);
     NovaEmpresa.setTelefone(MaskEdit1.Text);
     NovaEmpresa.setEmail(Edit5.Text);
@@ -2575,7 +2595,8 @@ begin
     if EmpresasController.Adicionar(NovaEmpresa, Mensagem) then
     begin
       ShowMessage(Mensagem);
-      LimparFormularioEmpresa;
+      // Mostrar o ID gerado, se quiser
+      CodigoEmpresa.Text := IntToStr(NovaEmpresa.getCodigo);
       CarregarEmpresas;
     end
     else
@@ -2585,62 +2606,71 @@ begin
   end;
 end;
 
+
 procedure TFMain.SpdEditarEmpresaClick(Sender: TObject);
 var
-  EmpresaTemp: TEmpresa;
-  Mensagem: string;
+  Msg: string;
 begin
-  if EditandoEmpresa and (EmpresaAtual <> nil) then
+  // === PRIMEIRO CLIQUE: ENTRAR EM MODO EDIÇÃO ===
+  if not EditandoEmpresa then
   begin
-    if not ValidarFormularioEmpresa then Exit;
-
-    EmpresaAtual.setCNPJ(CodigoEmpresa.Text);
-    EmpresaAtual.setNome(NomeDaEmpresa.Text);
-    EmpresaAtual.setTelefone(MaskEdit1.Text);
-    EmpresaAtual.setEmail(Edit5.Text);
-    EmpresaAtual.setEndereco(Edit6.Text);
-    EmpresaAtual.setUF(MaskEdit2.Text);
-
-    if EmpresasController.Atualizar(EmpresaAtual, Mensagem) then
+    if ClientDataSetEmpresas.IsEmpty then
     begin
-      ShowMessage(Mensagem);
-      LimparFormularioEmpresa;
-      FreeAndNil(EmpresaAtual);
-      EditandoEmpresa := False;
-      SpdAdicionarEmpresa.Enabled := True;
-      SpdEditarEmpresa.Caption := 'Editar';
-      pgcEmpresas.ActivePage := tbsEmpresasList;
-      CarregarEmpresas;
-    end
-    else
-      ShowMessage('Erro: ' + Mensagem);
-  end
-  else
-  begin
-    EmpresaTemp := EmpresaSelecionada;
-    if EmpresaTemp = nil then
-    begin
-      ShowMessage('Selecione uma empresa no grid primeiro!');
+      ShowMessage('Selecione uma empresa no grid para editar.');
       Exit;
     end;
 
-    EmpresaAtual := TEmpresa.Create;
-    EmpresaAtual.setCodigo(EmpresaTemp.getCodigo);
-    EmpresaAtual.setCNPJ(EmpresaTemp.getCNPJ);
-    EmpresaAtual.setNome(EmpresaTemp.getNome);
-    EmpresaAtual.setTelefone(EmpresaTemp.getTelefone);
-    EmpresaAtual.setEmail(EmpresaTemp.getEmail);
-    EmpresaAtual.setEndereco(EmpresaTemp.getEndereco);
-    EmpresaAtual.setUF(EmpresaTemp.getUF);
+    // Pega a empresa que está selecionada no DBGrid
+    EmpresaAtual := EmpresaSelecionada;
 
+    if EmpresaAtual = nil then
+    begin
+      ShowMessage('Erro ao carregar empresa selecionada.');
+      Exit;
+    end;
+
+    // Preenche os campos do formulário de cadastro
     PreencherFormularioEmpresa(EmpresaAtual);
 
+    // >>> TROCA A TELA PARA A ABA "Cadastro" <<<
+    pgcEmpresas.ActivePage := tbsEmpresasCad;
+
+    // Entra em modo edição
     EditandoEmpresa := True;
+    SpdEditarEmpresa.Caption    := 'Salvar';
     SpdAdicionarEmpresa.Enabled := False;
-    SpdEditarEmpresa.Caption := 'Salvar';
-    pgcEmpresas.ActivePage := tbsEmpresasList;
+
+    Exit; // só preparou edição, não grava ainda
   end;
+
+  // === SEGUNDO CLIQUE: SALVAR ALTERAÇÕES ===
+  if not ValidarFormularioEmpresa then
+    Exit;
+
+  EmpresaAtual.setCNPJ(MaskEditCNPJ.Text);
+  EmpresaAtual.setNome(NomeDaEmpresa.Text);
+  EmpresaAtual.setTelefone(MaskEdit1.Text);
+  EmpresaAtual.setEmail(Edit5.Text);
+  EmpresaAtual.setEndereco(Edit6.Text);
+  EmpresaAtual.setUF(MaskEdit2.Text);
+
+  if EmpresasController.Atualizar(EmpresaAtual, Msg) then
+  begin
+    ShowMessage('Empresa atualizada com sucesso!');
+    EditandoEmpresa := False;
+    SpdEditarEmpresa.Caption    := 'Editar';
+    SpdAdicionarEmpresa.Enabled := True;
+
+    CarregarEmpresas;
+
+    // opcional: voltar para a aba de Lista depois de salvar
+    pgcEmpresas.ActivePage := tbsEmpresasList;
+  end
+  else
+    ShowMessage('Erro: ' + Msg);
 end;
+
+
 
 procedure TFMain.SpdExcluirEmpresaClick(Sender: TObject);
 var

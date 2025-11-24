@@ -1968,7 +1968,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdRelatorios
+      ActiveCard = crdEmpresas
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -6300,7 +6300,7 @@
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 839
+                Width = 248
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -6313,7 +6313,6 @@
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
-                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -7223,7 +7222,7 @@
                 object Label5: TLabel
                   Left = 1
                   Top = 1
-                  Width = 823
+                  Width = 95
                   Height = 32
                   Align = alTop
                   Caption = 'Favoritos'
@@ -7236,7 +7235,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 95
                 end
                 object SpdAdicionarFavorito: TSpeedButton
                   Left = 52
@@ -8064,14 +8062,18 @@
         Caption = 'crdEmpresas'
         CardIndex = 3
         TabOrder = 3
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcEmpresas: TPageControl
           Left = 0
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsEmpresasList
+          ActivePage = tbsEmpresasCad
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsEmpresasCad: TTabSheet
             Caption = 'Cadastro'
             object Label13: TLabel
@@ -8091,6 +8093,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel9: TPanel
                 Left = 32
                 Top = 38
@@ -8120,9 +8124,9 @@
                 object Label7: TLabel
                   Left = 32
                   Top = 69
-                  Width = 39
+                  Width = 11
                   Height = 15
-                  Caption = 'Codigo'
+                  Caption = 'ID'
                 end
                 object Label8: TLabel
                   Left = 32
@@ -8132,7 +8136,7 @@
                   Caption = 'Nome d'#225' Empresa'
                 end
                 object Label9: TLabel
-                  Left = 400
+                  Left = 376
                   Top = 69
                   Width = 27
                   Height = 15
@@ -8146,14 +8150,14 @@
                   Caption = 'Endere'#231'o'
                 end
                 object Label11: TLabel
-                  Left = 400
+                  Left = 376
                   Top = 119
                   Width = 45
                   Height = 15
                   Caption = 'Telefone'
                 end
                 object Label12: TLabel
-                  Left = 400
+                  Left = 376
                   Top = 183
                   Width = 34
                   Height = 15
@@ -9091,28 +9095,36 @@
                   Layout = blGlyphTop
                   OnClick = SpdAdicionarEmpresaClick
                 end
+                object Label29: TLabel
+                  Left = 592
+                  Top = 183
+                  Width = 14
+                  Height = 15
+                  Caption = 'UF'
+                end
                 object CodigoEmpresa: TEdit
                   Left = 32
                   Top = 90
-                  Width = 209
+                  Width = 81
                   Height = 23
-                  TabOrder = 0
+                  Enabled = False
+                  TabOrder = 5
                 end
                 object NomeDaEmpresa: TEdit
                   Left = 32
                   Top = 147
                   Width = 209
                   Height = 23
-                  TabOrder = 1
+                  TabOrder = 0
                 end
-                object MaskEdit1: TMaskEdit
-                  Left = 400
+                object MaskEditCNPJ: TMaskEdit
+                  Left = 376
                   Top = 90
-                  Width = 97
+                  Width = 121
                   Height = 23
                   EditMask = '00.000.000/0000-00;0;_'
                   MaxLength = 18
-                  TabOrder = 2
+                  TabOrder = 1
                   Text = ''
                 end
                 object Edit5: TEdit
@@ -9122,22 +9134,32 @@
                   Height = 23
                   TabOrder = 3
                 end
-                object MaskEdit2: TMaskEdit
-                  Left = 400
+                object MaskEdit1: TMaskEdit
+                  Left = 376
                   Top = 140
-                  Width = 95
+                  Width = 121
                   Height = 23
                   EditMask = '!\(99\)00000-0000;1;_'
                   MaxLength = 14
-                  TabOrder = 4
+                  TabOrder = 2
                   Text = '(  )     -    '
                 end
                 object Edit6: TEdit
-                  Left = 400
+                  Left = 376
                   Top = 204
                   Width = 193
                   Height = 23
-                  TabOrder = 5
+                  TabOrder = 4
+                end
+                object MaskEdit2: TMaskEdit
+                  Left = 592
+                  Top = 204
+                  Width = 96
+                  Height = 23
+                  EditMask = '>LL;1;_'
+                  MaxLength = 2
+                  TabOrder = 6
+                  Text = '  '
                 end
               end
             end
@@ -9165,7 +9187,7 @@
                 object Label14: TLabel
                   Left = 1
                   Top = 1
-                  Width = 799
+                  Width = 188
                   Height = 32
                   Align = alTop
                   Caption = 'Lista de Empresas'
@@ -9178,7 +9200,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 188
                 end
                 object SpdEditarEmpresa: TSpeedButton
                   Left = 368
@@ -10424,7 +10445,7 @@
                 object Label15: TLabel
                   Left = 1
                   Top = 1
-                  Width = 839
+                  Width = 86
                   Height = 37
                   Align = alTop
                   Caption = 'Grupos'
@@ -10437,7 +10458,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 86
                 end
                 object SpdAdicionarGrupo: TSpeedButton
                   Left = 48
@@ -12153,7 +12173,7 @@
                 object Label18: TLabel
                   Left = 1
                   Top = 1
-                  Width = 831
+                  Width = 110
                   Height = 32
                   Align = alTop
                   Caption = 'USU'#193'RIOS'
@@ -12166,7 +12186,6 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
-                  ExplicitWidth = 110
                 end
                 object Bevel8: TBevel
                   Left = 1
@@ -14103,7 +14122,7 @@
           Align = alClient
           TabOrder = 0
           object tbsRelatorio: TTabSheet
-            Caption = 'Relat'#243'rio'
+            Caption = 'x'
             object Panel21: TPanel
               Left = 0
               Top = 0
@@ -14798,25 +14817,6 @@
     DataSetOptions = []
     Left = 708
     Top = 450
-    FieldDefs = <
-      item
-        FieldName = 'id_contato'
-      end
-      item
-        FieldName = 'nome'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'telefone'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'email'
-        FieldType = fftString
-        Size = 255
-      end>
   end
   object frxReportContatosNome: TfrxReport
     Version = '2026.1.1'
@@ -29657,35 +29657,6 @@
     DataSetOptions = []
     Left = 708
     Top = 504
-    FieldDefs = <
-      item
-        FieldName = 'id_usuario'
-      end
-      item
-        FieldName = 'nome'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'email'
-        FieldType = fftString
-        Size = 255
-      end
-      item
-        FieldName = 'criado_em'
-      end
-      item
-        FieldName = 'atualizado_em'
-      end
-      item
-        FieldName = 'ativo'
-        FieldType = fftBoolean
-      end
-      item
-        FieldName = 'telefone'
-        FieldType = fftString
-        Size = 20
-      end>
   end
   object qryUsuarioCRUD: TFDQuery
     Connection = FDConnRel
@@ -29700,10 +29671,10 @@
   end
   object SaveDialogVCF: TSaveDialog
     Left = 1116
-    Top = 248
+    Top = 152
   end
   object SaveDialogTXT: TSaveDialog
-    Left = 1028
-    Top = 256
+    Left = 1108
+    Top = 216
   end
 end

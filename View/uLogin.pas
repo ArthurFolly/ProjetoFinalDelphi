@@ -133,7 +133,7 @@ begin
     end;
 
     // Mensagem amigável
-    ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
+    //ShowMessage('Login realizado com sucesso! Bem-vindo, ' + Usuario.Nome);
 
     // Limpa os campos do formulário de login
     EditEmail.Clear;
