@@ -52,7 +52,7 @@ O Sistema **ContactHub** é uma solução completa para gerenciamento de contato
 - **Exportação em Diversos Formatos**: PDF, Excel, HTML
 
 ### 📝 Logs do Sistema
-**Em Progresso**: 
+- **Logs**: De entrada e saida do sistema 
 
 ## 🏗️ Arquitetura
 
@@ -63,13 +63,13 @@ O sistema implementa uma arquitetura MVC (Model-View-Controller) bem definida:
 **Controller**: Lógica de negócio e controle
 **Repository**: Camada de acesso a dados com PostgreSQL
 **Utils**: Utilitários e funcionalidades auxiliares
+**Core**: Instancia variaveis globais:
 
 ## 🔧 Tecnologias
 
 - **Linguagem**: Object Pascal (Delphi)
 - **Banco de Dados**: PostgreSQL
 - **Relatórios**: FastReport
-- **Framework**: VCL (Visual Component Library)
 - **Acesso a Dados**: FireDAC
 
 ## 📁 Estrutura do Projeto
@@ -202,11 +202,10 @@ O sistema oferece três tipos principais de relatórios:
 - Relatório de Contatos - Ordenado por Nome
 - Relatório de Contatos - Ordenado por Numero Telefônico
 - Relatório de Usuários - Ordenado por Nome
+- Relatorios de Contatos - Ordenado por Regiao
 
 
-## 📝 Logs do Sistema
 
-** Em progresso** 
 
 ## 🔐 Segurança
 
