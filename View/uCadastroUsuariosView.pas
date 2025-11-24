@@ -102,7 +102,7 @@ begin
 
 Self.Hide;
 
-FLogin.WindowState := wsMaximized;
+FLogin.WindowState := wsNormal;
 
 FLogin.Show;
 

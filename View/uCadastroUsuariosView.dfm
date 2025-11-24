@@ -1,6 +1,7 @@
 object FormCadastroUsuario: TFormCadastroUsuario
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'FormCadastroUsuario'
   ClientHeight = 681
   ClientWidth = 1248
@@ -895,6 +896,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       Color = 2561564
       ParentBackground = False
       TabOrder = 0
+      ExplicitLeft = 888
       object Label2: TLabel
         Left = 56
         Top = 131
@@ -1007,7 +1009,7 @@ object FormCadastroUsuario: TFormCadastroUsuario
       end
       object Panel3: TPanel
         Left = 56
-        Top = 409
+        Top = 402
         Width = 233
         Height = 49
         Caption = 'Cadastrar'

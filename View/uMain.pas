@@ -50,7 +50,7 @@ type
     crdUsuarios: TCard;
     pgcContatos: TPageControl;
     tbsContatosList: TTabSheet;
-    tbsContatosCad: TTabSheet;
+    ContatosCad: TTabSheet;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -297,6 +297,7 @@ type
     procedure edtPesquisaContatosChange(Sender: TObject);
 
 
+
   public
     procedure AplicarPermissoesUsuario;
 
@@ -401,7 +402,7 @@ var
 implementation
 
 uses
-  LogsRepository;  // unit que cuida da tabela Logs
+  LogsRepository;
 
 {$R *.dfm}
 
@@ -605,6 +606,7 @@ begin
   // Reaplica as permissões com base no nível já definido
   AplicarPermissoesUsuario;
 end;
+
 
 
 

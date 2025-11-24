@@ -1,7 +1,7 @@
 ﻿object FMain: TFMain
   Left = 0
   Top = 0
-  BorderStyle = bsSingle
+  BorderStyle = bsDialog
   Caption = 'uMain'
   ClientHeight = 681
   ClientWidth = 1250
@@ -34,7 +34,6 @@
     Color = 1184274
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 673
     object Label27: TLabel
       Left = 136
       Top = 536
@@ -1498,8 +1497,6 @@
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 880
-    ExplicitHeight = 673
     object Fundo: TImage
       Left = 0
       Top = 0
@@ -1968,12 +1965,10 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdEmpresas
+      ActiveCard = crdContatos
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
-      ExplicitWidth = 880
-      ExplicitHeight = 673
       object crdImpExp: TCard
         Left = 0
         Top = 0
@@ -1982,8 +1977,6 @@
         Caption = 'crdImpExp'
         CardIndex = 0
         TabOrder = 0
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcImpExp: TPageControl
           Left = 0
           Top = 0
@@ -1992,8 +1985,6 @@
           ActivePage = tbsExport
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsImport: TTabSheet
             Caption = 'Importar'
             object Panel15: TPanel
@@ -3891,8 +3882,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel18: TPanel
                 Left = 16
                 Top = 22
@@ -4978,7 +4967,7 @@
           Top = 0
           Width = 882
           Height = 681
-          ActivePage = tbsContatosList
+          ActivePage = ContatosCad
           Align = alClient
           TabOrder = 0
           TabWidth = 100
@@ -6276,8 +6265,8 @@
               end
             end
           end
-          object tbsContatosCad: TTabSheet
-            Caption = 'tbsContatosCad'
+          object ContatosCad: TTabSheet
+            Caption = 'ContatosCad'
             ImageIndex = 1
             object Panel3: TPanel
               Left = 0
@@ -6300,7 +6289,7 @@
               object Label1: TLabel
                 Left = 1
                 Top = 1
-                Width = 248
+                Width = 839
                 Height = 32
                 Align = alTop
                 Caption = 'Cadastro De Contatos'
@@ -6313,6 +6302,7 @@
                 ParentColor = False
                 ParentFont = False
                 Transparent = False
+                ExplicitWidth = 248
               end
               object Bevel1: TBevel
                 Left = 0
@@ -7222,7 +7212,7 @@
                 object Label5: TLabel
                   Left = 1
                   Top = 1
-                  Width = 95
+                  Width = 823
                   Height = 32
                   Align = alTop
                   Caption = 'Favoritos'
@@ -7235,6 +7225,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 95
                 end
                 object SpdAdicionarFavorito: TSpeedButton
                   Left = 52
@@ -8062,8 +8053,6 @@
         Caption = 'crdEmpresas'
         CardIndex = 3
         TabOrder = 3
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcEmpresas: TPageControl
           Left = 0
           Top = 0
@@ -8072,8 +8061,6 @@
           ActivePage = tbsEmpresasCad
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsEmpresasCad: TTabSheet
             Caption = 'Cadastro'
             object Label13: TLabel
@@ -8093,8 +8080,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
               object Panel9: TPanel
                 Left = 32
                 Top = 38
@@ -9187,7 +9172,7 @@
                 object Label14: TLabel
                   Left = 1
                   Top = 1
-                  Width = 188
+                  Width = 799
                   Height = 32
                   Align = alTop
                   Caption = 'Lista de Empresas'
@@ -9200,6 +9185,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 188
                 end
                 object SpdEditarEmpresa: TSpeedButton
                   Left = 368
@@ -10445,7 +10431,7 @@
                 object Label15: TLabel
                   Left = 1
                   Top = 1
-                  Width = 86
+                  Width = 839
                   Height = 37
                   Align = alTop
                   Caption = 'Grupos'
@@ -10458,6 +10444,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 86
                 end
                 object SpdAdicionarGrupo: TSpeedButton
                   Left = 48
@@ -12173,7 +12160,7 @@
                 object Label18: TLabel
                   Left = 1
                   Top = 1
-                  Width = 110
+                  Width = 831
                   Height = 32
                   Align = alTop
                   Caption = 'USU'#193'RIOS'
@@ -12186,6 +12173,7 @@
                   ParentColor = False
                   ParentFont = False
                   Transparent = False
+                  ExplicitWidth = 110
                 end
                 object Bevel8: TBevel
                   Left = 1
@@ -14122,7 +14110,7 @@
           Align = alClient
           TabOrder = 0
           object tbsRelatorio: TTabSheet
-            Caption = 'x'
+            Caption = 'Relat'#243'rios'
             object Panel21: TPanel
               Left = 0
               Top = 0
@@ -14819,7 +14807,7 @@
     Top = 450
   end
   object frxReportContatosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -19714,7 +19702,7 @@
     end
   end
   object frxReportContatosTelefone: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
@@ -24604,7 +24592,7 @@
     end
   end
   object frxReportUsuariosNome: TfrxReport
-    Version = '2026.1.1'
+    Version = '2026.1.2'
     DotMatrixReport = False
     EngineOptions.DoublePass = True
     IniFile = '\Software\Fast Reports'
