@@ -17,6 +17,10 @@ type
     frxDBContatosUF: TfrxDBDataset;
     qryContatosUF: TFDQuery;
     frxReportContatosUF: TfrxReport;
+    qryContatosUFuf: TWideStringField;
+    qryContatosUFnome: TWideStringField;
+    qryContatosUFtelefone: TWideStringField;
+    qryContatosUFemail: TWideStringField;
   private
     { Private declarations }
   public

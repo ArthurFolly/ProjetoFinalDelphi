@@ -231,6 +231,7 @@ type
     Panel19: TPanel;
     Label28: TLabel;
     edtPesquisaContatos: TEdit;
+    RadioButton4: TRadioButton;
 
 
     procedure FormCreate(Sender: TObject);
@@ -3187,6 +3188,28 @@ begin
     frxReportUsuariosNome.ShowReport;
     Exit;
   end;
+
+
+  if RadioButton4.Checked then
+  begin
+
+    DataModule1.qryContatosUF.Close;
+    DataModule1.qryContatosUF.SQL.Text :=
+      'SELECT id_contato, nome, telefone, email, uf ' +
+      'FROM "Contato" ' +
+      'ORDER BY uf ASC, nome ASC';
+    DataModule1.qryContatosUF.Open;
+
+
+    DataModule1.frxDBContatosUF.DataSet := DataModule1.qryContatosUF;
+
+    DataModule1.frxReportContatosUF.PrepareReport;
+    DataModule1.frxReportContatosUF.ShowReport;
+    Exit;
+  end;
+
+
+
 
   ShowMessage('Selecione um relatório para imprimir!');
 end;

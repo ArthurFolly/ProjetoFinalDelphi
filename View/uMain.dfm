@@ -1968,7 +1968,7 @@
       Width = 882
       Height = 681
       Align = alClient
-      ActiveCard = crdImpExp
+      ActiveCard = crdRelatorios
       BevelOuter = bvNone
       Caption = 'CardPanel1'
       TabOrder = 0
@@ -1982,6 +1982,8 @@
         Caption = 'crdImpExp'
         CardIndex = 0
         TabOrder = 0
+        ExplicitWidth = 880
+        ExplicitHeight = 673
         object pgcImpExp: TPageControl
           Left = 0
           Top = 0
@@ -1990,6 +1992,8 @@
           ActivePage = tbsExport
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 880
+          ExplicitHeight = 673
           object tbsImport: TTabSheet
             Caption = 'Importar'
             object Panel15: TPanel
@@ -3887,6 +3891,8 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 872
+              ExplicitHeight = 643
               object Panel18: TPanel
                 Left = 16
                 Top = 22
@@ -4967,8 +4973,6 @@
         CardIndex = 1
         CardVisible = False
         TabOrder = 1
-        ExplicitWidth = 880
-        ExplicitHeight = 673
         object pgcContatos: TPageControl
           Left = 0
           Top = 0
@@ -4979,8 +4983,6 @@
           TabOrder = 0
           TabWidth = 100
           Visible = False
-          ExplicitWidth = 880
-          ExplicitHeight = 673
           object tbsContatosList: TTabSheet
             Caption = 'Lista'
             object Panel2: TPanel
@@ -6250,9 +6252,6 @@
                 Align = alTop
                 Caption = 'Panel19'
                 TabOrder = 2
-                ExplicitLeft = 82
-                ExplicitTop = 40
-                ExplicitWidth = 185
                 object Label28: TLabel
                   Left = 16
                   Top = 7
@@ -6289,8 +6288,6 @@
               Color = 7015492
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 872
-              ExplicitHeight = 643
             end
             object Panel4: TPanel
               Left = 16
@@ -14703,6 +14700,20 @@
                   ParentFont = False
                   TabOrder = 2
                 end
+                object RadioButton4: TRadioButton
+                  Left = 56
+                  Top = 329
+                  Width = 577
+                  Height = 26
+                  Caption = 'Relat'#243'rio de Contatos - Ordenado por Regi'#245'es'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -23
+                  Font.Name = 'Segoe UI'
+                  Font.Style = []
+                  ParentFont = False
+                  TabOrder = 3
+                end
               end
             end
           end
@@ -14787,6 +14798,25 @@
     DataSetOptions = []
     Left = 708
     Top = 450
+    FieldDefs = <
+      item
+        FieldName = 'id_contato'
+      end
+      item
+        FieldName = 'nome'
+        FieldType = fftString
+        Size = 255
+      end
+      item
+        FieldName = 'telefone'
+        FieldType = fftString
+        Size = 255
+      end
+      item
+        FieldName = 'email'
+        FieldType = fftString
+        Size = 255
+      end>
   end
   object frxReportContatosNome: TfrxReport
     Version = '2026.1.1'
@@ -29599,6 +29629,7 @@
       'User_Name=postgres'
       'Password=root'
       'Port=5432')
+    Connected = True
     LoginPrompt = False
     Left = 620
     Top = 450
@@ -29626,6 +29657,35 @@
     DataSetOptions = []
     Left = 708
     Top = 504
+    FieldDefs = <
+      item
+        FieldName = 'id_usuario'
+      end
+      item
+        FieldName = 'nome'
+        FieldType = fftString
+        Size = 255
+      end
+      item
+        FieldName = 'email'
+        FieldType = fftString
+        Size = 255
+      end
+      item
+        FieldName = 'criado_em'
+      end
+      item
+        FieldName = 'atualizado_em'
+      end
+      item
+        FieldName = 'ativo'
+        FieldType = fftBoolean
+      end
+      item
+        FieldName = 'telefone'
+        FieldType = fftString
+        Size = 20
+      end>
   end
   object qryUsuarioCRUD: TFDQuery
     Connection = FDConnRel
